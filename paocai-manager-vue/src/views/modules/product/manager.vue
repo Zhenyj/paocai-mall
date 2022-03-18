@@ -187,8 +187,8 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 200) {
-          this.dataList = data.data.data.list;
-          this.totalPage = data.data.data.totalCount;
+          this.dataList = data.data.list;
+          this.totalPage = data.data.totalCount;
         } else {
           this.dataList = [];
           this.totalPage = 0;
