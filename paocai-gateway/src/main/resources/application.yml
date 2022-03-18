@@ -7,6 +7,54 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.136.12:8848
+    gateway:
+      routes:
+        # 商品服务路由
+        - id: product_route
+          uri: lb://paocai-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        # 会员服务路由
+        - id: member_route
+          uri: lb://paocai-member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        # 优惠券服务路由
+        - id: coupon_route
+          uri: lb://paocai-coupon
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        # 订单服务路由
+        - id: order_route
+          uri: lb://paocai-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        # 库存服务路由
+        - id: ware_route
+          uri: lb://paocai-ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        - id: admin_route
+          uri: lb://paocai-manager
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/paocai-manager/$\{segment}
+        - id: paocai_host_route
+          uri: lb://paocai-product
+          predicates:
+            - Host=paocai.vegetables.com,item.paocai.vegetables.com
+
 # 暴露所有端点
 management:
   endpoints:

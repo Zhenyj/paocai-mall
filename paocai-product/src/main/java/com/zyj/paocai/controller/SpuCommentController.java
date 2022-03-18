@@ -26,7 +26,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:19:43
  */
 @RestController
-@RequestMapping("paocai/spucomment")
+@RequestMapping("product/spucomment")
 public class SpuCommentController {
     @Autowired
     private SpuCommentService spuCommentService;

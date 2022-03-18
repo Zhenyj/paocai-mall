@@ -26,7 +26,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:19:43
  */
 @RestController
-@RequestMapping("paocai/attr")
+@RequestMapping("product/attr")
 public class AttrController {
     @Autowired
     private AttrService attrService;
