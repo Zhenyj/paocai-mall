@@ -26,7 +26,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:12:53
  */
 @RestController
-@RequestMapping("paocai/refundinfo")
+@RequestMapping("order/refundinfo")
 public class RefundInfoController {
     @Autowired
     private RefundInfoService refundInfoService;

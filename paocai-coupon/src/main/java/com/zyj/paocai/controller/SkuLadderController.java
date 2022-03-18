@@ -26,7 +26,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:22:50
  */
 @RestController
-@RequestMapping("paocai/skuladder")
+@RequestMapping("coupon/skuladder")
 public class SkuLadderController {
     @Autowired
     private SkuLadderService skuLadderService;

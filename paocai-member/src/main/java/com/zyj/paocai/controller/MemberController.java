@@ -26,7 +26,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:23:57
  */
 @RestController
-@RequestMapping("paocai/member")
+@RequestMapping("member/member")
 public class MemberController {
     @Autowired
     private MemberService memberService;

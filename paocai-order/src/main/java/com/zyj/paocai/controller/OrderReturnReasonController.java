@@ -19,7 +19,7 @@ import java.util.Map;
  * @date 2022-03-15 21:12:53
  */
 @RestController
-@RequestMapping("paocai/orderreturnreason")
+@RequestMapping("order/orderreturnreason")
 public class OrderReturnReasonController {
     @Autowired
     private OrderReturnReasonService orderReturnReasonService;

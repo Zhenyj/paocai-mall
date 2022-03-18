@@ -19,7 +19,7 @@ import java.util.Map;
  * @date 2022-03-15 21:22:50
  */
 @RestController
-@RequestMapping("paocai/categorybounds")
+@RequestMapping("coupon/categorybounds")
 public class CategoryBoundsController {
     @Autowired
     private CategoryBoundsService categoryBoundsService;

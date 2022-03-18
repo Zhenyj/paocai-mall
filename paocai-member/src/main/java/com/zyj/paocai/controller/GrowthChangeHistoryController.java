@@ -1,20 +1,14 @@
 package com.zyj.paocai.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.zyj.paocai.entity.GrowthChangeHistoryEntity;
 import com.zyj.paocai.service.GrowthChangeHistoryService;
 import com.zyj.paocai.utils.PageUtils;
 import com.zyj.paocai.utils.R;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -26,7 +20,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:23:57
  */
 @RestController
-@RequestMapping("paocai/growthchangehistory")
+@RequestMapping("member/growthchangehistory")
 public class GrowthChangeHistoryController {
     @Autowired
     private GrowthChangeHistoryService growthChangeHistoryService;

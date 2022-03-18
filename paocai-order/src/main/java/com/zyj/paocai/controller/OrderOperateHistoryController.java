@@ -20,7 +20,7 @@ import java.util.Map;
  * @date 2022-03-15 21:12:53
  */
 @RestController
-@RequestMapping("paocai/orderoperatehistory")
+@RequestMapping("order/orderoperatehistory")
 public class OrderOperateHistoryController {
     @Autowired
     private OrderOperateHistoryService orderOperateHistoryService;

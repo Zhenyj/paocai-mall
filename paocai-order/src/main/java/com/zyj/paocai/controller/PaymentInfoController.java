@@ -20,7 +20,7 @@ import java.util.Map;
  * @date 2022-03-15 21:12:53
  */
 @RestController
-@RequestMapping("paocai/paymentinfo")
+@RequestMapping("order/paymentinfo")
 public class PaymentInfoController {
     @Autowired
     private PaymentInfoService paymentInfoService;

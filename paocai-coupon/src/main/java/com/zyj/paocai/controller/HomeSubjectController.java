@@ -26,7 +26,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:22:50
  */
 @RestController
-@RequestMapping("paocai/homesubject")
+@RequestMapping("coupon/homesubject")
 public class HomeSubjectController {
     @Autowired
     private HomeSubjectService homeSubjectService;

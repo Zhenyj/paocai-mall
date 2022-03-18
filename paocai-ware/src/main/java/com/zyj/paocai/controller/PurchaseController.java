@@ -26,7 +26,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:24:53
  */
 @RestController
-@RequestMapping("paocai/purchase")
+@RequestMapping("ware/purchase")
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;

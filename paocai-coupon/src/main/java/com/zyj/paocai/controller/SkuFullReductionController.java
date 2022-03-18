@@ -26,7 +26,7 @@ import com.zyj.paocai.utils.R;
  * @date 2022-03-15 21:22:50
  */
 @RestController
-@RequestMapping("paocai/skufullreduction")
+@RequestMapping("coupon/skufullreduction")
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
