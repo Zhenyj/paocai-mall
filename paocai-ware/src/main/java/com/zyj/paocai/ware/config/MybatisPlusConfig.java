@@ -1,4 +1,4 @@
-package com.zyj.paocai.coupon.config;
+package com.zyj.paocai.ware.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("com.zyj.paocai.coupon.dao")
+@MapperScan("com.zyj.paocai.ware.dao")
 public class MybatisPlusConfig {
 
     // 最新版
