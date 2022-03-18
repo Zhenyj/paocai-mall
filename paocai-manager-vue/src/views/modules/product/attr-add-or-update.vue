@@ -195,7 +195,7 @@ export default {
           params: this.$http.adornParams({ page: 1, limit: 10000000 })
         }).then(({ data }) => {
           if (data && data.code === 200) {
-            this.attrGroups = data.page.list;
+            this.attrGroups = data.data.list;
           } else {
             this.$message.error(data.msg);
           }

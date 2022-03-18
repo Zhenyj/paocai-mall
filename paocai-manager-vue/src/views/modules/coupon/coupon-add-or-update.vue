@@ -221,7 +221,7 @@ export default {
           limit: 500
         })
       }).then(({ data }) => {
-        this.memberLevels = data.page.list;
+        this.memberLevels = data.data.list;
       });
     },
     init (id) {

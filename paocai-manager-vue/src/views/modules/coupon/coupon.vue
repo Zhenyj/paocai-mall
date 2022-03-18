@@ -213,7 +213,7 @@ export default {
           limit: 500
         })
       }).then(({ data }) => {
-        data.page.list.forEach(item => {
+        data.data.list.forEach(item => {
           this.memberLevels["level_" + item.id] = item.name;
         });
       });
@@ -231,8 +231,8 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 200) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
+          this.dataList = data.data.list;
+          this.totalPage = data.data.totalCount;
         } else {
           this.dataList = [];
           this.totalPage = 0;

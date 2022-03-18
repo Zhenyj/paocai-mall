@@ -140,7 +140,7 @@ export default {
         method: 'get',
         params: this.$http.adornParams()
       }).then(({ data }) => {
-        this.roleList = data && data.code === 200 ? data.list : []
+        this.roleList = data && data.code === 200 ? data.data.list : []
       }).then(() => {
         this.visible = true
         this.$nextTick(() => {
