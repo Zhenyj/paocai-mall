@@ -2,8 +2,6 @@ package com.zyj.paocai.product.entity.vo;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author lulx
  * @date 2022-03-19 16:47
@@ -38,5 +36,5 @@ public class AttrGroupWithCatelogPathVo {
     /**
      * 分类完整路径
      */
-    private List<Long> catelogPath;
+    private Long[] catelogPath;
 }

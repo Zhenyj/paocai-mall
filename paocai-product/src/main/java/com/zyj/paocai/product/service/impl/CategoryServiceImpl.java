@@ -10,6 +10,8 @@ import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,6 +44,27 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
         return list;
+    }
+
+    @Override
+    public Long[] getCatelogPath(Long catelogId) {
+        Long catId = catelogId;
+        List<Long> list = new ArrayList<>(3);
+        list.add(catelogId);
+        while (true) {
+            CategoryEntity entity = getById(catId);
+            if (entity == null) {
+                throw new RuntimeException("不存在分类id：" + catId + "的分类");
+            }
+            Long parentCid = entity.getParentCid();
+            if (parentCid != null && parentCid == 0) {
+                break;
+            }
+            list.add(parentCid);
+            catId = parentCid;
+        }
+        Collections.reverse(list);
+        return list.toArray(new Long[list.size()]);
     }
 
     /**

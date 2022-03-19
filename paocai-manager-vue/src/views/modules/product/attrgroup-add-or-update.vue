@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新增' : '修改'"
+  <el-dialog :title="!dataForm.attrGroupId ? '新增' : '修改'"
              :close-on-click-modal="false"
              :visible.sync="visible"
              @closed="dialogClose">
@@ -31,7 +31,11 @@
       <el-form-item label="所属分类"
                     prop="catelogId">
         <!-- <el-input v-model="dataForm.catelogId" placeholder="所属分类id"></el-input> @change="handleChange" -->
-        <!-- <el-cascader filterable placeholder="试试搜索：手机" v-model="catelogPath" :options="categorys"  :props="props"></el-cascader> -->
+        <!-- <el-cascader filterable
+                     placeholder="试试搜索：手机"
+                     v-model="catelogPath"
+                     :options="categorys"
+                     :props="props"></el-cascader> -->
         <!-- :catelogPath="catelogPath"自定义绑定的属性，可以给子组件传值 -->
         <category-cascader :catelogPath.sync="catelogPath"></category-cascader>
       </el-form-item>
@@ -109,13 +113,14 @@ export default {
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 200) {
-              this.dataForm.attrGroupName = data.attrGroup.attrGroupName;
-              this.dataForm.sort = data.attrGroup.sort;
-              this.dataForm.descript = data.attrGroup.descript;
-              this.dataForm.icon = data.attrGroup.icon;
-              this.dataForm.catelogId = data.attrGroup.catelogId;
+              data = data.data;
+              this.dataForm.attrGroupName = data.attrGroupName;
+              this.dataForm.sort = data.sort;
+              this.dataForm.descript = data.descript;
+              this.dataForm.icon = data.icon;
+              this.dataForm.catelogId = data.catelogId;
               //查出catelogId的完整路径
-              this.catelogPath = data.attrGroup.catelogPath;
+              this.catelogPath = data.catelogPath;
             }
           });
         }

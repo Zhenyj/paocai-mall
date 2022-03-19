@@ -1,5 +1,5 @@
 <template>
-<!-- 
+  <!-- 
 使用说明：
 1）、引入category-cascader.vue
 2）、语法：<category-cascader :catelogPath.sync="catelogPath"></category-cascader>
@@ -8,14 +8,12 @@
           由于有sync修饰符，所以cascader路径变化以后自动会修改父的catelogPath，这是结合子组件this.$emit("update:catelogPath",v);做的
       -->
   <div>
-    <el-cascader
-      filterable
-      clearable 
-      placeholder="试试搜索：手机"
-      v-model="paths"
-      :options="categorys"
-      :props="setting"
-    ></el-cascader>
+    <el-cascader filterable
+                 clearable
+                 placeholder="试试搜索：手机"
+                 v-model="paths"
+                 :options="categorys"
+                 :props="setting"></el-cascader>
   </div>
 </template>
 
@@ -30,12 +28,12 @@ export default {
   props: {
     catelogPath: {
       type: Array,
-      default(){
+      default () {
         return [];
       }
     }
   },
-  data() {
+  data () {
     //这里存放数据
     return {
       setting: {
@@ -47,19 +45,19 @@ export default {
       paths: this.catelogPath
     };
   },
-  watch:{
-    catelogPath(v){
+  watch: {
+    catelogPath (v) {
       this.paths = this.catelogPath;
     },
-    paths(v){
-      this.$emit("update:catelogPath",v);
+    paths (v) {
+      this.$emit("update:catelogPath", v);
       //还可以使用pubsub-js进行传值
-      this.PubSub.publish("catPath",v);
+      this.PubSub.publish("catPath", v);
     }
   },
   //方法集合
   methods: {
-    getCategorys() {
+    getCategorys () {
       this.$http({
         url: this.$http.adornUrl("/product/category/list/tree"),
         method: "get"
@@ -69,7 +67,7 @@ export default {
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {
+  created () {
     this.getCategorys();
   }
 };

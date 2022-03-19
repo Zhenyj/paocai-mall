@@ -3,7 +3,7 @@
 
 <mapper namespace="com.zyj.paocai.product.dao.AttrDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zyj.paocai.product.entity.AttrEntity" id="attrMap">
         <result property="attrId" column="attr_id"/>
         <result property="attrName" column="attr_name"/>
@@ -14,7 +14,35 @@
         <result property="enable" column="enable"/>
         <result property="catelogId" column="catelog_id"/>
         <result property="showDesc" column="show_desc"/>
+        <result property="valueType" column="value_type"/>
     </resultMap>
+    <sql id="selectAll">
+        SELECT `attr_id`,
+               `attr_name`,
+               `search_type`,
+               `icon`,
+               `value_select`,
+               `attr_type`,
+               `enable`,
+               `show_desc`,
+               `catelog_id`,
+               `value_type`
+        FROM `pms_attr`
+    </sql>
+    <select id="getAttrsByAttrGroupId" resultType="com.zyj.paocai.product.entity.AttrEntity">
+        SELECT `attr_id`,
+               `attr_name`,
+               `search_type`,
+               `icon`,
+               `value_select`,
+               `attr_type`,
+               `enable`,
+               `show_desc`,
+               `catelog_id`,
+               `value_type`
+        FROM `pms_attr`
+        WHERE `attr_id` IN (SELECT attr_id FROM pms_attr_attrgroup_relation WHERE attr_group_id = #{attrGroupId})
+    </select>
 
 
 </mapper>
