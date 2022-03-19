@@ -1,0 +1,20 @@
+server:
+  port: 12000
+spring:
+  application:
+    name: paocai-thirdparty
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.136.12:8848
+    alicloud:
+      access-key: LTAI5tQxe28JJSvVxpm3LMEW
+      secret-key: RPZa3oKyHnSbsMOuY1OUgZI7j5MXkK
+      oss:
+        endpoint: oss-cn-beijing.aliyuncs.com
+# 暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
