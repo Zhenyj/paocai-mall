@@ -2,6 +2,7 @@ package com.zyj.paocai.product.controller;
 
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.product.constant.ProductConstant;
 import com.zyj.paocai.product.entity.AttrEntity;
 import com.zyj.paocai.product.entity.vo.AttrInfoVo;
 import com.zyj.paocai.product.service.AttrService;
@@ -26,6 +27,20 @@ public class AttrController {
     private AttrService attrService;
 
     /**
+     * 获取分类销售属性
+     *
+     * @param catelogId
+     * @param params
+     * @return
+     */
+    @GetMapping("/sale/list/{catelogId}")
+    public R<PageUtils> getSaleAttrByCatelogId(@PathVariable("catelogId") Long catelogId, @RequestParam Map<String, Object> params) {
+        PageUtils page = attrService.getAttrByCatelogId(catelogId, params, ProductConstant.SALE_ATTR_TYPE);
+
+        return R.ok(page);
+    }
+
+    /**
      * 获取分类规格参数
      *
      * @param catelogId
@@ -34,7 +49,7 @@ public class AttrController {
      */
     @GetMapping("/base/list/{catelogId}")
     public R<PageUtils> getBaseAttrByCatelogId(@PathVariable("catelogId") Long catelogId, @RequestParam Map<String, Object> params) {
-        PageUtils page = attrService.getBaseAttrByCatelogId(catelogId, params);
+        PageUtils page = attrService.getAttrByCatelogId(catelogId, params, ProductConstant.BASE_ATTR_TYPE);
 
         return R.ok(page);
     }

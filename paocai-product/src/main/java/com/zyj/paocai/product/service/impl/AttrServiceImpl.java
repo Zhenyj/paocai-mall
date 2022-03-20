@@ -12,10 +12,8 @@ import com.zyj.paocai.product.entity.vo.AttrInfoVo;
 import com.zyj.paocai.product.service.AttrService;
 import com.zyj.paocai.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -47,9 +45,9 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     }
 
     @Override
-    public PageUtils getBaseAttrByCatelogId(Long catelogId, Map<String, Object> params) {
+    public PageUtils getAttrByCatelogId(Long catelogId, Map<String, Object> params, int attrType) {
         String key = (String) params.get("key");
-        List<AttrBaseVo> attrs = attrDao.getBaseAttrByCatelogId(catelogId, key);
+        List<AttrBaseVo> attrs = attrDao.getAttrByCatelogId(catelogId, key, attrType);
         return new PageUtils(attrs, params);
     }
 

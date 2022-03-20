@@ -22,13 +22,14 @@ public interface AttrDao extends BaseMapper<AttrEntity> {
     List<AttrEntity> getAttrsByAttrGroupId(@Param("attrGroupId") Long attrGroupId);
 
     /**
-     * 获取分类规格参数
+     * 获取分类属性
      *
      * @param catelogId
      * @param key
+     * @param attrType
      * @return
      */
-    List<AttrBaseVo> getBaseAttrByCatelogId(@Param("catelogId") Long catelogId, @Param("key") String key);
+    List<AttrBaseVo> getAttrByCatelogId(@Param("catelogId") Long catelogId, @Param("key") String key,@Param("attrType") Integer attrType);
 
     /**
      * 查询属性详情

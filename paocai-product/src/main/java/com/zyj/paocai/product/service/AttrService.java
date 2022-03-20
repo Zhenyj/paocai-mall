@@ -31,9 +31,10 @@ public interface AttrService extends IService<AttrEntity> {
      *
      * @param catelogId
      * @param params
+     * @param baseAttrType
      * @return
      */
-    PageUtils getBaseAttrByCatelogId(Long catelogId, Map<String, Object> params);
+    PageUtils getAttrByCatelogId(Long catelogId, Map<String, Object> params, int attrType);
 
     /**
      * 查询属性详情
