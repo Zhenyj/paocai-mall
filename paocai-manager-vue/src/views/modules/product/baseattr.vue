@@ -99,7 +99,7 @@
                            align="center"
                            label="所属分类"></el-table-column>
           <el-table-column v-if="attrtype == 1"
-                           prop="groupName"
+                           prop="attrGroupName"
                            header-align="center"
                            align="center"
                            label="所属分组"></el-table-column>
@@ -207,6 +207,12 @@ export default {
       }).then(({ data }) => {
         if (data && data.code === 200) {
           this.dataList = data.data.list;
+          this.dataList.forEach(item => {
+            if (item.attrId != null) {
+              item.id = item.attrId;
+            }
+          });
+          console.log(this.dataList);
           this.totalPage = data.data.totalCount;
         } else {
           this.dataList = [];

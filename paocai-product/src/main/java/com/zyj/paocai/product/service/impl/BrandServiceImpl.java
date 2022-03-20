@@ -8,12 +8,14 @@ import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.BrandDao;
 import com.zyj.paocai.product.entity.BrandEntity;
 import com.zyj.paocai.product.service.BrandService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
 
+@Slf4j
 @Service("brandService")
 public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
 

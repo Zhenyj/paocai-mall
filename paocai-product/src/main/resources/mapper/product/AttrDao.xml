@@ -43,6 +43,44 @@
         FROM `pms_attr`
         WHERE `attr_id` IN (SELECT attr_id FROM pms_attr_attrgroup_relation WHERE attr_group_id = #{attrGroupId})
     </select>
+    <select id="getBaseAttrByCatelogId" resultType="com.zyj.paocai.product.entity.vo.AttrBaseVo">
+        SELECT pa.attr_id,
+               pa.attr_name,
+               pa.search_type,
+               pa.icon,
+               pa.value_select,
+               pa.attr_type,
+               pa.`enable`,
+               pa.catelog_id,
+               pa.show_desc,
+               pa.value_type,
+               pag.attr_group_name,
+               pc.`name` AS catelog_name
+        FROM pms_attr pa
+                 LEFT JOIN pms_category pc ON pa.catelog_id = pc.cat_id
+                 LEFT JOIN pms_attr_attrgroup_relation paar ON pa.attr_id = paar.attr_id
+                 LEFT JOIN pms_attr_group pag ON paar.attr_group_id = pag.attr_group_id
+        WHERE pa.catelog_id = #{catelogId}
+          AND (CASE
+                   WHEN LENGTH(#{key}) > 0 THEN (pa.attr_id = #{key} OR pa.attr_name LIKE CONCAT('%', #{key}, '%'))
+                   ELSE TRUE END)
+    </select>
+    <select id="getAttrInfo" resultType="com.zyj.paocai.product.entity.vo.AttrInfoVo">
+        SELECT pa.attr_id,
+               pa.attr_name,
+               pa.search_type,
+               pa.icon,
+               pa.value_select,
+               pa.attr_type,
+               pa.`enable`,
+               pa.catelog_id,
+               pa.show_desc,
+               pa.value_type,
+               paar.attr_group_id
+        FROM pms_attr pa
+                 LEFT JOIN pms_attr_attrgroup_relation paar ON pa.attr_id = paar.attr_id
+        WHERE pa.attr_id = #{attrId}
+    </select>
 
 
 </mapper>

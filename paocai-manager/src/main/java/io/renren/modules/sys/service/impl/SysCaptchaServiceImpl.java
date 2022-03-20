@@ -17,6 +17,7 @@ import io.renren.common.utils.DateUtils;
 import io.renren.modules.sys.dao.SysCaptchaDao;
 import io.renren.modules.sys.entity.SysCaptchaEntity;
 import io.renren.modules.sys.service.SysCaptchaService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import java.util.Date;
  *
  * @author Mark sunlightcs@gmail.com
  */
+@Slf4j
 @Service("sysCaptchaService")
 public class SysCaptchaServiceImpl extends ServiceImpl<SysCaptchaDao, SysCaptchaEntity> implements SysCaptchaService {
     @Autowired

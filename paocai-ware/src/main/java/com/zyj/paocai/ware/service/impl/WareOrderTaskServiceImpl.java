@@ -1,18 +1,20 @@
 package com.zyj.paocai.ware.service.impl;
 
-import com.zyj.paocai.ware.service.WareOrderTaskService;
-import org.springframework.stereotype.Service;
-import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
-
 import com.zyj.paocai.ware.dao.WareOrderTaskDao;
 import com.zyj.paocai.ware.entity.WareOrderTaskEntity;
+import com.zyj.paocai.ware.service.WareOrderTaskService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 
+@Slf4j
 @Service("wareOrderTaskService")
 public class WareOrderTaskServiceImpl extends ServiceImpl<WareOrderTaskDao, WareOrderTaskEntity> implements WareOrderTaskService {
 

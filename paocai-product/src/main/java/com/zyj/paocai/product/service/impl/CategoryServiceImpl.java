@@ -3,12 +3,12 @@ package com.zyj.paocai.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zyj.paocai.product.entity.vo.CategoryVo;
-import com.zyj.paocai.product.service.CategoryService;
-import com.zyj.paocai.product.dao.CategoryDao;
-import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.product.dao.CategoryDao;
+import com.zyj.paocai.product.entity.CategoryEntity;
+import com.zyj.paocai.product.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 

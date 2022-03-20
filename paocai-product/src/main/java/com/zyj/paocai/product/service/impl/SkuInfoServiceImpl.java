@@ -3,11 +3,12 @@ package com.zyj.paocai.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zyj.paocai.product.service.SkuInfoService;
-import com.zyj.paocai.product.dao.SkuInfoDao;
-import com.zyj.paocai.product.entity.SkuInfoEntity;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.product.dao.SkuInfoDao;
+import com.zyj.paocai.product.entity.SkuInfoEntity;
+import com.zyj.paocai.product.service.SkuInfoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 
+@Slf4j
 @Service("skuInfoService")
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> implements SkuInfoService {
 

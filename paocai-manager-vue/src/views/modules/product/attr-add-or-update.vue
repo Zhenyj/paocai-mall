@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新增' : '修改'"
+  <el-dialog :title="!dataForm.attrId ? '新增' : '修改'"
              :close-on-click-modal="false"
              :visible.sync="visible"
              @closed="dialogClose">
@@ -225,20 +225,21 @@ export default {
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 200) {
-              this.dataForm.attrName = data.attr.attrName;
-              this.dataForm.searchType = data.attr.searchType;
-              this.dataForm.valueType = data.attr.valueType;
-              this.dataForm.icon = data.attr.icon;
-              this.dataForm.valueSelect = data.attr.valueSelect.split(";");
-              this.dataForm.attrType = data.attr.attrType;
-              this.dataForm.enable = data.attr.enable;
-              this.dataForm.catelogId = data.attr.catelogId;
-              this.dataForm.showDesc = data.attr.showDesc;
+              data = data.data;
+              this.dataForm.attrName = data.attrName;
+              this.dataForm.searchType = data.searchType;
+              this.dataForm.valueType = data.valueType;
+              this.dataForm.icon = data.icon;
+              this.dataForm.valueSelect = data.valueSelect.split(";");
+              this.dataForm.attrType = data.attrType;
+              this.dataForm.enable = data.enable;
+              this.dataForm.catelogId = data.catelogId;
+              this.dataForm.showDesc = data.showDesc;
               //attrGroupId
               //catelogPath
-              this.catelogPath = data.attr.catelogPath;
+              this.catelogPath = data.catelogPath;
               this.$nextTick(() => {
-                this.dataForm.attrGroupId = data.attr.attrGroupId;
+                this.dataForm.attrGroupId = data.attrGroupId;
               });
             }
           });

@@ -8,12 +8,14 @@ import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.SpuInfoDao;
 import com.zyj.paocai.product.entity.SpuInfoEntity;
 import com.zyj.paocai.product.service.SpuInfoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
 
+@Slf4j
 @Service("spuInfoService")
 public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> implements SpuInfoService {
 
