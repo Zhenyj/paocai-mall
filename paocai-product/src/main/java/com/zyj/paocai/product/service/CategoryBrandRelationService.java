@@ -26,5 +26,12 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
      * @return
      */
     List<BrandVo> getBrandsByCatId(Long catId);
+
+    /**
+     * 获取品牌关联的分类
+     * @param brandId
+     * @return
+     */
+    List<CategoryBrandRelationEntity> getCategoryByBrandId(Long brandId);
 }
 

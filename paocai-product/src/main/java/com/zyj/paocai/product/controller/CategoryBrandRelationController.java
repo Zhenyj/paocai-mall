@@ -26,6 +26,12 @@ public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
 
+    @GetMapping("/catelog/list")
+    public R<List<CategoryBrandRelationEntity>> getCategoryByBrandId(@RequestParam("brandId") Long brandId){
+        List<CategoryBrandRelationEntity> categoryVos = categoryBrandRelationService.getCategoryByBrandId(brandId);
+        return R.ok(categoryVos);
+    }
+
     @GetMapping("/brands/list")
     public R<List<BrandVo>> getBrandsByCatId(@RequestParam("catId") Long catId) {
         List<BrandVo> brands = categoryBrandRelationService.getBrandsByCatId(catId);
@@ -49,7 +55,6 @@ public class CategoryBrandRelationController {
     @RequestMapping("/info/{id}")
     public R info(@PathVariable("id") Long id) {
         CategoryBrandRelationEntity categoryBrandRelation = categoryBrandRelationService.getById(id);
-
         return R.ok(categoryBrandRelation);
     }
 

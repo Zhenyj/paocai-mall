@@ -1,11 +1,21 @@
 <template>
   <div>
-    <el-upload action="http://gulimall-zhenyj.oss-cn-beijing.aliyuncs.com" :data="dataObj" list-type="picture-card" :file-list="fileList" :before-upload="beforeUpload" :on-remove="handleRemove" :on-success="handleUploadSuccess"
-      :on-preview="handlePreview" :limit="maxCount" :on-exceed="handleExceed">
+    <el-upload action="https://paocai-zhenyj.oss-cn-beijing.aliyuncs.com"
+               :data="dataObj"
+               list-type="picture-card"
+               :file-list="fileList"
+               :before-upload="beforeUpload"
+               :on-remove="handleRemove"
+               :on-success="handleUploadSuccess"
+               :on-preview="handlePreview"
+               :limit="maxCount"
+               :on-exceed="handleExceed">
       <i class="el-icon-plus"></i>
     </el-upload>
     <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="dialogImageUrl" alt />
+      <img width="100%"
+           :src="dialogImageUrl"
+           alt />
     </el-dialog>
   </div>
 </template>
@@ -23,7 +33,7 @@ export default {
       default: 30
     }
   },
-  data() {
+  data () {
     return {
       dataObj: {
         policy: "",
@@ -39,7 +49,7 @@ export default {
     };
   },
   computed: {
-    fileList() {
+    fileList () {
       let fileList = [];
       for (let i = 0; i < this.value.length; i++) {
         fileList.push({ url: this.value[i] });
@@ -48,23 +58,23 @@ export default {
       return fileList;
     }
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    emitInput(fileList) {
+    emitInput (fileList) {
       let value = [];
       for (let i = 0; i < fileList.length; i++) {
         value.push(fileList[i].url);
       }
       this.$emit("input", value);
     },
-    handleRemove(file, fileList) {
+    handleRemove (file, fileList) {
       this.emitInput(fileList);
     },
-    handlePreview(file) {
+    handlePreview (file) {
       this.dialogVisible = true;
       this.dialogImageUrl = file.url;
     },
-    beforeUpload(file) {
+    beforeUpload (file) {
       let _self = this;
       return new Promise((resolve, reject) => {
         policy()
@@ -84,7 +94,7 @@ export default {
           });
       });
     },
-    handleUploadSuccess(res, file) {
+    handleUploadSuccess (res, file) {
       this.fileList.push({
         name: file.name,
         // url: this.dataObj.host + "/" + this.dataObj.dir + "/" + file.name； 替换${filename}为真正的文件名
@@ -95,7 +105,7 @@ export default {
       });
       this.emitInput(this.fileList);
     },
-    handleExceed(files, fileList) {
+    handleExceed (files, fileList) {
       this.$message({
         message: "最多只能上传" + this.maxCount + "张图片",
         type: "warning",

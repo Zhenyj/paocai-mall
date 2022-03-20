@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新增' : '修改'"
+  <el-dialog :title="!dataForm.brandId ? '新增' : '修改'"
              :close-on-click-modal="false"
              :visible.sync="visible">
     <el-form :model="dataForm"
@@ -127,12 +127,13 @@ export default {
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 200) {
-              this.dataForm.name = data.brand.name;
-              this.dataForm.logo = data.brand.logo;
-              this.dataForm.descript = data.brand.descript;
-              this.dataForm.showStatus = data.brand.showStatus;
-              this.dataForm.firstLetter = data.brand.firstLetter;
-              this.dataForm.sort = data.brand.sort;
+
+              this.dataForm.name = data.data.name;
+              this.dataForm.logo = data.data.logo;
+              this.dataForm.descript = data.data.descript;
+              this.dataForm.showStatus = data.data.showStatus;
+              this.dataForm.firstLetter = data.data.firstLetter;
+              this.dataForm.sort = data.data.sort;
             }
           });
         }

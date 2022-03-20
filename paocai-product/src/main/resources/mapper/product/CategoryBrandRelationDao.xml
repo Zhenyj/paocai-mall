@@ -11,6 +11,11 @@
         <result property="brandName" column="brand_name"/>
         <result property="catelogName" column="catelog_name"/>
     </resultMap>
+    <select id="getCategoryByBrandId" resultType="com.zyj.paocai.product.entity.vo.CategoryVo">
+        SELECT catelog_id, catelog_name
+        FROM pms_category_brand_relation
+        where brand_id = #{brandId}
+    </select>
 
 
 </mapper>

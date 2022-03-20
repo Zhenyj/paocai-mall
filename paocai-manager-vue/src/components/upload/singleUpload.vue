@@ -1,12 +1,24 @@
 <template> 
   <div>
-    <el-upload action="http://gulimall-zhenyj.oss-cn-beijing.aliyuncs.com" :data="dataObj" list-type="picture" :multiple="false" :show-file-list="showFileList" :file-list="fileList" :before-upload="beforeUpload" :on-remove="handleRemove"
-      :on-success="handleUploadSuccess" :on-preview="handlePreview">
-      <el-button size="small" type="primary">点击上传</el-button>
-      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过10MB</div>
+    <el-upload action="https://paocai-zhenyj.oss-cn-beijing.aliyuncs.com"
+               :data="dataObj"
+               list-type="picture"
+               :multiple="false"
+               :show-file-list="showFileList"
+               :file-list="fileList"
+               :before-upload="beforeUpload"
+               :on-remove="handleRemove"
+               :on-success="handleUploadSuccess"
+               :on-preview="handlePreview">
+      <el-button size="small"
+                 type="primary">点击上传</el-button>
+      <div slot="tip"
+           class="el-upload__tip">只能上传jpg/png文件，且不超过10MB</div>
     </el-upload>
     <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="fileList[0].url" alt="">
+      <img width="100%"
+           :src="fileList[0].url"
+           alt="">
     </el-dialog>
   </div>
 </template>
@@ -20,17 +32,17 @@ export default {
     value: String
   },
   computed: {
-    imageUrl() {
+    imageUrl () {
       return this.value;
     },
-    imageName() {
+    imageName () {
       if (this.value != null && this.value !== "") {
         return this.value.substr(this.value.lastIndexOf("/") + 1);
       } else {
         return null;
       }
     },
-    fileList() {
+    fileList () {
       return [
         {
           name: this.imageName,
@@ -39,15 +51,15 @@ export default {
       ];
     },
     showFileList: {
-      get: function() {
+      get: function () {
         return (
           this.value !== null && this.value !== "" && this.value !== undefined
         );
       },
-      set: function(newValue) {}
+      set: function (newValue) { }
     }
   },
-  data() {
+  data () {
     return {
       dataObj: {
         policy: "",
@@ -62,16 +74,16 @@ export default {
     };
   },
   methods: {
-    emitInput(val) {
+    emitInput (val) {
       this.$emit("input", val);
     },
-    handleRemove(file, fileList) {
+    handleRemove (file, fileList) {
       this.emitInput("");
     },
-    handlePreview(file) {
+    handlePreview (file) {
       this.dialogVisible = true;
     },
-    beforeUpload(file) {
+    beforeUpload (file) {
       let _self = this;
       return new Promise((resolve, reject) => {
         policy()
@@ -89,16 +101,14 @@ export default {
           });
       });
     },
-    handleUploadSuccess(res, file) {
+    handleUploadSuccess (res, file) {
       console.log("上传成功...");
       this.showFileList = true;
       this.fileList.pop();
       this.fileList.push({
         name: file.name,
         url:
-          this.dataObj.host +
-          "/" +
-          this.dataObj.key.replace("${filename}", file.name)
+          this.dataObj.host + "/" + this.dataObj.key.replace("${filename}", file.name)
       });
       this.emitInput(this.fileList[0].url);
     }

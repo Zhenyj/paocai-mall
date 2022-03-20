@@ -3,11 +3,13 @@ package com.zyj.paocai.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyj.paocai.product.entity.vo.CategoryVo;
 import com.zyj.paocai.product.service.CategoryService;
 import com.zyj.paocai.product.dao.CategoryDao;
 import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +21,9 @@ import java.util.stream.Collectors;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Autowired
+    CategoryDao categoryDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

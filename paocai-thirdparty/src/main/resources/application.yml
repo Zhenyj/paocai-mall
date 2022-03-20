@@ -12,6 +12,7 @@ spring:
       secret-key: RPZa3oKyHnSbsMOuY1OUgZI7j5MXkK
       oss:
         endpoint: oss-cn-beijing.aliyuncs.com
+        bucket: paocai-zhenyj
 # 暴露所有端点
 management:
   endpoints:
