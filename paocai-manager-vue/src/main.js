@@ -14,7 +14,6 @@ import {
 import cloneDeep from 'lodash/cloneDeep'
 import PubSub from 'pubsub-js'
 
-
 Vue.use(VueCookie)
 Vue.config.productionTip = false
 

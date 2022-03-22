@@ -1,0 +1,17 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body,
+html {
+	width: 100%;
+	background-color: #fff;
+	font: 400 12px arial;
+	color: #666;
+}
+
+.pos-rel {
+	position: relative;
+}
