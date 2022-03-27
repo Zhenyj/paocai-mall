@@ -1,17 +1,44 @@
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body,
 html {
-	width: 100%;
-	background-color: #fff;
-	font: 400 12px arial;
-	color: #666;
+  width: 100%;
+
 }
 
-.pos-rel {
-	position: relative;
+body{
+  color: #3C3C3C;
+  background-color: #FFF;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font: 12px/1.5 tahoma, arial, "Hiragino Sans GB", "\5b8b\4f53", sans-serif;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+.show-block {
+  display: block;
+}
+
+.show-none {
+  display: none;
+}
+
+body a{
+  text-decoration: none;
+}
+body a:hover{
+  text-decoration: none;
 }

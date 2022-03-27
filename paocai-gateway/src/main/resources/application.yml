@@ -59,7 +59,7 @@ spring:
         - id: paocai_host_route
           uri: lb://paocai-product
           predicates:
-            - Host=paocai.vegetables.com,item.paocai.vegetables.com
+            - Host=paocai.mall.com,item.paocai.mall.com
 
 # 暴露所有端点
 management:

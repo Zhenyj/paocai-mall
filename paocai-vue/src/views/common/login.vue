@@ -12,13 +12,19 @@
 					<el-form-item>
 						<div class="fm-field">
 							<div class="fm-label-icon"><i class="iconfont icon-member" title="用户名"></i></div>
-							<div class="fm-field-input"><el-input v-model="loginForm.loginId" placeholder="会员名/邮箱/手机号" size="large" style="width:100%;"></el-input></div>
+							<div class="fm-field-input">
+								<el-input v-model="loginForm.loginId" placeholder="会员名/邮箱/手机号" size="large"
+									style="width:100%;"></el-input>
+							</div>
 						</div>
 					</el-form-item>
 					<el-form-item>
 						<div class="fm-field">
 							<div class="fm-label-icon"><i class="iconfont icon-password" title="密码"></i></div>
-							<div class="fm-field-input"><el-input v-model="loginForm.password" placeholder="请输入登录密码" size="large" type="password"></el-input></div>
+							<div class="fm-field-input">
+								<el-input v-model="loginForm.password" placeholder="请输入登录密码" size="large"
+									type="password"></el-input>
+							</div>
 						</div>
 					</el-form-item>
 				</el-form>
@@ -29,7 +35,10 @@
 					<el-form-item>
 						<div class="fm-field">
 							<div class="fm-label-icon"><i class="iconfont icon-member" title="手机号"></i></div>
-							<div class="fm-field-input"><el-input v-model="loginForm.mobile" placeholder="请输入手机号" size="large" style="width:100%;" :maxlength="11"></el-input></div>
+							<div class="fm-field-input">
+								<el-input v-model="loginForm.mobile" placeholder="请输入手机号" size="large"
+									style="width:100%;" :maxlength="11"></el-input>
+							</div>
 						</div>
 					</el-form-item>
 					<el-form-item>
@@ -76,129 +85,138 @@
 </template>
 
 <script>
-import LogReg from 'components/login-regist.vue';
-export default {
-	components: { LogReg },
-	data() {
-		return {
-			title: '欢迎登录',
-			loginType: 0,
-			loginForm: {
-				loginId: '',
-				password: '',
-				mobile: '',
-				code: ''
+	import LogReg from '@/components/login-regist.vue'
+	export default {
+		name:'login',
+		components: { LogReg },
+		data () {
+			return {
+				title: '欢迎登录',
+				loginType: 0,
+				loginForm: {
+					loginId: '',
+					password: '',
+					mobile: '',
+					code: ''
+				}
 			}
-		};
-	},
-	methods: {
-		login() {
-			console.log('login...');
 		},
-		getSmsCode() {
-			console.log('getSmsCode...');
+		methods: {
+			login () {
+				console.log('login...')
+			},
+			getSmsCode () {
+				console.log('getSmsCode...')
+			}
 		}
 	}
-};
 </script>
 
 <style lang="less" scoped>
-.login-slot {
-	.login-switch-tab {
-		display: flex;
-		flex-direction: row;
-		margin: 4px 8px 20px 8px;
-		.switch-tab-item {
-			font-size: 16px;
-			color: #3c3c3c;
-			height: 18px;
-			line-height: 5px;
-			margin: 9px 10px 0 0;
-			font-weight: 700;
-			cursor: pointer;
+	.login-slot {
+		.login-switch-tab {
+			display: flex;
+			flex-direction: row;
+			margin: 4px 8px 20px 8px;
+
+			.switch-tab-item {
+				font-size: 16px;
+				color: #3c3c3c;
+				height: 18px;
+				line-height: 5px;
+				margin: 9px 10px 0 0;
+				font-weight: 700;
+				cursor: pointer;
+			}
+
+			.check {
+				border-bottom: 2px solid #000;
+			}
 		}
-		.check {
-			border-bottom: 2px solid #000;
-		}
-	}
+	
 	.login-form-wrap {
-		.login-form {
-			.fm-field {
-				width: 100%;
-				display: flex;
+			.login-form {
+				.fm-field {
+					width: 100%;
+					display: flex;
 
-				.fm-label-icon {
-					width: 40px;
-					height: 40px;
-					line-height: 40px;
-					text-align: center;
-					color: #fff;
-					background-color: #ccc;
-					.iconfont {
-						font-size: 20px;
+					.fm-label-icon {
+						width: 40px;
+						height: 40px;
+						line-height: 40px;
+						text-align: center;
 						color: #fff;
-					}
-				}
+						background-color: #ccc;
 
-				.fm-field-input {
-					flex: 1;
-					.el-input {
-						&:deep(.el-input__inner) {
-							border-radius: 0 10px 10px 0 !important;
+						.iconfont {
+							font-size: 20px;
+							color: #fff;
 						}
 					}
-				}
 
-				.fm-field-right {
-					height: 40px;
-					line-height: 40px;
-					font-size: 13px;
-					float: right;
-					span {
-						cursor: pointer;
+					.fm-field-input {
+						flex: 1;
+
+						.el-input {
+							&:deep(.el-input__inner) {
+								border-radius: 0 10px 10px 0 !important;
+							}
+						}
 					}
+
+					.fm-field-right {
+						height: 40px;
+						line-height: 40px;
+						font-size: 13px;
+						float: right;
+
+						span {
+							cursor: pointer;
+					}
+						}
 				}
 			}
 		}
-	}
 
-	.submit {
-		width: 100%;
-		height: 40px;
-		line-height: 40px;
-		text-align: center;
-		font-size: 18px;
-		border-radius: 15px;
-		background-color: #ff4400;
-		color: #fff;
-		cursor: pointer;
-	}
-	.sns-links {
-		a {
+		.submit {
+			width: 100%;
+			height: 40px;
+			line-height: 40px;
+			text-align: center;
+			font-size: 18px;
+			border-radius: 15px;
+			background-color: #ff4400;
+			color: #fff;
+			cursor: pointer;
+		}
+
+		.sns-links {
+			a {
+				margin-top: 15px;
+				color: #000;
+				display: inline-block;
+				text-decoration: none;
+				outline: none;
+				margin-right: 5px;
+			}
+
+			.iconfont {
+				font-size: 16px;
+				margin-right: 3px;
+			}
+		}
+
+		.links {
 			margin-top: 15px;
-			color: #000;
-			display: inline-block;
-			text-decoration: none;
-			outline: none;
-			margin-right: 5px;
-		}
+			display: flex;
+			flex-direction: row;
+			justify-content: end;
 
-		.iconfont {
-			font-size: 16px;
-			margin-right: 3px;
+			.links-op {
+				color: #000;
+				text-decoration: none;
+				margin-left: 10px;
+			}
 		}
 	}
-
-	.links {
-		margin-top: 15px;
-		display: flex;
-		flex-direction: row;
-		justify-content: end;
-		.links-op {
-			color: #000;
-			text-decoration: none;
-			margin-left: 10px;
-		}
-	}
-}
 </style>

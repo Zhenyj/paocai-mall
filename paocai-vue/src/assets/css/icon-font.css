@@ -1,54 +1,98 @@
 @font-face {
-	font-family: 'iconfont'; /* Project id 3264922 */
-	src: url('//at.alicdn.com/t/font_3264922_y0nx00goq3g.woff2?t=1647879888402') format('woff2'),
-		url('//at.alicdn.com/t/font_3264922_y0nx00goq3g.woff?t=1647879888402') format('woff'),
-		url('//at.alicdn.com/t/font_3264922_y0nx00goq3g.ttf?t=1647879888402') format('truetype');
+  font-family: "iconfont"; /* Project id 3264922 */
+  src: url('//at.alicdn.com/t/font_3264922_su7swp9tzqo.woff2?t=1648390782281') format('woff2'),
+       url('//at.alicdn.com/t/font_3264922_su7swp9tzqo.woff?t=1648390782281') format('woff'),
+       url('//at.alicdn.com/t/font_3264922_su7swp9tzqo.ttf?t=1648390782281') format('truetype');
 }
 
 .iconfont {
-	font-family: 'iconfont' !important;
-	font-size: 16px;
-	font-style: normal;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shop:before {
+  content: "\e811";
+}
+
+.icon-package:before {
+  content: "\e618";
+}
+
+.icon-history:before {
+  content: "\e621";
+}
+
+.icon-collection:before {
+  content: "\e8b9";
+}
+
+.icon-like-fill:before {
+  content: "\e668";
+}
+
+.icon-cart:before {
+  content: "\e68d";
+}
+
+.icon-collection-fill:before {
+  content: "\e6ea";
+}
+
+.icon-arrow-right:before {
+  content: "\e743";
+}
+
+.icon-arrow-left:before {
+  content: "\e744";
+}
+
+.icon-arrow-up:before {
+  content: "\e745";
+}
+
+.icon-arrow-down:before {
+  content: "\e7b2";
 }
 
 .icon-member:before {
-	content: '\e787';
+  content: "\e787";
 }
 
 .icon-phone:before {
-	content: '\e9ef';
+  content: "\e9ef";
 }
 
 .icon-yanzhengma:before {
-	content: '\e65a';
+  content: "\e65a";
 }
 
 .icon-password:before {
-	content: '\e638';
+  content: "\e638";
 }
 
 .icon-gitee-login:before {
-	content: '\e677';
+  content: "\e677";
 }
 
 .icon-wx-login:before {
-	content: '\e66c';
+  content: "\e66c";
 }
 
 .icon-zfb-login:before {
-	content: '\e65f';
+  content: "\e65f";
 }
 
 .icon-qq-login:before {
-	content: '\e62e';
+  content: "\e62e";
 }
 
 .icon-zfb-pay:before {
-	content: '\e654';
+  content: "\e654";
 }
 
 .icon-wx-pay:before {
-	content: '\e662';
+  content: "\e662";
 }
