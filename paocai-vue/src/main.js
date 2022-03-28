@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import '@/assets/css/index.css'
-import '@/assets/css/icon-font.css'
+import '@/assets/css/iconfont.css'
 import store from '@/store'
 import VueCookie from 'vue-cookie'
 import '@/element-ui'

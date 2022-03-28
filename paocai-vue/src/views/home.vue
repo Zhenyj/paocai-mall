@@ -109,7 +109,7 @@
               <div class="promo">
                 <div class="promo-bd">
                   <el-carousel :interval="5000" arrow="always" indicator-position="none">
-                    <el-carousel-item v-for="item in promoCarousel" :key="item">
+                    <el-carousel-item v-for="(item,index) in promoCarousel" :key="index">
                       <h3><a href="#" target="_blank"><img :src="item.url"></a></h3>
                     </el-carousel-item>
                   </el-carousel>
@@ -118,7 +118,7 @@
               <div class="tmall">
                 <div class="tmall-bd">
                   <el-carousel :interval="5000" arrow="always" indicator-position="none">
-                    <el-carousel-item v-for="item in promoCarousel" :key="item">
+                    <el-carousel-item v-for="(item,index) in promoCarousel" :key="index">
                       <a href="#" target="_blank"><img :src="item.url"></a>
                       <a href="#" target="_blank"><img :src="item.url"></a>
                     </el-carousel-item>
@@ -231,15 +231,93 @@
           </div>
         </div>
       </div>
+      <!-- 秒杀商品 -->
+      <div class="seckill-container">
+        <div class="seckill-inner">
+          <a href="#" class="seckill-countdown">
+            <div class="countdown-title">泡菜秒杀</div>
+            <div class="countdown-icon">
+              <i class="iconfont icon-shandian"></i>
+            </div>
+            <div>
+              <div class="countdown-desc">
+                <strong>20:00</strong>点场 距结束
+              </div>
+              <span class="timmer countdown-main">
+                <span class="timmer-unit timmer-unit-hour">
+                  01
+                </span><span class="timmer-unit timmer-unit-minute">
+                  02
+                </span><span class="timmer-unit timmer-unit-second">
+                  03
+                </span>
+              </span>
+            </div>
+          </a>
+          <div class="seckill-list">
+            <div class="slider-wrapper">
+              <el-carousel :interval="3000" arrow="always" height="280px" indicator-position="none">
+                <el-carousel-item v-for="(item,index) in promoCarousel" :key="index">
+                  <a href="#" v-for="i in 4" :key="i">
+                    <div class="seckill-item">
+                      <div class="seckill-item-image">
+                        <img :src="item.url">
+                      </div>
+                      <h6 class="seckill-item-name">商品名称</h6>
+                      <div class="seckill-item-price">
+                        <span class="price-origin">
+                          <i class="iconfont icon-money"></i>
+                          <span>
+                            199.00
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </div>
+          <div class="seckill-brand">
+            <div class="seckill-brand-slider">
+              <el-carousel :interval="3000" arrow="none" height="260px">
+                <el-carousel-item v-for="item in promoCarousel" :key="item">
+                  <a href="#">
+                    <div class="item-image">
+                      <img :src="item.url">
+                    </div>
+                    <div class="item-info">
+                      <div class="item-info-title">小米秒杀专场</div>
+                      <div class="item-info-promo">品质好物，点击抢购</div>
+                      <div class="item-info-action">
+                        品牌秒杀<i class="iconfont icon-arrow-right"></i>
+                      </div>
+                    </div>
+                  </a>
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hotsale-container">
+        <div class="hotsale-hd">
+          <h3><span class="hotsale-title">
+              猜你喜欢
+            </span><span class="hotsale-icon">
+              个性推荐
+            </span></h3>
+        </div>
+      </div>
     </div>
     <!-- 侧边工具 -->
     <div class="fixedtool"
       :style="[{position:(scrollTop>530?'fixed':'absolute')},{top:(scrollTop>530?'75px':'600px')}]">
       <div class="fixedtool-list">
-        <div class="fixedtool-item goods on">品质好货</div>
+        <div class="fixedtool-item goods on">泡菜秒杀</div>
         <div class="fixedtool-item hotsale">猜你喜欢</div>
         <div class="fixedtool-item">反馈</div>
-        <el-backtop :visibility-height="300" :right="60" class="fixedtool-item">
+        <el-backtop :visibility-height="400" :right="60" class="fixedtool-item">
         </el-backtop>
       </div>
     </div>
@@ -295,8 +373,6 @@
           url: 'http://rule.lyxgxx.cn:8088/UploadFolder/GoodsImg/G2020112800000265_goodsimgs.jpg',
         }, {
           url: 'http://www.lyxgxx.cn/public/uploads/attach/2020/05/23/5ec9250ab3aae.png',
-        }, {
-          url: 'http://www.lyxgxx.cn/public/uploads/attach/2019/05/13/s_5cd8dc3079d78.jpg',
         }],
       }
     },
@@ -318,7 +394,6 @@
       // 保存滚动值，这是兼容的写法
       handleScroll () {
         this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-        console.log(this.scrollTop);
       },
       selectCateMenu (index) {
         this.cateIndex = index;
@@ -328,15 +403,17 @@
       }
     },
     async created () {
-      let res = await this.$request({
-        url: 'product/category/list/tree',
-        method: 'GET'
-      });
-      if (res.code === 200) {
-        this.category = res.data;
-      } else {
+      // let res = await this.$request({
+      //   url: 'product/category/list/tree',
+      //   method: 'GET'
+      // });
+      // if (res.code === 200) {
+      //   this.category = res.data;
+      // } else {
 
-      }
+      // }
+      let json = require('../assets/category.json')
+      this.category = json.data;
     },
     mounted () {
       window.addEventListener('scroll', this.handleScroll, true)
@@ -821,11 +898,11 @@
 
             .cate-menu-item:hover {
               color: #ff5500;
-              background-color: #D9D9D9;
+              background-color: #d9d9d9;
             }
 
             .cate-menu-item-on {
-              background-color: #D9D9D9;
+              background-color: #d9d9d9;
             }
           }
 
@@ -845,7 +922,7 @@
 
               a {
                 text-decoration: none;
-                color: #6C6C6C;
+                color: #6c6c6c;
                 font-size: 12px;
                 letter-spacing: 1px;
               }
@@ -911,7 +988,7 @@
                 .el-carousel__indicators {
                   .is-active {
                     /deep/ .el-carousel__button {
-                      background-color: #FF5500;
+                      background-color: #ff5500;
                     }
                   }
                 }
@@ -930,7 +1007,7 @@
             margin-top: 15px;
 
             .tmall-bd {
-              background-color: #F6F6F6;
+              background-color: #f6f6f6;
               border-radius: 12px;
 
               .el-carousel {
@@ -969,10 +1046,10 @@
       margin: 10px 20px 0 20px;
       margin-right: 18px;
       margin-top: 10px;
-      background-color: #F3F3F3;
+      background-color: #f3f3f3;
 
       .member {
-        background-color: #F3F3F3;
+        background-color: #f3f3f3;
 
         .member-bd {
           position: relative;
@@ -1009,12 +1086,10 @@
               line-height: 17px;
               height: 17px;
               text-align: center;
-
-              .member-nick {}
             }
 
             .member-nick-info:hover {
-              color: #F40;
+              color: #f40;
             }
           }
         }
@@ -1037,10 +1112,12 @@
               line-height: 32px;
               border-radius: 5px;
               font-size: 16px;
-              background-image: linear-gradient(to right, #ff5000 0, #ff6f06 100%);
+              background-image: linear-gradient(to right,
+                  #ff5000 0,
+                  #ff6f06 100%);
               background-repeat: repeat-x;
               text-align: center;
-              color: #FFF;
+              color: #fff;
             }
           }
 
@@ -1058,12 +1135,12 @@
                 strong {
                   display: block;
                   font-size: 14px;
-                  color: #F40;
+                  color: #f40;
                 }
               }
 
               a:hover {
-                color: #F40;
+                color: #f40;
               }
             }
           }
@@ -1085,7 +1162,6 @@
 
             img {
               width: 356px;
-              ;
               height: 141px;
             }
           }
@@ -1093,7 +1169,7 @@
       }
 
       .notice {
-        background-color: #F3F3F3;
+        background-color: #f3f3f3;
         margin-left: 14px;
 
         .notice-top {
@@ -1128,11 +1204,11 @@
             width: 32px;
             line-height: 18px;
             border-radius: 2px;
-            background-color: rgba(255, 174, 174, .2);
-            opacity: .8;
+            background-color: rgba(255, 174, 174, 0.2);
+            opacity: 0.8;
             text-align: center;
             font-size: 12px;
-            color: #FF5000;
+            color: #ff5000;
             font-weight: 700;
             float: left;
           }
@@ -1158,9 +1234,10 @@
         justify-content: space-around;
 
         .mypao-content {
-          a{
+          a {
             display: block;
           }
+
           .iconfont {
             display: block;
             width: 60px;
@@ -1168,9 +1245,294 @@
             text-align: center;
           }
         }
-        .mypao-content:hover .iconfont{
-          color: #F40;
+
+        .mypao-content:hover .iconfont {
+          color: #f40;
         }
+      }
+    }
+  }
+
+  /* 秒杀 */
+  .seckill-container {
+    width: 1200px;
+    height: 300px;
+    margin: 0 auto;
+    padding-top: 20px;
+    background-color: #FFF;
+
+    .seckill-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+
+      .seckill-countdown {
+        background-image: linear-gradient(to bottom, #ff9000 0, #ff5000 100%);
+        display: block;
+        width: 190px;
+        height: 100%;
+        color: #fff;
+
+        .countdown-title {
+          width: 100%;
+          text-align: center;
+          font-size: 30px;
+          font-weight: 700;
+          margin-top: 31px;
+        }
+
+        .countdown-icon {
+          width: 100%;
+          height: 80px;
+          line-height: 80px;
+          text-align: center;
+
+          .icon-shandian {
+            font-size: 40px;
+          }
+        }
+
+        .countdown-desc {
+          margin-top: 10px;
+          font-size: 14px;
+          text-align: center;
+
+          strong {
+            font-size: 18px;
+            padding-right: 2px;
+            vertical-align: middle;
+            display: inline-block;
+            margin-top: -1px;
+          }
+        }
+
+        .timmer {
+          .timmer-unit {
+            position: relative;
+            float: left;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            background-color: #2f3430;
+            margin-right: 20px;
+            color: white;
+            font-size: 20px;
+          }
+
+          .timmer-unit::after {
+            content: ":";
+            display: block;
+            position: absolute;
+            right: -20px;
+            font-weight: bolder;
+            font-size: 18px;
+            width: 20px;
+            height: 100%;
+            top: 0;
+          }
+
+          .timmer-unit:last-child::after {
+            content: "";
+          }
+
+          .timmer-unit-hour {}
+
+          .timmer-unit-minute {}
+
+          .timmer-unit-second {
+            margin-right: 0;
+            content: "";
+          }
+        }
+
+        .countdown-main {
+          margin-left: auto;
+          margin-right: auto;
+          width: 130px;
+          height: 30px;
+          margin-top: 10px;
+          display: block;
+        }
+      }
+
+      .seckill-list {
+        width: 800px;
+        height: 280px;
+        background-color: #FFF;
+
+        .slider-wrapper {
+          width: 800px;
+          height: 100%;
+
+          .el-carousel__item {
+            display: flex;
+
+            a {
+              display: block;
+              width: 200px;
+              height: 280px;
+              padding: 4px;
+              background-color: #F3F3F3;
+
+              .seckill-item {
+                margin: 0 4px;
+                background-color: #FFF;
+
+                .seckill-item-image {
+                  background-color: #FFF;
+                  width: 184px;
+                  padding: 7px;
+
+                  img {
+                    width: 170px;
+                    height: 170px;
+                    border-radius: 5px;
+                  }
+                }
+
+                .seckill-item-name {
+                  width: 180px;
+                  height: 35px;
+                  line-height: 35px;
+                  padding: 0 10px;
+                  text-align: center;
+                  font-size: 12px;
+                  font-weight: 400;
+                  color: #333;
+                  transition: color .2s ease;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  background-color: #FFF;
+
+                }
+
+                .seckill-item-price {
+                  width: 180px;
+                  height: 45px;
+                  text-align: center;
+                  padding: 0 10px;
+                  background-color: #FFF;
+
+                  .price-origin {
+                    height: 100%;
+                    width: 66px;
+                    background: #fff;
+                    color: #e1251b;
+                    font-size: 14px;
+                    font-weight: 700;
+                    line-height: 22px;
+                    box-sizing: border-box;
+                    vertical-align: top;
+                    vertical-align: bottom;
+                    text-align: center;
+
+                    .icon-money {
+                      font-size: 12px;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .seckill-brand {
+        flex: 1;
+        height: 260px;
+        padding: 10px;
+
+        .seckill-brand-slider {
+          .item-image {
+            width: 120px;
+            height: 120px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+
+          .item-info {
+            background: linear-gradient(180deg, rgba(255, 255, 255, .5), rgba(220, 224, 236, .5));
+            text-align: center;
+            font-size: 14px;
+            position: relative;
+            width: 100%;
+            height: 110px;
+            margin-top: 10px;
+            border-radius: 10px;
+
+            .item-info-title {
+              color: #666666;
+            }
+
+            .item-info-promo {
+              color: #333;
+              font-weight: 700;
+            }
+
+            .item-info-action {
+              color: #F40;
+              border-radius: 14px;
+              width: 82px;
+              height: 24px;
+              box-sizing: border-box;
+              text-align: center;
+              display: inline-block;
+              line-height: 22px;
+              font-weight: 700;
+              padding-left: 4px;
+              font-size: 12px;
+              border: 1px solid #F40;
+              margin-top: 4px;
+            }
+
+            .item-info-action:hover {
+              background-color: #F40;
+              color: #FFF;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .hotsale-container {
+    width: 1200px;
+    margin: 0 auto;
+
+    .hotsale-hd {
+      background-color: #FFF;
+      display: block;
+      height: 48px;
+      position: relative;
+      padding-left: 20px;
+      line-height: 48px;
+      font-size: 20px;
+
+      .hotsale-title {
+        font-size: 24px;
+        color: #111;
+        font-weight: bold;
+        line-height: 24px;
+      }
+
+      .hotsale-icon {
+        background-image: linear-gradient(to bottom, #ff9000 0, #ff5000 100%);
+        width: 70px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        display: inline-block;
+        font-size: 13px;
+        color: #FFF;
+        border-radius: 5px;
       }
     }
   }

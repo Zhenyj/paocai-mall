@@ -42,3 +42,7 @@ body a{
 body a:hover{
   text-decoration: none;
 }
+
+i{
+  font-style: normal;
+}
