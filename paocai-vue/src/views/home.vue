@@ -232,7 +232,7 @@
         </div>
       </div>
       <!-- 秒杀商品 -->
-      <div class="seckill-container">
+      <div id="seckill-container" class="seckill-container">
         <div class="seckill-inner">
           <a href="#" class="seckill-countdown">
             <div class="countdown-title">泡菜秒杀</div>
@@ -281,10 +281,10 @@
           <div class="seckill-brand">
             <div class="seckill-brand-slider">
               <el-carousel :interval="3000" arrow="none" height="260px">
-                <el-carousel-item v-for="item in promoCarousel" :key="item">
+                <el-carousel-item v-for="item in 2" :key="item">
                   <a href="#">
                     <div class="item-image">
-                      <img :src="item.url">
+                      <img src="../assets/images/login_bg.png">
                     </div>
                     <div class="item-info">
                       <div class="item-info-title">小米秒杀专场</div>
@@ -300,7 +300,7 @@
           </div>
         </div>
       </div>
-      <div class="hotsale-container">
+      <div id="hotsale-container" class="hotsale-container">
         <div class="hotsale-hd">
           <h3><span class="hotsale-title">
               猜你喜欢
@@ -308,14 +308,33 @@
               个性推荐
             </span></h3>
         </div>
+        <div class="list">
+          <div class="item" v-for="item in 20" :key="item">
+            <a href="" class="hotsale-item">
+              <div class="img-wrapper">
+                <img src="../assets/images/10001.png">
+              </div>
+              <h4>【新品享6期免息】Redmi 天玑8100 2K屏幕智能游戏5g</h4>
+              <p class="info">
+                <span class="price">
+                  <i class="iconfont icon-money"></i>
+                  2399.00
+                </span>
+              </p>
+            </a>
+          </div>
+        </div>
+        <div class="hotsale-ft">
+          <i class="hotsale-end">END</i>
+        </div>
       </div>
     </div>
     <!-- 侧边工具 -->
     <div class="fixedtool"
       :style="[{position:(scrollTop>530?'fixed':'absolute')},{top:(scrollTop>530?'75px':'600px')}]">
       <div class="fixedtool-list">
-        <div class="fixedtool-item goods on">泡菜秒杀</div>
-        <div class="fixedtool-item hotsale">猜你喜欢</div>
+        <div class="fixedtool-item goods" :class="{'on':scrollTop<=835}" @click="goAnchor(555)">泡菜秒杀</div>
+        <div class="fixedtool-item hotsale" :class="{'on':scrollTop>835}" @click="goAnchor(840)">猜你喜欢</div>
         <div class="fixedtool-item">反馈</div>
         <el-backtop :visibility-height="400" :right="60" class="fixedtool-item">
         </el-backtop>
@@ -394,12 +413,16 @@
       // 保存滚动值，这是兼容的写法
       handleScroll () {
         this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+        console.log(this.scrollTop);
       },
       selectCateMenu (index) {
         this.cateIndex = index;
       },
       outCateMenu () {
         this.cateIndex = -1;
+      },
+      goAnchor (height) {
+        document.documentElement.scrollTop = height
       }
     },
     async created () {
@@ -1373,7 +1396,7 @@
               width: 200px;
               height: 280px;
               padding: 4px;
-              background-color: #F3F3F3;
+              background: linear-gradient(180deg, rgba(240, 244, 248, .5), rgba( 255,255,255,.5));
 
               .seckill-item {
                 margin: 0 4px;
@@ -1441,7 +1464,7 @@
 
       .seckill-brand {
         flex: 1;
-        height: 260px;
+        height: 280px;
         padding: 10px;
 
         .seckill-brand-slider {
@@ -1506,9 +1529,9 @@
   .hotsale-container {
     width: 1200px;
     margin: 0 auto;
+    background-color: #FFF;
 
     .hotsale-hd {
-      background-color: #FFF;
       display: block;
       height: 48px;
       position: relative;
@@ -1533,6 +1556,124 @@
         font-size: 13px;
         color: #FFF;
         border-radius: 5px;
+      }
+    }
+
+    .list {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      min-height: 652px;
+
+      .item {
+        border-radius: 12px;
+        padding: 7px 7px 0 7px;
+        margin: 0 0 2px 7px;
+        color: #6c6c6c;
+        width: 230px;
+        height: 325px;
+        position: relative;
+
+        .hotsale-item {
+          display: block;
+
+          .img-wrapper {
+            width: 215px;
+            height: 215px;
+            border-radius: 12px;
+            background-color: rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+
+            img {
+              display: block;
+              border-radius: 12px;
+              width: 100%;
+              height: 100%;
+              transition: opacity 0.2s;
+              background: #fff;
+              opacity: .9;
+            }
+          }
+
+          h4 {
+            margin-top: 9px;
+            line-height: 22px;
+            height: 44px;
+            font-size: 16px;
+            color: #111111;
+            font-weight: normal;
+            transition: color 0.3s;
+            overflow: hidden;
+          }
+
+          .info {
+            margin-top: 11px;
+            height: 22px;
+            line-height: 22px;
+            vertical-align: bottom;
+            border-radius: 0 0 12px 12px;
+
+            .price {
+              float: left;
+              color: #F40;
+              font-size: 20px;
+              height: 22px;
+              line-height: 22px;
+
+              .icon-money {
+                font-size: 14px;
+              }
+            }
+          }
+        }
+      }
+
+      .item:hover {
+        transition: all 0.5s;
+        box-shadow: 0 19px 39px 0 rgb(0 0 0 / 12%);
+      }
+
+      .item:hover h4 {
+        color: #FF5500;
+      }
+    }
+
+    .hotsale-ft {
+      height: 80px;
+      background: #fff;
+      position: relative;
+
+      .hotsale-end {
+        position: absolute;
+        text-align: center;
+        color: #ccccd0;
+        left: 50%;
+        width: 84px;
+        line-height: 40px;
+        font-size: 18px;
+        margin-left: -42px;
+        font-style: normal;
+        top: 20px;
+      }
+
+      .hotsale-end::before {
+        left: -70px;
+      }
+
+      .hotsale-end::after {
+        right: -70px;
+      }
+
+      .hotsale-end::before,
+      .hotsale-end::after {
+        content: ' ';
+        position: absolute;
+        height: 0;
+        line-height: 0;
+        border-top: 1px solid #e6e6e6;
+        width: 60px;
+        top: 50%;
       }
     }
   }
