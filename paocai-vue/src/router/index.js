@@ -14,30 +14,31 @@ Vue.use(Router)
 const _import = require('./import-' + process.env.NODE_ENV)
 
 // 全局路由(无需嵌套上左右整体布局)
-const globalRoutes = [
-  {
+const globalRoutes = [{
     path: '/404',
     component: _import('common/404'),
     name: '404',
-    meta: {
-      title: '404未找到'
-    }
-  },
-  {
+    meta: { title: '404未找到' }
+  }, {
     path: '/login',
     component: _import('common/login'),
     name: 'login',
-    meta: {
-      title: '登录'
-    }
-  },
-  {
+    meta: { title: '登录' }
+  },{
     path: '/regist',
     component: _import('common/regist'),
     name: 'regist',
-    meta: {
-      title: '注册'
-    }
+    meta: { title: '注册' }
+  },{
+    path: '/search',
+    component: _import('search'),
+    name: 'search',
+    meta: { title: '搜索' }
+  },{
+    path: '/product',
+    component: _import('product'),
+    name: 'product',
+    meta: { title: '商品' }
   }
 ]
 
@@ -46,12 +47,8 @@ const mainRoutes = {
   path: '/',
   component: _import('home'),
   name: 'main',
-  redirect: {
-    name: 'home'
-  },
-  meta: {
-    title: '主入口整体布局'
-  },
+  redirect: { name: 'home' },
+  meta: { title: '主入口整体布局' },
   children: [
     // 通过meta对象设置路由展示方式
     // 1. isTab: 是否通过tab展示内容, true: 是, false: 否
@@ -61,9 +58,7 @@ const mainRoutes = {
       path: '/home',
       component: _import('home'),
       name: 'home',
-      meta: {
-        title: '首页'
-      }
+      meta: { title: '泡菜商城' }
     }
   ],
   // beforeEnter (to, from, next) {
@@ -80,9 +75,7 @@ const mainRoutes = {
 
 const router = new Router({
   mode: 'hash',
-  scrollBehavior: () => ({
-    y: 0
-  }),
+  scrollBehavior: () => ({ y: 0 }),
   routes: globalRoutes.concat(mainRoutes)
 })
 

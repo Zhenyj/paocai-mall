@@ -31,7 +31,7 @@ public interface AttrService extends IService<AttrEntity> {
      *
      * @param catelogId
      * @param params
-     * @param baseAttrType
+     * @param attrType
      * @return
      */
     PageUtils getAttrByCatelogId(Long catelogId, Map<String, Object> params, int attrType);
@@ -42,5 +42,9 @@ public interface AttrService extends IService<AttrEntity> {
      * @return
      */
     AttrInfoVo getAttrInfo(Long attrId);
+
+    void saveAttr(AttrInfoVo attr);
+
+    void updateAttr(AttrInfoVo attr);
 }
 

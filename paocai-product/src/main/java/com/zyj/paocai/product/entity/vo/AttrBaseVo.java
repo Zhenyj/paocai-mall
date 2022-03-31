@@ -54,6 +54,7 @@ public class AttrBaseVo implements Serializable {
      * 值类型【0：单值；1：多值】
      */
     private Integer valueType;
+
     /** 属性分组名 */
     private String attrGroupName;
 

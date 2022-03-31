@@ -36,7 +36,7 @@
                   <div class="search-panel-fields">
                     <div class="search-combobox">
                       <div class="search-combobox-input-wrap">
-                        <input class="search-combobox-input" id="key" v-model="key" placeholder="搜索" />
+                        <input class="search-combobox-input" id="key" v-model="key" placeholder="" />
                       </div>
                     </div>
                   </div>
@@ -413,7 +413,6 @@
       // 保存滚动值，这是兼容的写法
       handleScroll () {
         this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-        console.log(this.scrollTop);
       },
       selectCateMenu (index) {
         this.cateIndex = index;

@@ -8,6 +8,7 @@
     <artifactId>paocai-mall</artifactId>
     <version>1.0-SNAPSHOT</version>
     <description>泡菜商城聚合服务</description>
+    <packaging>pom</packaging>
 
 
     <modules>
@@ -19,6 +20,9 @@
         <module>paocai-ware</module>
         <module>paocai-gateway</module>
         <module>paocai-thirdparty</module>
+        <module>paocai-cart</module>
+        <module>paocai-auth-server</module>
+        <module>paocai-search</module>
     </modules>
 
 </project>

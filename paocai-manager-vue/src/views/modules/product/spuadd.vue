@@ -32,7 +32,7 @@
               <category-cascader></category-cascader>
             </el-form-item>
             <el-form-item label="选择品牌"
-                          prop="brandId">
+                          prop="brandName">
               <brand-select></brand-select>
             </el-form-item>
             <el-form-item label="商品重量(Kg)"

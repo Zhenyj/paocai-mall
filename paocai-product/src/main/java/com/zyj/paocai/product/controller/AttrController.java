@@ -2,8 +2,9 @@ package com.zyj.paocai.product.controller;
 
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
-import com.zyj.paocai.product.constant.ProductConstant;
+import com.zyj.paocai.common.constant.ProductConstant;
 import com.zyj.paocai.product.entity.AttrEntity;
+import com.zyj.paocai.product.entity.vo.AttrBaseVo;
 import com.zyj.paocai.product.entity.vo.AttrInfoVo;
 import com.zyj.paocai.product.service.AttrService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +80,8 @@ public class AttrController {
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody AttrEntity attr) {
-        attrService.save(attr);
+    public R save(@RequestBody AttrInfoVo attr) {
+        attrService.saveAttr(attr);
 
         return R.ok();
     }
@@ -89,8 +90,8 @@ public class AttrController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody AttrEntity attr) {
-        attrService.updateById(attr);
+    public R update(@RequestBody AttrInfoVo attr) {
+        attrService.updateAttr(attr);
 
         return R.ok();
     }
