@@ -6,13 +6,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.CategoryBrandRelationDao;
+import com.zyj.paocai.product.entity.BrandEntity;
 import com.zyj.paocai.product.entity.CategoryBrandRelationEntity;
+import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.product.entity.vo.BrandVo;
+import com.zyj.paocai.product.service.BrandService;
 import com.zyj.paocai.product.service.CategoryBrandRelationService;
 import com.zyj.paocai.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -28,6 +32,9 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    BrandService brandService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -68,6 +75,32 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
             log.info("暂无品牌id:{}的相关分类信息", brandId);
         }
         return entities;
+    }
+
+    /**
+     * 保存
+     * @param categoryBrandRelation
+     * @throws RuntimeException
+     */
+    @Transactional
+    @Override
+    public void saveDetail(CategoryBrandRelationEntity categoryBrandRelation) throws RuntimeException {
+        // 获取分类名称
+        Long catelogId = categoryBrandRelation.getCatelogId();
+        CategoryEntity category = categoryService.getById(catelogId);
+        if (category == null) {
+            throw new RuntimeException("不存在分类id:" + catelogId + "对应的分类数据");
+        }
+        categoryBrandRelation.setCatelogName(category.getName());
+
+        // 获取品牌名称
+        Long brandId = categoryBrandRelation.getBrandId();
+        BrandEntity brand = brandService.getById(brandId);
+        if (brand == null) {
+            throw new RuntimeException("不存在品牌id:" + brandId + "对应的分类数据");
+        }
+        categoryBrandRelation.setBrandName(brand.getName());
+        save(categoryBrandRelation);
     }
 
 }

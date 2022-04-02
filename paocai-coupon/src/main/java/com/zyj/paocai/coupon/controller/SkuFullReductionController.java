@@ -1,20 +1,15 @@
 package com.zyj.paocai.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-
-import com.zyj.paocai.coupon.entity.SkuFullReductionEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.zyj.paocai.coupon.service.SkuFullReductionService;
+import com.zyj.paocai.common.entity.to.SkuReductionTo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.coupon.entity.SkuFullReductionEntity;
+import com.zyj.paocai.coupon.service.SkuFullReductionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -30,6 +25,17 @@ import com.zyj.paocai.common.utils.R;
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
+
+    /**
+     * 保存sku优惠信息
+     * @param skuReductionTo
+     * @return
+     */
+    @PostMapping("/saveinfo")
+    public R saveInfo(@RequestBody SkuReductionTo skuReductionTo){
+        skuFullReductionService.saveSkuReduction(skuReductionTo);
+        return R.ok();
+    }
 
     /**
      * 列表

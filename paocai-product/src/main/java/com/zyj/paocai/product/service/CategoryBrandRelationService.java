@@ -33,5 +33,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
      * @return
      */
     List<CategoryBrandRelationEntity> getCategoryByBrandId(Long brandId);
+
+    void saveDetail(CategoryBrandRelationEntity categoryBrandRelation) throws RuntimeException;
 }
 

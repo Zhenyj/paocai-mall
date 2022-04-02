@@ -4,6 +4,7 @@ import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.product.entity.AttrEntity;
 import com.zyj.paocai.product.entity.AttrGroupEntity;
+import com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithCatelogPathVo;
 import com.zyj.paocai.product.service.AttrGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,17 @@ import java.util.Map;
 public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
+
+    /**
+     * 获取分类下所有分组&关联属性
+     * @param catelogId
+     * @return
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public R<List<AttrGroupWithAttrsVo>> getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId){
+        List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrs(catelogId);
+        return R.ok(vos);
+    }
 
     /**
      * 获取属性分组的关联的所有属性

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.product.entity.AttrEntity;
 import com.zyj.paocai.product.entity.AttrGroupEntity;
+import com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithCatelogPathVo;
 
 import java.util.List;
@@ -44,5 +45,12 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
      * @return
      */
     List<AttrEntity> getAttrsByAttrGroupId(Long attrGroupId);
+
+    /**
+     * 获取分类下所有分组&关联属性
+     * @param catelogId
+     * @return
+     */
+    List<AttrGroupWithAttrsVo> getAttrGroupWithAttrs(Long catelogId);
 }
 

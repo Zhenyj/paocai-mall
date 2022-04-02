@@ -1,5 +1,7 @@
 package com.zyj.paocai.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,6 +10,7 @@ import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.AttrGroupDao;
 import com.zyj.paocai.product.entity.AttrEntity;
 import com.zyj.paocai.product.entity.AttrGroupEntity;
+import com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithCatelogPathVo;
 import com.zyj.paocai.product.service.AttrAttrgroupRelationService;
 import com.zyj.paocai.product.service.AttrGroupService;
@@ -97,4 +100,44 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         }
         return attrEntities;
     }
+
+    /**
+     * 获取分类下所有分组&关联属性
+     * 通过sql组成的JSON字符串转为List
+     * @param catelogId
+     * @return
+     */
+    @Override
+    public List<AttrGroupWithAttrsVo> getAttrGroupWithAttrs(Long catelogId) {
+        List<AttrGroupWithAttrsVo> vos = attrGroupDao.getAttrGroupWithAttrs(catelogId);
+        if(vos != null && vos.size() > 0){
+            for (AttrGroupWithAttrsVo vo : vos) {
+                // 通过sql组成的JSON字符串转为List
+                vo.setAttrs(JSON.parseObject(vo.getAttrString(), new TypeReference<List<AttrEntity>>(){}));
+                vo.setAttrString("");
+            }
+        }
+        return vos;
+    }
+
+    /**
+     * 获取分类下所有分组&关联属性
+     * @param catelogId
+     * @return
+     */
+//    public List<AttrGroupWithAttrsVo> getAttrGroupWithAttrs(Long catelogId) {
+//        long start = System.currentTimeMillis();
+//        List<AttrGroupEntity> attrGroupEntities = baseMapper.selectList(new QueryWrapper<AttrGroupEntity>()
+//                .eq("catelog_id", catelogId));
+//        List<AttrGroupWithAttrsVo> vos = attrGroupEntities.stream().map(attrGroupEntity -> {
+//            AttrGroupWithAttrsVo vo = new AttrGroupWithAttrsVo();
+//            BeanUtils.copyProperties(attrGroupEntity, vo);
+//            // 获取分组相关属性
+//            vo.setAttrs(attrService.getAttrsByAttrGroupId(attrGroupEntity.getAttrGroupId()));
+//            return vo;
+//        }).collect(Collectors.toList());
+//        long end = System.currentTimeMillis();
+//        log.info("查询时间:{}", end-start);
+//        return vos;
+//    }
 }

@@ -12,6 +12,46 @@
         <result property="icon" column="icon"/>
         <result property="catelogId" column="catelog_id"/>
     </resultMap>
+    <select id="getAttrGroupWithAttrs" resultType="com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo">
+        SELECT
+            pag.attr_group_id,
+            pag.attr_group_name,
+            pag.catelog_id,
+            pag.descript,
+            pag.icon,
+            pag.sort,
+            JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                            'attrId',
+                            pa.attr_id,
+                            'attrName',
+                            pa.attr_name,
+                            'searchType',
+                            pa.search_type,
+                            'valueType',
+                            pa.value_type,
+                            'icon',
+                            pa.icon,
+                            'valueSelect',
+                            value_select,
+                            'attrType',
+                            pa.attr_type,
+                            'enable',
+                            pa.`enable`,
+                            'catelogId',
+                            pa.catelog_id,
+                            'showDesc',
+                            pa.show_desc
+                        )) attrString
+        FROM
+            pms_attr_group pag
+                LEFT JOIN pms_attr_attrgroup_relation paar ON pag.attr_group_id = paar.attr_group_id
+                LEFT JOIN pms_attr pa ON paar.attr_id = pa.attr_id
+        WHERE
+            pag.catelog_id = #{catelogId} AND pa.attr_type = 1
+        GROUP BY
+            pag.attr_group_id
+    </select>
 
 
 </mapper>
