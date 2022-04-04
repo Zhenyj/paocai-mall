@@ -1,5 +1,7 @@
 package com.zyj.paocai.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,10 +9,15 @@ import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.CategoryDao;
 import com.zyj.paocai.product.entity.CategoryEntity;
+import com.zyj.paocai.product.entity.vo.Catalog2Vo;
 import com.zyj.paocai.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,8 +30,13 @@ import java.util.stream.Collectors;
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
+    private static final String CATEGORY_JSON = "categoryJson";
+
     @Autowired
     CategoryDao categoryDao;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -71,6 +83,71 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }
         Collections.reverse(list);
         return list.toArray(new Long[list.size()]);
+    }
+
+    @Override
+    public List<CategoryEntity> getLevel1Categorys() {
+        return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("cat_level", 1));
+    }
+
+    @Cacheable(value = "category", key = "#root.method.name")
+    @Override
+    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+        String json = redisTemplate.opsForValue().get(CATEGORY_JSON);
+        if (StringUtils.hasText(json)) {
+            // 已有缓存
+            Map<String, List<Catalog2Vo>> result = JSON.parseObject(json,
+                    new TypeReference<Map<String, List<Catalog2Vo>>>() {
+                    });
+            return result;
+        }
+        // 没有缓存，查询数据库
+        log.info("查询数据库分类信息");
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+        // 查询所有一级分类
+        List<CategoryEntity> level1Categorys = getParentCid(selectList, 0L);
+
+        // 封装数据
+        Map<String, List<Catalog2Vo>> Catalog2VoMap = level1Categorys.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            // 查询二级分类
+            List<CategoryEntity> categoryEntities = getParentCid(selectList, v.getCatId());
+            // 封装结果
+            List<Catalog2Vo> Catalog2Vos = null;
+            if (!CollectionUtils.isEmpty(categoryEntities)) {
+                Catalog2Vos = categoryEntities.stream().map(l2 -> {
+                    // 查找当前二级分类的三级分类数据
+                    List<CategoryEntity> categoryEntities1 = getParentCid(selectList, l2.getCatId());
+                    List<Catalog2Vo.Catalog3Vo> catalog3Vos = null;
+                    if (!CollectionUtils.isEmpty(categoryEntities1)) {
+                        catalog3Vos = categoryEntities1.stream().map(l3 -> {
+                            Catalog2Vo.Catalog3Vo Catalog3Vo = new Catalog2Vo.Catalog3Vo(l2.getCatId().toString(),
+                                    l3.getCatId().toString(), l3.getName());
+                            return Catalog3Vo;
+                        }).collect(Collectors.toList());
+                    } else {
+                        log.info("当前分类:{},没有三级分类", l2.getCatId());
+                    }
+
+                    Catalog2Vo Catalog2Vo = new Catalog2Vo(v.getCatId().toString(), catalog3Vos,
+                            l2.getCatId().toString(), l2.getName());
+                    return Catalog2Vo;
+                }).collect(Collectors.toList());
+            }
+            return Catalog2Vos;
+        }));
+        return Catalog2VoMap;
+    }
+
+    /**
+     * @param categoryEntities
+     * @param parentCid
+     * @return
+     */
+    private List<CategoryEntity> getParentCid(List<CategoryEntity> categoryEntities, Long parentCid) {
+        List<CategoryEntity> collect = categoryEntities.stream().filter(item -> {
+            return parentCid.equals(item.getParentCid());
+        }).collect(Collectors.toList());
+        return collect;
     }
 
     /**

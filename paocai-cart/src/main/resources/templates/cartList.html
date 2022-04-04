@@ -24,14 +24,14 @@
             </ul>
             <ul class="header-right">
                 <li>
-                    <a th:if="${session.loginUser==null}" href="http://auth.paocaimall.com/login.html"
+                    <a th:if="${session.loginUser==null}" href="http://auth.paocai.mall.com/login.html"
                        style="color: red;">你好，请登录</a>
                     <a th:if="${session.loginUser!=null}" style="width: 100px">欢迎：[[${
                         #strings.isEmpty(session.loginUser.nickname) ? session.loginUser.username :
                         session.loginUser.nickname}]]</a>
                 </li>
                 <li>
-                    <a th:if="${session.loginUser==null}" href="http://auth.paocaimall.com/register.html">免费注册</a>
+                    <a th:if="${session.loginUser==null}" href="http://auth.paocai.mall.com/register.html">免费注册</a>
                 </li>
                 <li class="spacer"></li>
                 <li><a href="/static/cart/">我的订单</a></li>
@@ -50,7 +50,7 @@
         <div class="one_search_top">
             <div class="one_top_left">
                 <a href="http://paocaimall.com" class="one_left_logo"><img src="/static/cart/img/logo1.jpg"></a>
-                <a href="http://cart.paocaimall.com/cart.html" class="one_left_link">购物车</a>
+                <a href="http://cart.paocai.mall.com/cart.html" class="one_left_link">购物车</a>
             </div>
             <div class="one_top_right">
                 <input type="text" class="one_right_txt" placeholder="" onfocus="this.placeholder=''"
@@ -61,7 +61,7 @@
         <div class="one_search_load" th:if="${session.loginUser == null}">
             <img src="/static/cart/img/shop_07.jpg" class="one_load_wraing">
             <span>您还没有登录！登录后购物车的商品将保存到您账号中</span>
-            <a href="http://auth.paocaimall.com/login.html"><input type="button" onclick="login()" value="立即登录"
+            <a href="http://auth.paocai.mall.com/login.html"><input type="button" onclick="login()" value="立即登录"
                                                                  class="one_load_btn"></a>
         </div>
     </div>
@@ -222,7 +222,7 @@
 <script src="/static/cart/js/index.js" charset="utf-8"></script>
 <script type="text/javascript">
     function toTrade() {
-        window.location.href = "http://order.paocaimall.com/toTrade";
+        window.location.href = "http://order.paocai.mall.com/toTrade";
     }
 
     function toItem(skuId) {
@@ -230,7 +230,7 @@
     }
 
     function login() {
-        window.location.href = "http://auth.paocaimall.com/login.html"
+        window.location.href = "http://auth.paocai.mall.com/login.html"
     }
 
     function checkSku(chkbox) {
@@ -770,19 +770,19 @@
     $(".itemCheck").click(function () {
         let skuId = $(this).attr("skuId");
         let check = $(this).prop('checked');
-        location.href = "http://cart.paocaimall.com/checkItem?skuId=" + skuId + "&check=" + (check ? 1 : 0);
+        location.href = "http://cart.paocai.mall.com/checkItem?skuId=" + skuId + "&check=" + (check ? 1 : 0);
     });
     $('.countOpsBtn').click(function () {
         //1.获取skuId
         let skuId = $(this).parent().attr('skuId');
         let num = $(this).parent().find('.countOpsNum').text();
-        location.href = "http://cart.paocaimall.com/countItem?skuId=" + skuId + "&num=" + num;
+        location.href = "http://cart.paocai.mall.com/countItem?skuId=" + skuId + "&num=" + num;
     });
 
     var deleteId;
 
     function deleteItem() {
-        location.href = "http://cart.paocaimall.com/deleteItem?skuId=" + deleteId;
+        location.href = "http://cart.paocai.mall.com/deleteItem?skuId=" + deleteId;
     }
 
     $(".deleteItemBtn").click(function () {

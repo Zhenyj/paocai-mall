@@ -22,7 +22,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -60,6 +59,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     /**
      * 获取sku是否有库存
+     *
      * @param skuIds
      * @return
      */
@@ -74,7 +74,6 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     }
 
     /**
-     *
      * @param addStocks
      */
     @Transactional
@@ -82,10 +81,6 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     public void addStock(List<PurchaseDetailEntity> addStocks) {
         // 1、获取已有的库存记录(skuId与wareId相同)
         List<WareSkuEntity> wareSkus = wareSkuDao.getStockInfosByPurchaseDetail(addStocks);
-        Map<Long, WareSkuEntity> skuWareMap = wareSkus.stream()
-                .collect(Collectors.toMap(WareSkuEntity::getSkuId, Function.identity()));
-        Map<Long, WareSkuEntity> wareMap = wareSkus.stream()
-                .collect(Collectors.toMap(WareSkuEntity::getWareId, Function.identity()));
 
         // 2、获取相关商品的名称
         List<Long> skuIds = addStocks.stream().map(item -> item.getSkuId()).collect(Collectors.toList());
@@ -101,10 +96,17 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         // 保存库存信息
         List<WareSkuEntity> wareSkuEntities = addStocks.stream().map(item -> {
             WareSkuEntity entity = null;
-            if (wareMap.get(item.getWareId()) != null && skuWareMap.get(item.getSkuId()) != null &&
-                    wareMap.get(item.getWareId()) == skuWareMap.get(item.getSkuId())) {
+            boolean flag = false;
+            for (WareSkuEntity wareSkuEntity : wareSkus) {
+                if (wareSkuEntity.getWareId().equals(item.getWareId()) &&
+                        wareSkuEntity.getSkuId().equals(item.getSkuId())) {
+                    flag = true;
+                    entity = wareSkuEntity;
+                    break;
+                }
+            }
+            if (flag) {
                 // 已存在库存信息
-                entity = wareMap.get(item.getWareId());
                 entity.setStock(entity.getStock() + item.getSkuNum());
             } else {
                 // 新增库存信息

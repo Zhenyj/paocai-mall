@@ -7,6 +7,7 @@ import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.SkuInfoDao;
 import com.zyj.paocai.product.entity.SkuInfoEntity;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
 import com.zyj.paocai.product.service.SkuInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -100,6 +101,11 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         Map<Long, String> map = skuInfoEntities.stream().collect(Collectors.toMap(SkuInfoEntity::getSkuId,
                 SkuInfoEntity::getSkuName));
         return map;
+    }
+
+    @Override
+    public SkuItemVo getItem(Long skuId) {
+        return null;
     }
 
 }

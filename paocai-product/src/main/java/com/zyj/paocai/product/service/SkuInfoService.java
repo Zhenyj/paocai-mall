@@ -3,6 +3,7 @@ package com.zyj.paocai.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.product.entity.SkuInfoEntity;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
 
 import java.util.List;
 import java.util.Map;
@@ -38,5 +39,7 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
      * @return
      */
     Map<Long, String> getSkuNameInfos(List<Long> skuIds);
+
+    SkuItemVo getItem(Long skuId);
 }
 

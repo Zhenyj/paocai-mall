@@ -49,7 +49,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-;
 
 /**
  * @author lulx
@@ -81,7 +80,6 @@ public class MallSearchServiceImpl implements MallSearchService {
         try {
             // 检索请求
             SearchResponse response = client.search(request, PaocaimallElasticSearchConfig.COMMON_OPTIONS);
-
             // 分析数据封装成特定格式
             result = buildSearchResult(param, response);
         } catch (IOException e) {
@@ -392,9 +390,9 @@ public class MallSearchServiceImpl implements MallSearchService {
         attrIdAgg.subAggregation(AggregationBuilders.terms("attr_name_agg").field("attrs.attrName").size(1));
         attrIdAgg.subAggregation(AggregationBuilders.terms("attr_value_agg").field("attrs.attrValue").size(50));
         attrAgg.subAggregation(attrIdAgg);
-
         sourceBuilder.aggregation(attrAgg);
 
+        System.out.println(sourceBuilder);
         SearchRequest request = new SearchRequest(new String[]{EsConstant.PRODUCT_INDEX}, sourceBuilder);
         return request;
     }

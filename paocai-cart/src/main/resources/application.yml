@@ -2,7 +2,7 @@ server:
   port: 16000
 spring:
   application:
-    name: paocaimall-cart
+    name: paocai-cart
   cloud:
     nacos:
       discovery:

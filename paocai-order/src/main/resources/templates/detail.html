@@ -132,11 +132,11 @@
 			</ul>
 			<ul class="header_ul_right">
 				<li style="width: 100px;">
-					<a style="border: 0;" class="aa" th:if="${session.loginUser==null}" href="http://auth.paocaimall.com/login.html">你好，请登录</a>
+					<a style="border: 0;" class="aa" th:if="${session.loginUser==null}" href="http://auth.paocai.mall.com/login.html">你好，请登录</a>
 					<a style="border: 0;" class="aa" th:if="${session.loginUser!=null}">欢迎：[[${#strings.isEmpty(session.loginUser.nickname) ? session.loginUser.username : session.loginUser.nickname}]]</a>
 				</li>
 				<li th:if="${session.loginUser==null}">
-					<a href="http://auth.paocaimall.com/register.html" style="color: red;">免费注册</a> |
+					<a href="http://auth.paocai.mall.com/register.html" style="color: red;">免费注册</a> |
 				</li>
 				<li>
 					<a href="/static/order/detail/javascript:;" class="aa">我的订单</a> |

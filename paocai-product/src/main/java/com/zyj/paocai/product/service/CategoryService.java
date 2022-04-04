@@ -3,6 +3,7 @@ package com.zyj.paocai.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.product.entity.CategoryEntity;
+import com.zyj.paocai.product.entity.vo.Catalog2Vo;
 
 import java.util.List;
 import java.util.Map;
@@ -31,5 +32,12 @@ public interface CategoryService extends IService<CategoryEntity> {
      */
     Long[] getCatelogPath(Long catelogId);
 
+    /**
+     * 查询所有一级分类
+     * @return
+     */
+    List<CategoryEntity> getLevel1Categorys();
+
+    Map<String, List<Catalog2Vo>> getCatalogJson();
 }
 

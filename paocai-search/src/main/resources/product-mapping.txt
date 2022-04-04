@@ -1,4 +1,4 @@
-PUT paocaimall_product
+PUT paocai_product
 {
   "mappings": {
     "properties": {
@@ -50,8 +50,7 @@ PUT paocaimall_product
           },
           "attrName": {
             "type": "keyword",
-            "index": false,
-            "doc_values": false
+            "index": false
           },
           "attrValue": {
             "type": "keyword"

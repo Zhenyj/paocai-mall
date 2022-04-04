@@ -64,13 +64,13 @@
         </b>
         <ul>
             <li>
-                <a class="li_2" th:if="${session.loginUser==null}" href="http://auth.paocaimall.com/login.html">
+                <a class="li_2" th:if="${session.loginUser==null}" href="http://auth.paocai.mall.com/login.html">
                     你好，请登录
                 </a>
                 <a class="li_2" th:if="${session.loginUser!=null}" th:text="${session.loginUser.nickname}"></a>
             </li>
             <li th:if="${session.loginUser==null}">
-                <a href="http://auth.paocaimall.com/reg.html">免费注册</a>
+                <a href="http://auth.paocai.mall.com/reg.html">免费注册</a>
             </li>
             <span>|</span>
             <li>
@@ -410,7 +410,7 @@
     </div>
     <div class="header_ico">
         <div class="header_gw">
-            <span><a href="http://cart.paocaimall.com/cart.html">我的购物车</a></span>
+            <span><a href="http://cart.paocai.mall.com/cart.html">我的购物车</a></span>
             <img src="/static/search/image/settleup-@1x.png"/>
             <span>0</span>
         </div>
@@ -1197,7 +1197,7 @@
                                 <a href="#">关注</a>
                             </div>
                             <p class="da">
-                                <a th:href="'http://item.paocaimall.com/'+${product.getSkuId()}+'.html'">
+                                <a th:href="'http://item.paocai.mall.com/'+${product.getSkuId()}+'.html'">
                                     <img th:src="${product.getSkuImg()}" class="dim">
                                 </a>
                             </p>

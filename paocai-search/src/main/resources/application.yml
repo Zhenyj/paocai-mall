@@ -2,7 +2,7 @@ server:
   port: 13000
 spring:
   application:
-    name: paocaimall-search
+    name: paocai-search
   cloud:
     nacos:
       discovery:

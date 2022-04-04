@@ -27,11 +27,11 @@
         <ul class="hd_wrap_right">
             <li class="forel">
                 <a class="link_login" th:if="${session.loginUser==null}"
-                   href="http://auth.paocaimall.com/login.html">你好，请登录</a>
+                   href="http://auth.paocai.mall.com/login.html">你好，请登录</a>
                 <a class="link_login" th:if="${session.loginUser!=null}" style="width: 100px">欢迎：[[${
                     #strings.isEmpty(session.loginUser.nickname) ? session.loginUser.username :
                     session.loginUser.nickname}]]</a>
-                &nbsp;<a th:if="${session.loginUser==null}" href="http://auth.paocaimall.com/register.html">免费注册</a>
+                &nbsp;<a th:if="${session.loginUser==null}" href="http://auth.paocai.mall.com/register.html">免费注册</a>
             </li>
             <li class="spacer"></li>
 
@@ -80,7 +80,7 @@
                             </div>
                             <div class="p-info">
                                 <div class="p-name">
-                                    <a th:href="'http://item.paocaimall.com/'+${item.skuId}+'.html'"
+                                    <a th:href="'http://item.paocai.mall.com/'+${item.skuId}+'.html'"
                                        th:text="${item.title}">TCL
                                         55A950C 55英寸32核人工智能 HDR曲面超薄4K电视金属机身（枪色）</a>
                                 </div>
@@ -95,9 +95,9 @@
                         </div>
                         <div class="clr"></div>
                         <div class="bg_shop">
-                            <a class="btn-tobback" th:href="'http://item.paocaimall.com/'+${item.skuId}+'.html'"
-                               href="http://item.paocaimall.com/1.html">查看商品详情</a>
-                            <a class="btn-addtocart" href="http://cart.paocaimall.com/cart.html"
+                            <a class="btn-tobback" th:href="'http://item.paocai.mall.com/'+${item.skuId}+'.html'"
+                               href="http://item.paocai.mall.com/1.html">查看商品详情</a>
+                            <a class="btn-addtocart" href="http://cart.paocai.mall.com/cart.html"
                                id="GotoShoppingCart"><b></b>去购物车结算</a>
                         </div>
                     </div>

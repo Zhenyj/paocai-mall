@@ -2,7 +2,7 @@ server:
   port: 20000
 spring:
   application:
-    name: paocaimall-auth-server
+    name: paocai-auth-server
   cloud:
     nacos:
       discovery:

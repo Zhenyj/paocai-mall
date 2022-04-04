@@ -56,12 +56,12 @@
             </ul>
             <ul class="header_ul_right">
                 <li style="border: 0;">
-                    <a class="aa" th:if="${session.loginUser==null}" href="http://auth.paocaimall.com/login.html">
+                    <a class="aa" th:if="${session.loginUser==null}" href="http://auth.paocai.mall.com/login.html">
                         你好，请登录
                     </a>
                     <a class="aa" th:if="${session.loginUser!=null}" th:text="${session.loginUser.nickname}"></a>
                 </li>
-                <li th:if="${session.loginUser==null}"><a href="http://auth.paocaimall.com/reg.html" style="color: red;">免费注册</a>
+                <li th:if="${session.loginUser==null}"><a href="http://auth.paocai.mall.com/reg.html" style="color: red;">免费注册</a>
                     |
                 </li>
                 <li><a href="javascript:;" class="aa">我的订单</a> |</li>
@@ -76,7 +76,7 @@
                 <div class="nav_top_two"><input type="text"/>
                     <button>搜索</button>
                 </div>
-                <div class="nav_top_three"><a href="http://cart.paocaimall.com/cart.html">我的购物车</a><span
+                <div class="nav_top_three"><a href="http://cart.paocai.mall.com/cart.html">我的购物车</a><span
                         class="glyphicon glyphicon-shopping-cart"></span>
                     <div class="nav_top_three_1">
                         <img src="/static/item/img/44.png"/>购物车还没有商品，赶紧选购吧！
@@ -244,7 +244,7 @@
 
                 <div class="box-btns clear">
                     <div class="box-btns-one">
-                        <form id="itemForm" action="http://cart.paocaimall.com/addToCart" method="get">
+                        <form id="itemForm" action="http://cart.paocai.mall.com/addToCart" method="get">
                             <input type="text" name="num" id="numInput" value="1"/>
                             <input type="hidden" name="skuId" th:value="${item.info?.skuId}"/>
 
@@ -571,7 +571,7 @@
             filterEle = $(filterEle).filter(skus[i]);
         }
         //3. 跳转
-        location.href = "http://item.paocaimall.com/" + filterEle[0] + ".html";
+        location.href = "http://item.paocai.mall.com/" + filterEle[0] + ".html";
     });
 
 
@@ -624,7 +624,7 @@
     $("#addToCartA").click(function () {
         let num = $("#numInput").val();
         let skuId = $(this).attr("skuId");
-        location.href = "http://cart.paocaimall.com/addToCart?skuId=" + skuId + "&num=" + num;
+        location.href = "http://cart.paocai.mall.com/addToCart?skuId=" + skuId + "&num=" + num;
         return false;
     });
 
@@ -635,7 +635,7 @@
             var killId = $(this).attr("sessionid") + "_" + $(this).attr("skuid");
             var key = $(this).attr("code");
             var num = $("#numInput").val();
-            location.href = "http://seckill.paocaimall.com/kill?killId=" + killId + "&key=" + key + "&num=" + num;
+            location.href = "http://seckill.paocai.mall.com/kill?killId=" + killId + "&key=" + key + "&num=" + num;
         } else {
             alert("秒杀请先登录");
         }

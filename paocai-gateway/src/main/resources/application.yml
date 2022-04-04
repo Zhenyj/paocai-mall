@@ -60,6 +60,34 @@ spring:
           uri: lb://paocai-product
           predicates:
             - Host=paocai.mall.com,item.paocai.mall.com
+        - id: search_route
+          uri: lb://paocai-search
+          predicates:
+            - Host=search.paocai.mall.com
+        - id: auth_route
+          uri: lb://paocai-auth
+          predicates:
+            - Host=auth.paocai.mall.com
+        - id: cart_route
+          uri: lb://paocai-cart
+          predicates:
+            - Host=cart.paocai.mall.com
+        - id: coupon_route
+          uri: lb://paocai-coupon
+          predicates:
+            - Host=coupon.paocai.mall.com
+        - id: member_route
+          uri: lb://paocai-member
+          predicates:
+            - Host=member.paocai.mall.com
+        - id: order_route
+          uri: lb://paocai-order
+          predicates:
+            - Host=order.paocai.mall.com
+        - id: ware_route
+          uri: lb://paocai-ware
+          predicates:
+            - Host=ware.paocai.mall.com
 
 # 暴露所有端点
 management:
