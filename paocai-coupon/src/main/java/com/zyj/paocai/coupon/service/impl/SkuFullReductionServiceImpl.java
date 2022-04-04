@@ -52,7 +52,7 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
     @Transactional
     @Override
     public void saveSkuReduction(SkuReductionTo skuReductionTo) {
-        // 1、sku的优惠、满减信息，gulimall-sms数据库中sms_sku_ladder、sms_sku_full_reduction、sms_member_price
+        // 1、sku的优惠、满减信息，paocai-sms数据库中sms_sku_ladder、sms_sku_full_reduction、sms_member_price
         // sms_sku_ladder
         saveSkuLadder(skuReductionTo);
 

@@ -2,7 +2,7 @@ package com.zyj.paocai.common.exception;
 
 /**
  * @author zyj
- * @create 2021-08-23 1:15
+ * @create 2022-04-01 1:15
  * <p>
  * 错误码和错误信息定义类
  * 1。错误码定义规则为5为数字

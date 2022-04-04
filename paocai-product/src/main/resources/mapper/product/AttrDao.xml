@@ -82,6 +82,13 @@
                  LEFT JOIN pms_attr_attrgroup_relation paar ON pa.attr_id = paar.attr_id
         WHERE pa.attr_id = #{attrId}
     </select>
+    <select id="selectSearchAttrIds" resultType="java.lang.Long">
+        SELECT attr_id FROM `pms_attr` WHERE attr_id IN
+        <foreach collection="attrIds" open="(" close=")" separator="," item="attrId">
+            #{attrId}
+        </foreach>
+        AND search_type = 1
+    </select>
 
 
 </mapper>

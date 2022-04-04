@@ -12,6 +12,28 @@
         <result property="skuName" column="sku_name"/>
         <result property="stockLocked" column="stock_locked"/>
     </resultMap>
+    <resultMap id="skuHasStockVo" type="com.zyj.paocai.common.entity.to.SkuHasStockVo">
+        <result property="skuId" column="sku_id" javaType="java.lang.Long"/>
+        <result property="hasStock" column="hasStock" javaType="java.lang.Boolean"/>
+    </resultMap>
+    <select id="getSkuStockInfoBySkuIds" resultMap="skuHasStockVo">
+        SELECT
+        `sku_id`,
+        (CASE WHEN ( SUM( `stock` - `stock_locked` ) > 0 ) THEN 'true' ELSE 'false' END ) AS hasStock
+        FROM `wms_ware_sku`
+        WHERE sku_id IN
+        <foreach collection="skuIds" item="skuId" separator="," open="(" close=")">
+            #{skuId}
+        </foreach>
+        GROUP BY `sku_id`
+    </select>
+    <select id="getStockInfosByPurchaseDetail" resultType="com.zyj.paocai.ware.entity.WareSkuEntity">
+        <foreach collection="details" item="detail" separator="UNION">
+        SELECT `id`,`sku_id`,`ware_id`,`stock`,`sku_name`,`stock_locked`
+        FROM `wms_ware_sku`
+        WHERE `sku_id` = #{detail.skuId} AND `ware_id` = #{detail.wareId}
+        </foreach>
+    </select>
 
 
 </mapper>

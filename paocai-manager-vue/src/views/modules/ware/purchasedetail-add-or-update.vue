@@ -104,12 +104,12 @@ export default {
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 200) {
-              this.dataForm.purchaseId = data.purchaseDetail.purchaseId;
-              this.dataForm.skuId = data.purchaseDetail.skuId;
-              this.dataForm.skuNum = data.purchaseDetail.skuNum;
-              this.dataForm.skuPrice = data.purchaseDetail.skuPrice;
-              this.dataForm.wareId = data.purchaseDetail.wareId;
-              this.dataForm.status = data.purchaseDetail.status;
+              this.dataForm.purchaseId = data.data.purchaseId;
+              this.dataForm.skuId = data.data.skuId;
+              this.dataForm.skuNum = data.data.skuNum;
+              this.dataForm.skuPrice = data.data.skuPrice;
+              this.dataForm.wareId = data.data.wareId;
+              this.dataForm.status = data.data.status;
             }
           });
         }

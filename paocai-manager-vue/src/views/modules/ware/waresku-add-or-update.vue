@@ -10,7 +10,7 @@
       <el-form-item label="sku_id"
                     prop="skuId">
         <el-input v-model="dataForm.skuId"
-                  placeholder="sku_id"></el-input>
+                  placeholder="sku_id" disabled></el-input>
       </el-form-item>
       <el-form-item label="仓库"
                     prop="wareId">
@@ -31,7 +31,7 @@
       <el-form-item label="sku_name"
                     prop="skuName">
         <el-input v-model="dataForm.skuName"
-                  placeholder="sku_name"></el-input>
+                  placeholder="sku_name" disabled></el-input>
       </el-form-item>
       <el-form-item label="锁定库存"
                     prop="stockLocked">
@@ -102,11 +102,11 @@ export default {
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 200) {
-              this.dataForm.skuId = data.wareSku.skuId;
-              this.dataForm.wareId = data.wareSku.wareId;
-              this.dataForm.stock = data.wareSku.stock;
-              this.dataForm.skuName = data.wareSku.skuName;
-              this.dataForm.stockLocked = data.wareSku.stockLocked;
+              this.dataForm.skuId = data.data.skuId;
+              this.dataForm.wareId = data.data.wareId;
+              this.dataForm.stock = data.data.stock;
+              this.dataForm.skuName = data.data.skuName;
+              this.dataForm.stockLocked = data.data.stockLocked;
             }
           });
         }

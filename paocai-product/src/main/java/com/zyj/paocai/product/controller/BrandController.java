@@ -1,20 +1,15 @@
 package com.zyj.paocai.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-
+import com.zyj.paocai.common.utils.PageUtils;
+import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.product.entity.BrandEntity;
 import com.zyj.paocai.product.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.zyj.paocai.common.utils.PageUtils;
-import com.zyj.paocai.common.utils.R;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -32,6 +27,17 @@ public class BrandController {
     private BrandService brandService;
 
     /**
+     * 获取品牌信息
+     * @param brandIds
+     * @return
+     */
+    @GetMapping("/infos")
+    public R<List<BrandEntity>> info(@RequestParam("brandIds") List<Long> brandIds) {
+        List<BrandEntity> brand = brandService.listByIds(brandIds);
+        return R.ok(brand);
+    }
+
+    /**
      * 列表
      */
     @RequestMapping("/list")
@@ -46,7 +52,7 @@ public class BrandController {
      * 信息
      */
     @RequestMapping("/info/{brandId}")
-    public R info(@PathVariable("brandId") Long brandId){
+    public R<BrandEntity> info(@PathVariable("brandId") Long brandId){
 		BrandEntity brand = brandService.getById(brandId);
 
         return R.ok(brand);

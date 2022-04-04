@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +25,12 @@ import java.util.Map;
 public class SkuInfoController {
     @Autowired
     private SkuInfoService skuInfoService;
+
+    @PostMapping("/skunameinfos")
+    R<Map<Long,String>> getSkuNameInfos(@RequestBody List<Long> skuIds){
+        Map<Long,String> map = skuInfoService.getSkuNameInfos(skuIds);
+        return R.ok(map);
+    }
 
     /**
      * 列表

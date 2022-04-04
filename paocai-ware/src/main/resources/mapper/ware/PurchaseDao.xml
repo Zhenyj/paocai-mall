@@ -3,7 +3,7 @@
 
 <mapper namespace="com.zyj.paocai.ware.dao.PurchaseDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zyj.paocai.ware.entity.PurchaseEntity" id="purchaseMap">
         <result property="id" column="id"/>
         <result property="assigneeId" column="assignee_id"/>
@@ -16,6 +16,11 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <update id="updateTime">
+        UPDATE wms_purchase
+        SET update_time = now()
+        WHERE id = #{purchaseId}
+    </update>
 
 
 </mapper>

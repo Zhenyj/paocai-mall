@@ -37,4 +37,6 @@ public interface AttrDao extends BaseMapper<AttrEntity> {
      * @return
      */
     AttrInfoVo getAttrInfo(@Param("attrId") Long attrId);
+
+    List<Long> selectSearchAttrIds(List<Long> attrIds);
 }

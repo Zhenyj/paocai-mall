@@ -46,5 +46,12 @@ public interface AttrService extends IService<AttrEntity> {
     void saveAttr(AttrInfoVo attr);
 
     void updateAttr(AttrInfoVo attr);
+
+    /**
+     * 在所有属性即合理，筛选出检索属性
+     * @param attrIds
+     * @return
+     */
+    List<Long> selectSearchAttrIds(List<Long> attrIds);
 }
 
