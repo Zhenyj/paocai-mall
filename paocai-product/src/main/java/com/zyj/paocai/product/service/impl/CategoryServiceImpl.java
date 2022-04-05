@@ -10,12 +10,15 @@ import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.CategoryDao;
 import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.product.entity.vo.Catalog2Vo;
+import com.zyj.paocai.product.service.CategoryBrandRelationService;
 import com.zyj.paocai.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +37,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     CategoryDao categoryDao;
+
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
 
     @Autowired
     StringRedisTemplate redisTemplate;
@@ -85,6 +91,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return list.toArray(new Long[list.size()]);
     }
 
+    @Cacheable(value = {"category"}, key = "#root.method.name")
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
         return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("cat_level", 1));
@@ -136,6 +143,23 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return Catalog2Vos;
         }));
         return Catalog2VoMap;
+    }
+
+    /**
+     * 级联更新所有关联的数据
+     *
+     * @param category
+     */
+    @CacheEvict(value = "category", allEntries = true)
+    @Transactional
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        // 更新分类数据
+        boolean b = updateById(category);
+        if (b && StringUtils.hasText(category.getName())) {
+            // 更新
+            categoryBrandRelationService.updateCategory(category);
+        }
     }
 
     /**

@@ -25,6 +25,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+
     @GetMapping("/list/tree")
     public R<List<CategoryEntity>> listTree() {
         List<CategoryEntity> list = categoryService.listTree();
@@ -67,8 +68,21 @@ public class CategoryController {
      */
     @RequestMapping("/update")
     public R update(@RequestBody CategoryEntity category) {
-        categoryService.updateById(category);
+        categoryService.updateCascade(category);
 
+        return R.ok();
+    }
+
+    /**
+     * 修改菜单排序
+     *
+     * @param category
+     * @return
+     */
+    @RequestMapping("/update/sort")
+    public R updateSort(@RequestBody List<CategoryEntity> category) {
+        // 批量修改
+        categoryService.updateBatchById(category);
         return R.ok();
     }
 

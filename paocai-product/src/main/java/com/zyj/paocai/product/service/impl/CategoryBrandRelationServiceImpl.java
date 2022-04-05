@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.CategoryBrandRelationDao;
+import com.zyj.paocai.product.dao.CategoryDao;
 import com.zyj.paocai.product.entity.BrandEntity;
 import com.zyj.paocai.product.entity.CategoryBrandRelationEntity;
 import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.product.entity.vo.BrandVo;
 import com.zyj.paocai.product.service.BrandService;
 import com.zyj.paocai.product.service.CategoryBrandRelationService;
-import com.zyj.paocai.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +28,7 @@ import java.util.stream.Collectors;
 public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandRelationDao, CategoryBrandRelationEntity> implements CategoryBrandRelationService {
 
     @Autowired
-    CategoryBrandRelationDao categoryBrandRelationDao;
-
-    @Autowired
-    CategoryService categoryService;
+    CategoryDao categoryDao;
 
     @Autowired
     BrandService brandService;
@@ -79,6 +76,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     /**
      * 保存
+     *
      * @param categoryBrandRelation
      * @throws RuntimeException
      */
@@ -87,7 +85,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     public void saveDetail(CategoryBrandRelationEntity categoryBrandRelation) throws RuntimeException {
         // 获取分类名称
         Long catelogId = categoryBrandRelation.getCatelogId();
-        CategoryEntity category = categoryService.getById(catelogId);
+        CategoryEntity category = categoryDao.selectById(catelogId);
         if (category == null) {
             throw new RuntimeException("不存在分类id:" + catelogId + "对应的分类数据");
         }
@@ -101,6 +99,11 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         }
         categoryBrandRelation.setBrandName(brand.getName());
         save(categoryBrandRelation);
+    }
+
+    @Override
+    public void updateCategory(CategoryEntity category) {
+        baseMapper.updateCategory(category.getCatId(), category.getName());
     }
 
 }
