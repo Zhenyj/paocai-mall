@@ -6,6 +6,7 @@ import com.zyj.paocai.product.entity.AttrEntity;
 import com.zyj.paocai.product.entity.AttrGroupEntity;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithCatelogPathVo;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
 
 import java.util.List;
 import java.util.Map;
@@ -52,5 +53,13 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
      * @return
      */
     List<AttrGroupWithAttrsVo> getAttrGroupWithAttrs(Long catelogId);
+
+    /**
+     * 获取spu规格参数信息
+     * @param spuId
+     * @param catalogId
+     * @return
+     */
+    List<SkuItemVo.SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId);
 }
 

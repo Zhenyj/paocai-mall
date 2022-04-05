@@ -64,7 +64,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
      * @return
      */
     @Override
-    public List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds) {
+    public List<SkuHasStockVo> getSkuHasStockBatch(List<Long> skuIds) {
         List<SkuHasStockVo> skuHasStockVos = wareSkuDao.getSkuStockInfoBySkuIds(skuIds);
         if (skuIds.size() != skuHasStockVos.size()) {
             log.error(BizCodeEnum.PRODUCT_WARE_EXCEPTION.getMsg());
@@ -120,6 +120,12 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             return entity;
         }).collect(Collectors.toList());
         this.saveBatch(wareSkuEntities);
+    }
+
+    @Override
+    public SkuHasStockVo getSkuHasStock(Long skuId) {
+        SkuHasStockVo vo = wareSkuDao.getSkuHasStockBySkuId(skuId);
+        return vo;
     }
 
 }

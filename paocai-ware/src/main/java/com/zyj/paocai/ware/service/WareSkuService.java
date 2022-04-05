@@ -21,17 +21,24 @@ public interface WareSkuService extends IService<WareSkuEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     /**
-     * 是否有库存
+     * 批量获取sku是否有库存
      *
      * @param skuIds
      * @return
      */
-    List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds);
+    List<SkuHasStockVo> getSkuHasStockBatch(List<Long> skuIds);
 
     /**
      * 添加库存信息
      * @param addStocks
      */
     void addStock(List<PurchaseDetailEntity> addStocks);
+
+    /**
+     * 获取sku是否有库存
+     * @param skuId
+     * @return
+     */
+    SkuHasStockVo getSkuHasStock(Long skuId);
 }
 

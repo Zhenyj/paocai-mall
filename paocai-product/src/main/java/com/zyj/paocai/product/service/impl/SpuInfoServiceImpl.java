@@ -196,7 +196,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         // 3、发送远程调用，库存系统是否有库存
         Map<Long, Boolean> skuStockMap = null;
         try{
-            R<List<SkuHasStockVo>> r = wareFeignService.getSkuHasStock(skuIds);
+            R<List<SkuHasStockVo>> r = wareFeignService.getSkuHasStockBatch(skuIds);
             skuStockMap = r.getData().stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId,SkuHasStockVo::getHasStock));
         }catch (Exception e){
             log.error("库存服务查询异常:原因{}",e);

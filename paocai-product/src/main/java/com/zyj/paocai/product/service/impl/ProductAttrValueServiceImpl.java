@@ -7,6 +7,7 @@ import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.ProductAttrValueDao;
 import com.zyj.paocai.product.entity.ProductAttrValueEntity;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
 import com.zyj.paocai.product.service.ProductAttrValueService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

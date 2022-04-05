@@ -12,6 +12,7 @@ import com.zyj.paocai.product.entity.AttrEntity;
 import com.zyj.paocai.product.entity.AttrGroupEntity;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithCatelogPathVo;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
 import com.zyj.paocai.product.service.AttrAttrgroupRelationService;
 import com.zyj.paocai.product.service.AttrGroupService;
 import com.zyj.paocai.product.service.AttrService;
@@ -120,24 +121,11 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         return vos;
     }
 
-    /**
-     * 获取分类下所有分组&关联属性
-     * @param catelogId
-     * @return
-     */
-//    public List<AttrGroupWithAttrsVo> getAttrGroupWithAttrs(Long catelogId) {
-//        long start = System.currentTimeMillis();
-//        List<AttrGroupEntity> attrGroupEntities = baseMapper.selectList(new QueryWrapper<AttrGroupEntity>()
-//                .eq("catelog_id", catelogId));
-//        List<AttrGroupWithAttrsVo> vos = attrGroupEntities.stream().map(attrGroupEntity -> {
-//            AttrGroupWithAttrsVo vo = new AttrGroupWithAttrsVo();
-//            BeanUtils.copyProperties(attrGroupEntity, vo);
-//            // 获取分组相关属性
-//            vo.setAttrs(attrService.getAttrsByAttrGroupId(attrGroupEntity.getAttrGroupId()));
-//            return vo;
-//        }).collect(Collectors.toList());
-//        long end = System.currentTimeMillis();
-//        log.info("查询时间:{}", end-start);
-//        return vos;
-//    }
+    @Override
+    public List<SkuItemVo.SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId) {
+        // 1、查询当前spu对应的所有属性的分组信息以及当前分组下的所有属性对应的值
+        List<SkuItemVo.SpuItemAttrGroupVo> vo = attrGroupDao.getAttrGroupWithAttrsBySpuId(spuId, catalogId);
+        return vo;
+    }
+
 }

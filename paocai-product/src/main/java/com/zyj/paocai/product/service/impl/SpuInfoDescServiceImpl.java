@@ -28,4 +28,9 @@ public class SpuInfoDescServiceImpl extends ServiceImpl<SpuInfoDescDao, SpuInfoD
         return new PageUtils(page);
     }
 
+    @Override
+    public SpuInfoDescEntity getDescBySpuId(Long spuId) {
+        return baseMapper.selectOne(new QueryWrapper<SpuInfoDescEntity>().eq("spu_id", spuId));
+    }
+
 }

@@ -7,10 +7,12 @@ import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.SkuSaleAttrValueDao;
 import com.zyj.paocai.product.entity.SkuSaleAttrValueEntity;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
 import com.zyj.paocai.product.service.SkuSaleAttrValueService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -26,6 +28,17 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 获取spu基本属性
+     * @param spuId
+     * @return
+     */
+    @Override
+    public List<SkuItemVo.SkuItemSaleAttrVo> getSaleAttrsBySpuId(Long spuId) {
+        List<SkuItemVo.SkuItemSaleAttrVo> saleAttrs = baseMapper.getSaleAttrsBySpuId(spuId);
+        return saleAttrs;
     }
 
 }

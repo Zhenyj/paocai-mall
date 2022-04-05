@@ -26,12 +26,19 @@ public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
 
+
+    @PostMapping("/hasstock/{skuId}")
+    public R<SkuHasStockVo> getSkuHasStock(@PathVariable("skuId") Long skuId){
+        SkuHasStockVo vo = wareSkuService.getSkuHasStock(skuId);
+        return R.ok(vo);
+    }
+
     /**
      * 查询sku是否有库存
      */
-    @PostMapping("/hasstock")
-    public R<List<SkuHasStockVo>> getSkuHasStock(@RequestBody List<Long> skuIds) {
-        List<SkuHasStockVo> vos = wareSkuService.getSkuHasStock(skuIds);
+    @PostMapping("/hasstock/batch")
+    public R<List<SkuHasStockVo>> getSkuHasStockBatch(@RequestBody List<Long> skuIds) {
+        List<SkuHasStockVo> vos = wareSkuService.getSkuHasStockBatch(skuIds);
         return R.ok(vos);
     }
 

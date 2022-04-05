@@ -3,7 +3,7 @@
 
 <mapper namespace="com.zyj.paocai.ware.dao.WareSkuDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zyj.paocai.ware.entity.WareSkuEntity" id="wareSkuMap">
         <result property="id" column="id"/>
         <result property="skuId" column="sku_id"/>
@@ -29,10 +29,16 @@
     </select>
     <select id="getStockInfosByPurchaseDetail" resultType="com.zyj.paocai.ware.entity.WareSkuEntity">
         <foreach collection="details" item="detail" separator="UNION">
-        SELECT `id`,`sku_id`,`ware_id`,`stock`,`sku_name`,`stock_locked`
-        FROM `wms_ware_sku`
-        WHERE `sku_id` = #{detail.skuId} AND `ware_id` = #{detail.wareId}
+            SELECT `id`,`sku_id`,`ware_id`,`stock`,`sku_name`,`stock_locked`
+            FROM `wms_ware_sku`
+            WHERE `sku_id` = #{detail.skuId} AND `ware_id` = #{detail.wareId}
         </foreach>
+    </select>
+    <select id="getSkuHasStockBySkuId" resultType="com.zyj.paocai.common.entity.to.SkuHasStockVo">
+        SELECT `sku_id`,
+               (CASE WHEN (SUM(`stock` - `stock_locked`) > 0) THEN 'true' ELSE 'false' END) AS hasStock
+        FROM `wms_ware_sku`
+        WHERE `sku_id` = #{skuId}
     </select>
 
 

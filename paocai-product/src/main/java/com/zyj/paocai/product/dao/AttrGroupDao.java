@@ -3,6 +3,7 @@ package com.zyj.paocai.product.dao;
 import com.zyj.paocai.product.entity.AttrGroupEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,4 +25,6 @@ public interface AttrGroupDao extends BaseMapper<AttrGroupEntity> {
      * @return
      */
     List<AttrGroupWithAttrsVo> getAttrGroupWithAttrs(@Param("catelogId") Long catelogId);
+
+    List<SkuItemVo.SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(@Param("spuId") Long spuId, @Param("catalogId") Long catalogId);
 }

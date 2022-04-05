@@ -11,6 +11,7 @@ import com.zyj.paocai.product.service.SkuImagesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -26,6 +27,17 @@ public class SkuImagesServiceImpl extends ServiceImpl<SkuImagesDao, SkuImagesEnt
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 获取skuId相关图片
+     *
+     * @param skuId
+     * @return
+     */
+    @Override
+    public List<SkuImagesEntity> getImagesBySkuId(Long skuId) {
+        return baseMapper.selectList(new QueryWrapper<SkuImagesEntity>().eq("sku_id", skuId));
     }
 
 }

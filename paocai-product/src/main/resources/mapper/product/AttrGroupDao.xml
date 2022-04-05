@@ -3,7 +3,7 @@
 
 <mapper namespace="com.zyj.paocai.product.dao.AttrGroupDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zyj.paocai.product.entity.AttrGroupEntity" id="attrGroupMap">
         <result property="attrGroupId" column="attr_group_id"/>
         <result property="attrGroupName" column="attr_group_name"/>
@@ -12,45 +12,58 @@
         <result property="icon" column="icon"/>
         <result property="catelogId" column="catelog_id"/>
     </resultMap>
+    <resultMap id="SpuItemAttrGroupVoMap" type="com.zyj.paocai.product.entity.vo.SkuItemVo$SpuItemAttrGroupVo">
+        <result column="attr_group_name" property="groupName" javaType="string"/>
+        <collection property="attrs" ofType="com.zyj.paocai.product.entity.vo.SkuItemVo$SpuBaseAttrVo">
+            <result column="attr_name" property="attrName" javaType="String"/>
+            <result column="attr_value" property="attrValue" javaType="String"/>
+        </collection>
+    </resultMap>
     <select id="getAttrGroupWithAttrs" resultType="com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo">
-        SELECT
-            pag.attr_group_id,
-            pag.attr_group_name,
-            pag.catelog_id,
-            pag.descript,
-            pag.icon,
-            pag.sort,
-            JSON_ARRAYAGG(
-                    JSON_OBJECT(
-                            'attrId',
-                            pa.attr_id,
-                            'attrName',
-                            pa.attr_name,
-                            'searchType',
-                            pa.search_type,
-                            'valueType',
-                            pa.value_type,
-                            'icon',
-                            pa.icon,
-                            'valueSelect',
-                            value_select,
-                            'attrType',
-                            pa.attr_type,
-                            'enable',
-                            pa.`enable`,
-                            'catelogId',
-                            pa.catelog_id,
-                            'showDesc',
-                            pa.show_desc
-                        )) attrString
-        FROM
-            pms_attr_group pag
-                LEFT JOIN pms_attr_attrgroup_relation paar ON pag.attr_group_id = paar.attr_group_id
-                LEFT JOIN pms_attr pa ON paar.attr_id = pa.attr_id
-        WHERE
-            pag.catelog_id = #{catelogId} AND pa.attr_type = 1
-        GROUP BY
-            pag.attr_group_id
+        SELECT pag.attr_group_id,
+               pag.attr_group_name,
+               pag.catelog_id,
+               pag.descript,
+               pag.icon,
+               pag.sort,
+               JSON_ARRAYAGG(
+                       JSON_OBJECT(
+                               'attrId',
+                               pa.attr_id,
+                               'attrName',
+                               pa.attr_name,
+                               'searchType',
+                               pa.search_type,
+                               'valueType',
+                               pa.value_type,
+                               'icon',
+                               pa.icon,
+                               'valueSelect',
+                               value_select,
+                               'attrType',
+                               pa.attr_type,
+                               'enable',
+                               pa.`enable`,
+                               'catelogId',
+                               pa.catelog_id,
+                               'showDesc',
+                               pa.show_desc
+                           )) attrString
+        FROM pms_attr_group pag
+                 LEFT JOIN pms_attr_attrgroup_relation paar ON pag.attr_group_id = paar.attr_group_id
+                 LEFT JOIN pms_attr pa ON paar.attr_id = pa.attr_id
+        WHERE pag.catelog_id = #{catelogId}
+          AND pa.attr_type = 1
+        GROUP BY pag.attr_group_id
+    </select>
+    <select id="getAttrGroupWithAttrsBySpuId" resultMap="SpuItemAttrGroupVoMap">
+        SELECT pav.`spu_id`, ag.`attr_group_name`, ag.`attr_group_id`, aar.`attr_id`, attr.`attr_name`, pav.`attr_value`
+        FROM `pms_attr_group` ag
+                 LEFT JOIN `pms_attr_attrgroup_relation` aar ON aar.`attr_group_id` = ag.`attr_group_id`
+                 LEFT JOIN `pms_attr` attr ON attr.`attr_id` = aar.`attr_id`
+                 LEFT JOIN `pms_product_attr_value` pav ON pav.`attr_id` = attr.`attr_id`
+        WHERE ag.catelog_id = #{catalogId}
+          AND pav.`spu_id` = #{spuId}
     </select>
 
 
