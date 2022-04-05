@@ -35,4 +35,28 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
                 .eq("spu_id", spuId));
     }
 
+    /**
+     * 获取spu规格
+     *
+     * @param spuId
+     * @return
+     */
+    @Override
+    public List<ProductAttrValueEntity> listBaseAttrForSpu(Long spuId) {
+        return baseMapper.selectList(new QueryWrapper<ProductAttrValueEntity>()
+                .eq("spu_id", spuId));
+    }
+
+    @Override
+    public void updateBaseAttrForSpu(List<ProductAttrValueEntity> entities, Long spuId) {
+        // 删除原来的属性
+        baseMapper.deleteBySpuId(spuId);
+
+        // 重新添加属性
+        for (ProductAttrValueEntity entity : entities) {
+            entity.setSpuId(spuId);
+        }
+        saveBatch(entities);
+    }
+
 }

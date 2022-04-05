@@ -1,16 +1,17 @@
 package com.zyj.paocai.product.controller;
 
+import com.zyj.paocai.common.constant.ProductConstant;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
-import com.zyj.paocai.common.constant.ProductConstant;
-import com.zyj.paocai.product.entity.AttrEntity;
-import com.zyj.paocai.product.entity.vo.AttrBaseVo;
+import com.zyj.paocai.product.entity.ProductAttrValueEntity;
 import com.zyj.paocai.product.entity.vo.AttrInfoVo;
 import com.zyj.paocai.product.service.AttrService;
+import com.zyj.paocai.product.service.ProductAttrValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,6 +28,9 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
+    @Autowired
+    ProductAttrValueService productAttrValueService;
+
     /**
      * 获取分类销售属性
      *
@@ -39,6 +43,24 @@ public class AttrController {
         PageUtils page = attrService.getAttrByCatelogId(catelogId, params, ProductConstant.SALE_ATTR_TYPE);
 
         return R.ok(page);
+    }
+
+    @PostMapping("/update/{spuId}")
+    public R updateBaseAttrForSpu(@RequestBody List<ProductAttrValueEntity> attrValueEntities, @PathVariable("spuId") Long spuId) {
+        productAttrValueService.updateBaseAttrForSpu(attrValueEntities,spuId);
+        return R.ok();
+    }
+
+    /**
+     * 获取spu规格
+     *
+     * @param spuId
+     * @return
+     */
+    @GetMapping("/base/listforspu/{spuId}")
+    public R<List<ProductAttrValueEntity>> listBaseAttrForSpu(@PathVariable("spuId") Long spuId) {
+        List<ProductAttrValueEntity> list = productAttrValueService.listBaseAttrForSpu(spuId);
+        return R.ok(list);
     }
 
     /**
