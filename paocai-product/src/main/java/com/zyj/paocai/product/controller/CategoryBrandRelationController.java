@@ -26,12 +26,22 @@ public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
 
+    /**
+     * 获取品牌关联的分类
+     * @param brandId
+     * @return
+     */
     @GetMapping("/catelog/list")
     public R<List<CategoryBrandRelationEntity>> getCategoryByBrandId(@RequestParam("brandId") Long brandId){
         List<CategoryBrandRelationEntity> categoryVos = categoryBrandRelationService.getCategoryByBrandId(brandId);
         return R.ok(categoryVos);
     }
 
+    /**
+     * 获取分类关联的品牌
+     * @param catId
+     * @return
+     */
     @GetMapping("/brands/list")
     public R<List<BrandVo>> getBrandsByCatId(@RequestParam("catId") Long catId) {
         List<BrandVo> brands = categoryBrandRelationService.getBrandsByCatId(catId);

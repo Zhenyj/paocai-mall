@@ -2,11 +2,15 @@ package com.zyj.paocai.product.controller;
 
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.product.entity.AttrAttrgroupRelationEntity;
 import com.zyj.paocai.product.entity.AttrEntity;
 import com.zyj.paocai.product.entity.AttrGroupEntity;
+import com.zyj.paocai.product.entity.vo.AttrGroupRelationVo;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithAttrsVo;
 import com.zyj.paocai.product.entity.vo.AttrGroupWithCatelogPathVo;
+import com.zyj.paocai.product.service.AttrAttrgroupRelationService;
 import com.zyj.paocai.product.service.AttrGroupService;
+import com.zyj.paocai.product.service.AttrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,13 +32,51 @@ public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
 
+    @Autowired
+    AttrAttrgroupRelationService relationService;
+
+    @Autowired
+    AttrService attrService;
+
+    @PostMapping("/attr/relation")
+    public R addAttrRelation(@RequestBody List<AttrAttrgroupRelationEntity> relations) {
+        relationService.saveBatch(relations);
+        return R.ok();
+    }
+
+    /**
+     * 删除属性与分组的关联关系
+     *
+     * @param
+     * @return
+     */
+    @PostMapping("/attr/relation/delete")
+    public R deleteRelation(@RequestBody List<AttrGroupRelationVo> vos) {
+        relationService.deleteRelation(vos);
+        return R.ok();
+    }
+
+    /**
+     * 获取属性分组没有关联的其他属性
+     *
+     * @param params
+     * @param attrGroupId
+     * @return
+     */
+    @GetMapping("/{attrGroupId}/noattr/relation")
+    public R<PageUtils> getNoRelationAttr(@RequestParam Map<String, Object> params, @PathVariable("attrGroupId") Long attrGroupId) {
+        PageUtils page = attrService.getNoRelationAttr(params, attrGroupId);
+        return R.ok(page);
+    }
+
     /**
      * 获取分类下所有分组&关联属性
+     *
      * @param catelogId
      * @return
      */
     @GetMapping("/{catelogId}/withattr")
-    public R<List<AttrGroupWithAttrsVo>> getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId){
+    public R<List<AttrGroupWithAttrsVo>> getAttrGroupWithAttrs(@PathVariable("catelogId") Long catelogId) {
         List<AttrGroupWithAttrsVo> vos = attrGroupService.getAttrGroupWithAttrs(catelogId);
         return R.ok(vos);
     }

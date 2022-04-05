@@ -57,16 +57,19 @@
              class="dialog-footer">
           <el-button @click="innerVisible = false">取 消</el-button>
           <el-button type="primary"
-                     @click="submitAddRealtion">确认新增</el-button>
+                     @click="submitAddRealtion">确认新增
+          </el-button>
         </div>
       </el-dialog>
       <el-row>
         <el-col :span="24">
           <el-button type="primary"
-                     @click="addRelation">新建关联</el-button>
+                     @click="addRelation">新建关联
+          </el-button>
           <el-button type="danger"
                      @click="batchDeleteRelation"
-                     :disabled="dataListSelections.length <= 0">批量删除</el-button>
+                     :disabled="dataListSelections.length <= 0">批量删除
+          </el-button>
           <!--  -->
           <el-table :data="relationAttrs"
                     style="width: 100%"
@@ -87,11 +90,11 @@
                   <div slot="content">
                     <span v-for="(i,index) in scope.row.valueSelect.split(';')"
                           :key="index">
-                      {{i}}
-                      <br />
+                      {{ i }}
+                      <br/>
                     </span>
                   </div>
-                  <el-tag>{{scope.row.valueSelect.split(";")[0]+" ..."}}</el-tag>
+                  <el-tag>{{ scope.row.valueSelect.split(";")[0] + " ..." }}</el-tag>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -102,7 +105,8 @@
               <template slot-scope="scope">
                 <el-button type="text"
                            size="small"
-                           @click="relationRemove(scope.row.attrId)">移除</el-button>
+                           @click="relationRemove(scope.row.attrId)">移除
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -120,7 +124,7 @@ export default {
   //import引入的组件需要注入到对象中才能使用
   components: {},
   props: {},
-  data () {
+  data() {
     //这里存放数据
     return {
       attrGroupId: 0,
@@ -145,67 +149,67 @@ export default {
   watch: {},
   //方法集合
   methods: {
-    selectionChangeHandle (val) {
+    selectionChangeHandle(val) {
       this.dataListSelections = val;
     },
-    innerSelectionChangeHandle (val) {
+    innerSelectionChangeHandle(val) {
       this.innerdataListSelections = val;
     },
-    addRelation () {
+    addRelation() {
       this.getDataList();
       this.innerVisible = true;
     },
-    batchDeleteRelation (val) {
+    batchDeleteRelation(val) {
       let postData = [];
       this.dataListSelections.forEach(item => {
-        postData.push({ attrId: item.attrId, attrGroupId: this.attrGroupId });
+        postData.push({attrId: item.attrId, attrGroupId: this.attrGroupId});
       });
       this.$http({
         url: this.$http.adornUrl("/product/attrgroup/attr/relation/delete"),
         method: "post",
         data: this.$http.adornData(postData, false)
-      }).then(({ data }) => {
-        if (data.code == 0) {
-          this.$message({ type: "success", message: "删除成功" });
+      }).then(({data}) => {
+        if (data.code == 200) {
+          this.$message({type: "success", message: "删除成功"});
           this.init(this.attrGroupId);
         } else {
-          this.$message({ type: "error", message: data.msg });
+          this.$message({type: "error", message: data.msg});
         }
       });
     },
     //移除关联
-    relationRemove (attrId) {
+    relationRemove(attrId) {
       let data = [];
-      data.push({ attrId, attrGroupId: this.attrGroupId });
+      data.push({attrId, attrGroupId: this.attrGroupId});
       this.$http({
         url: this.$http.adornUrl("/product/attrgroup/attr/relation/delete"),
         method: "post",
         data: this.$http.adornData(data, false)
-      }).then(({ data }) => {
-        if (data.code == 0) {
-          this.$message({ type: "success", message: "删除成功" });
+      }).then(({data}) => {
+        if (data.code == 200) {
+          this.$message({type: "success", message: "删除成功"});
           this.init(this.attrGroupId);
         } else {
-          this.$message({ type: "error", message: data.msg });
+          this.$message({type: "error", message: data.msg});
         }
       });
     },
-    submitAddRealtion () {
+    submitAddRealtion() {
       this.innerVisible = false;
       //准备数据
       console.log("准备新增的数据", this.innerdataListSelections);
       if (this.innerdataListSelections.length > 0) {
         let postData = [];
         this.innerdataListSelections.forEach(item => {
-          postData.push({ attrId: item.attrId, attrGroupId: this.attrGroupId });
+          postData.push({attrId: item.attrId, attrGroupId: this.attrGroupId});
         });
         this.$http({
           url: this.$http.adornUrl("/product/attrgroup/attr/relation"),
           method: "post",
           data: this.$http.adornData(postData, false)
-        }).then(({ data }) => {
+        }).then(({data}) => {
           if (data.code == 0) {
-            this.$message({ type: "success", message: "新增关联成功" });
+            this.$message({type: "success", message: "新增关联成功"});
           }
           this.$emit("refreshData");
           this.init(this.attrGroupId);
@@ -213,7 +217,7 @@ export default {
       } else {
       }
     },
-    init (id) {
+    init(id) {
       this.attrGroupId = id || 0;
       this.visible = true;
       this.$http({
@@ -222,15 +226,16 @@ export default {
         ),
         method: "get",
         params: this.$http.adornParams({})
-      }).then(({ data }) => {
+      }).then(({data}) => {
         this.relationAttrs = data.data;
       });
     },
-    dialogClose () { },
+    dialogClose() {
+    },
 
     //========
     // 获取数据列表
-    getDataList () {
+    getDataList() {
       this.dataListLoading = true;
       this.$http({
         url: this.$http.adornUrl(
@@ -242,7 +247,7 @@ export default {
           limit: this.pageSize,
           key: this.dataForm.key
         })
-      }).then(({ data }) => {
+      }).then(({data}) => {
         if (data && data.code === 200) {
           this.dataList = data.data.list;
           this.totalPage = data.data.totalCount;
@@ -254,13 +259,13 @@ export default {
       });
     },
     // 每页数
-    sizeChangeHandle (val) {
+    sizeChangeHandle(val) {
       this.pageSize = val;
       this.pageIndex = 1;
       this.getDataList();
     },
     // 当前页
-    currentChangeHandle (val) {
+    currentChangeHandle(val) {
       this.pageIndex = val;
       this.getDataList();
     }

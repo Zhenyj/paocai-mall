@@ -102,15 +102,16 @@
 
 <script>
 import CategoryCascader from "../common/category-cascader";
+
 export default {
-  data () {
+  data() {
     return {
       visible: false,
       dataForm: {
         attrId: 0,
         attrName: "",
         searchType: 0,
-        valueType: 1,
+        valueType: 0,
         icon: "",
         valueSelect: "",
         attrType: 1,
@@ -123,7 +124,7 @@ export default {
       attrGroups: [],
       dataRule: {
         attrName: [
-          { required: true, message: "属性名不能为空", trigger: "blur" }
+          {required: true, message: "属性名不能为空", trigger: "blur"}
         ],
         searchType: [
           {
@@ -140,7 +141,7 @@ export default {
           }
         ],
         icon: [
-          { required: true, message: "属性图标不能为空", trigger: "blur" }
+          {required: true, message: "属性图标不能为空", trigger: "blur"}
         ],
         attrType: [
           {
@@ -180,7 +181,7 @@ export default {
     }
   },
   watch: {
-    catelogPath (path) {
+    catelogPath(path) {
       //监听到路径变化需要查出这个三级分类的分组信息
       console.log("路径变了", path);
       this.attrGroups = [];
@@ -192,8 +193,8 @@ export default {
             `/product/attrgroup/list/${path[path.length - 1]}`
           ),
           method: "get",
-          params: this.$http.adornParams({ page: 1, limit: 10000000 })
-        }).then(({ data }) => {
+          params: this.$http.adornParams({page: 1, limit: 10000000})
+        }).then(({data}) => {
           if (data && data.code === 200) {
             this.attrGroups = data.data.list;
           } else {
@@ -208,9 +209,9 @@ export default {
       }
     }
   },
-  components: { CategoryCascader },
+  components: {CategoryCascader},
   methods: {
-    init (id) {
+    init(id) {
       this.dataForm.attrId = id || 0;
       this.dataForm.attrType = this.type;
       this.visible = true;
@@ -223,7 +224,7 @@ export default {
             ),
             method: "get",
             params: this.$http.adornParams()
-          }).then(({ data }) => {
+          }).then(({data}) => {
             if (data && data.code === 200) {
               data = data.data;
               this.dataForm.attrName = data.attrName;
@@ -247,7 +248,7 @@ export default {
       });
     },
     // 表单提交
-    dataFormSubmit () {
+    dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           this.$http({
@@ -268,7 +269,7 @@ export default {
               attrGroupId: this.dataForm.attrGroupId,
               showDesc: this.dataForm.showDesc
             })
-          }).then(({ data }) => {
+          }).then(({data}) => {
             if (data && data.code === 200) {
               this.$message({
                 message: "操作成功",
@@ -287,10 +288,9 @@ export default {
       });
     },
     //dialogClose
-    dialogClose () {
+    dialogClose() {
       this.catelogPath = [];
     }
   }
 };
 </script>
- 

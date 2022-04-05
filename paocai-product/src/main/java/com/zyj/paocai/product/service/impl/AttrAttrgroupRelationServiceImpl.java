@@ -7,10 +7,12 @@ import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.AttrAttrgroupRelationDao;
 import com.zyj.paocai.product.entity.AttrAttrgroupRelationEntity;
+import com.zyj.paocai.product.entity.vo.AttrGroupRelationVo;
 import com.zyj.paocai.product.service.AttrAttrgroupRelationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -26,6 +28,15 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 删除属性与分组的关联关系
+     * @param relations
+     */
+    @Override
+    public void deleteRelation(List<AttrGroupRelationVo> relations) {
+        baseMapper.deleteBatchByAttrAttrGroup(relations);
     }
 
 }
