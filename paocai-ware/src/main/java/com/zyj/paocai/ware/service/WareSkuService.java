@@ -1,7 +1,7 @@
 package com.zyj.paocai.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zyj.paocai.common.entity.to.SkuHasStockVo;
+import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.ware.entity.PurchaseDetailEntity;
 import com.zyj.paocai.ware.entity.WareSkuEntity;

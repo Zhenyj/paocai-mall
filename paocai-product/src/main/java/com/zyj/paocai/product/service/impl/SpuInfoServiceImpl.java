@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.constant.ProductConstant;
-import com.zyj.paocai.common.entity.to.SkuHasStockVo;
+import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
 import com.zyj.paocai.common.entity.to.SkuReductionTo;
 import com.zyj.paocai.common.entity.to.SpuBoundsTo;
 import com.zyj.paocai.common.entity.to.es.SkuEsModel;

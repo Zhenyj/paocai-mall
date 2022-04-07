@@ -1,4 +1,4 @@
-package com.zyj.paocai.common.entity.to;
+package com.zyj.paocai.common.entity.vo;
 
 import lombok.Data;
 

@@ -1,5 +1,6 @@
 package com.zyj.paocai.order.controller;
 
+import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
 import com.zyj.paocai.order.entity.OrderEntity;
 import com.zyj.paocai.order.service.OrderService;
 import com.zyj.paocai.common.utils.PageUtils;
@@ -11,12 +12,11 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-
 /**
  * 订单
  *
  * @author lulx
- * @email 
+ * @email
  * @date 2022-03-15 21:12:53
  */
 @RestController
@@ -26,10 +26,21 @@ public class OrderController {
     private OrderService orderService;
 
     /**
+     * 获取用户订单状态信息
+     * @param memberId
+     * @return
+     */
+    @PostMapping("/order_status_num")
+    public R<OrderStatusNumsVo> getOrderStatusNumsInfo(@RequestParam("memberId") Long memberId) {
+        OrderStatusNumsVo vo = orderService.getOrderStatusNumsInfo(memberId);
+        return R.ok(vo);
+    }
+
+    /**
      * 列表
      */
     @RequestMapping("/list")
-    public R<PageUtils> list(@RequestParam Map<String, Object> params){
+    public R<PageUtils> list(@RequestParam Map<String, Object> params) {
         PageUtils page = orderService.queryPage(params);
 
         return R.ok(page);
@@ -40,8 +51,8 @@ public class OrderController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-    public R info(@PathVariable("id") Long id){
-		OrderEntity order = orderService.getById(id);
+    public R info(@PathVariable("id") Long id) {
+        OrderEntity order = orderService.getById(id);
 
         return R.ok(order);
     }
@@ -50,8 +61,8 @@ public class OrderController {
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody OrderEntity order){
-		orderService.save(order);
+    public R save(@RequestBody OrderEntity order) {
+        orderService.save(order);
 
         return R.ok();
     }
@@ -60,8 +71,8 @@ public class OrderController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody OrderEntity order){
-		orderService.updateById(order);
+    public R update(@RequestBody OrderEntity order) {
+        orderService.updateById(order);
 
         return R.ok();
     }
@@ -70,8 +81,8 @@ public class OrderController {
      * 删除
      */
     @RequestMapping("/delete")
-    public R delete(@RequestBody Long[] ids){
-		orderService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Long[] ids) {
+        orderService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

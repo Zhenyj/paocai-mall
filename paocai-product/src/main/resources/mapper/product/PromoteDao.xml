@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyj.paocai.product.dao.PromoteDao">
+
+    <resultMap id="BaseResultMap" type="com.zyj.paocai.product.entity.PromoteEntity">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="promoteName" column="promote_name" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="imgName" column="img_name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="TINYINT"/>
+        <result property="promoteUrl" column="promote_url" jdbcType="VARCHAR"/>
+        <result property="showStatus" column="show_status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,promote_name,img_url,img_name,type,promote_url,show_status
+    </sql>
+</mapper>

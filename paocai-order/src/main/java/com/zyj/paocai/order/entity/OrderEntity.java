@@ -2,11 +2,11 @@ package com.zyj.paocai.order.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.math.BigDecimal;
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 订单
@@ -82,7 +82,7 @@ public class OrderEntity implements Serializable {
 	 */
 	private Integer sourceType;
 	/**
-	 * 订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】
+	 * 订单状态【0->待付款；1->待发货；2->待收货；3->待评论；4->已完成；5->已关闭；6->无效订单】
 	 */
 	private Integer status;
 	/**

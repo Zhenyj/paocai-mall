@@ -25,11 +25,17 @@ public class Constant {
     /** 升序 */
     public static final String ASC = "asc";
 
-    /** 成功 */
+    /** 成功状态码 */
     public static final Integer SUCCESS_CODE = 200;
 
-    /** 失败 */
+    /** 失败状态码 */
     public static final Integer ERROR_CODE = 500;
+
+    /** 显示 */
+    public static final int SHOW = 1;
+
+    /** 不显示 */
+    public static final int NO_SHOW = 0;
 
     /**
      * 菜单

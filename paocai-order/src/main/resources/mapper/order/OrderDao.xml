@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.zyj.paocai.paocai.dao.OrderDao">
+<mapper namespace="com.zyj.paocai.order.dao.OrderDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="com.zyj.paocai.paocai.entity.OrderEntity" id="orderMap">
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.zyj.paocai.order.entity.OrderEntity" id="orderMap">
         <result property="id" column="id"/>
         <result property="memberId" column="member_id"/>
         <result property="orderSn" column="order_sn"/>
@@ -48,6 +48,30 @@
         <result property="commentTime" column="comment_time"/>
         <result property="modifyTime" column="modify_time"/>
     </resultMap>
+    <resultMap id="orderStatusNumsMap" type="com.zyj.paocai.common.entity.vo.OrderStatusNumsVo">
+        <result property="waitPayNum" column="wait_pay_num"/>
+        <result property="waitDeliverNum" column="wait_deliver_num"/>
+        <result property="waitReceiveNum" column="wait_receive_num"/>
+        <result property="waitCommentNum" column="wait_comment_num"/>
+    </resultMap>
+    <select id="getOrderStatusNumsInfo" resultType="com.zyj.paocai.common.entity.vo.OrderStatusNumsVo">
+        SELECT member_id,
+               COUNT(
+                       IF
+                           (`status` = 0, 1, NULL)) wait_pay_num,
+               COUNT(
+                       IF
+                           (`status` = 1, 1, NULL)) wait_deliver_num,
+               COUNT(
+                       IF
+                           (`status` = 2, 1, NULL)) wait_receive_num,
+               COUNT(
+                       IF
+                           (`status` = 3, 1, NULL)) wait_comment_num
+        FROM oms_order
+        WHERE member_id = 1
+          AND `status` IN (0, 1, 2, 3)
+    </select>
 
 
 </mapper>

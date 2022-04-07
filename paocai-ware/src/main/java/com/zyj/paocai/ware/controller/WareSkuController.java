@@ -1,6 +1,6 @@
 package com.zyj.paocai.ware.controller;
 
-import com.zyj.paocai.common.entity.to.SkuHasStockVo;
+import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.ware.entity.WareSkuEntity;

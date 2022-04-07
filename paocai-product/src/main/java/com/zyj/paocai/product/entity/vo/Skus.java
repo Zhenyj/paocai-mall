@@ -1,6 +1,6 @@
 package com.zyj.paocai.product.entity.vo;
 
-import com.zyj.paocai.common.entity.to.MemberPrice;
+import com.zyj.paocai.common.entity.vo.MemberPrice;
 import lombok.Data;
 
 import java.math.BigDecimal;

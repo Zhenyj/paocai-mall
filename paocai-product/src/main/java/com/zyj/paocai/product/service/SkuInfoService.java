@@ -42,5 +42,13 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
     Map<Long, String> getSkuNameInfos(List<Long> skuIds);
 
     SkuItemVo getItem(Long skuId) throws ExecutionException, InterruptedException;
+
+    /**
+     * 获取猜你喜欢、热销商品数据
+     * @param pageSize
+     * @param page
+     * @return
+     */
+    List<SkuInfoEntity> getHotSales(Integer pageSize, Integer page);
 }
 

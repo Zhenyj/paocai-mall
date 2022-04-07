@@ -1,8 +1,11 @@
 package com.zyj.paocai.product.web;
 
+import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.product.entity.vo.Catalog2Vo;
+import com.zyj.paocai.product.entity.vo.HomePageData;
 import com.zyj.paocai.product.service.CategoryService;
+import com.zyj.paocai.product.service.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author lulx
@@ -22,6 +26,16 @@ public class IndexController {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    IndexService indexService;
+
+    @RequestMapping("/product/index/data")
+    @ResponseBody
+    public R<HomePageData> main() throws ExecutionException, InterruptedException {
+        HomePageData vo = indexService.getMain();
+        return R.ok(vo);
+    }
 
     @RequestMapping({"/", "/index.html"})
     public String indexPage(Model model) {

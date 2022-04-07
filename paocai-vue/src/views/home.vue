@@ -46,7 +46,7 @@
               <div class="search-ft">
                 <div class="hotword">
                   <div class="search-hots-lines">
-                    <div class="hots-item" v-for="(item,index) in hotwords" :key="index" @click="searchHot(item)">
+                    <div class="hots-item" v-for="(item,index) in hotWords" :key="index" @click="searchHot(item)">
                       {{item}}
                     </div>
                   </div>
@@ -109,8 +109,8 @@
               <div class="promo">
                 <div class="promo-bd">
                   <el-carousel :interval="5000" arrow="always" indicator-position="none">
-                    <el-carousel-item v-for="(item,index) in promoCarousel" :key="index">
-                      <h3><a href="#" target="_blank"><img :src="item.url"></a></h3>
+                    <el-carousel-item v-for="(item,index) in promoteCarousel" :key="index">
+                      <h3><a href="#" target="_blank"><img :src="item.imgUrl" :title="item.imgName"></a></h3>
                     </el-carousel-item>
                   </el-carousel>
                 </div>
@@ -118,9 +118,9 @@
               <div class="tmall">
                 <div class="tmall-bd">
                   <el-carousel :interval="5000" arrow="always" indicator-position="none">
-                    <el-carousel-item v-for="(item,index) in promoCarousel" :key="index">
-                      <a href="#" target="_blank"><img :src="item.url"></a>
-                      <a href="#" target="_blank"><img :src="item.url"></a>
+                    <el-carousel-item v-for="(item,index) in smallPromoteCarousel" :key="index">
+                      <a href="#" target="_blank"><img :src="item.left.imgUrl" :title="item.left.imgName"></a>
+                      <a href="#" target="_blank"><img :src="item.right.imgUrl" :title="item.right.imgName"></a>
                     </el-carousel-item>
                   </el-carousel>
                 </div>
@@ -257,11 +257,11 @@
           <div class="seckill-list">
             <div class="slider-wrapper">
               <el-carousel :interval="3000" arrow="always" height="280px" indicator-position="none">
-                <el-carousel-item v-for="(item,index) in promoCarousel" :key="index">
+                <el-carousel-item v-for="(item,index) in promoteCarousel" :key="index">
                   <a href="#" v-for="i in 4" :key="i">
                     <div class="seckill-item">
                       <div class="seckill-item-image">
-                        <img :src="item.url">
+                        <img :src="item.imgUrl">
                       </div>
                       <h6 class="seckill-item-name">商品名称</h6>
                       <div class="seckill-item-price">
@@ -309,16 +309,16 @@
             </span></h3>
         </div>
         <div class="list">
-          <div class="item" v-for="item in 20" :key="item">
+          <div class="item" v-for="(item,index) in hotSale.hotSales" :key="index">
             <a href="" class="hotsale-item">
               <div class="img-wrapper">
-                <img src="../assets/images/10001.png">
+                <img :src="item.skuDefaultImg">
               </div>
-              <h4>【新品享6期免息】Redmi 天玑8100 2K屏幕智能游戏5g</h4>
+              <h4>{{item.skuName}}</h4>
               <p class="info">
                 <span class="price">
                   <i class="iconfont icon-money"></i>
-                  2399.00
+                    {{item.price}}
                 </span>
               </p>
             </a>
@@ -380,11 +380,11 @@
           searchTypeName: '泡泡'
         }],
         key: '',
-        hotwords: ['新款连衣裙', '四件套', '潮流T恤', '时尚女鞋', '短裤', '半身裙', '男士外套', '墙纸', '行车记录仪', '新款男鞋', '耳机', '时尚女包', '沙发'],
+        hotWords: ['新款连衣裙', '四件套', '潮流T恤', '时尚女鞋', '短裤', '半身裙', '男士外套', '墙纸', '行车记录仪', '新款男鞋', '耳机', '时尚女包', '沙发'],
         scrollTop: 0, //屏幕高度
         category: [],
         cateIndex: -1,
-        promoCarousel: [{
+        promoteCarousel: [{
           url: 'http://www.lyxgxx.cn/public/uploads/attach/2019/06/22/s_5d0d8c761f794.JPG',
         }, {
           url: 'http://rule.lyxgxx.cn:8088/UploadFolder/GoodsImg/G2020010300001062_goodsimgs.jpg',
@@ -393,9 +393,35 @@
         }, {
           url: 'http://www.lyxgxx.cn/public/uploads/attach/2020/05/23/5ec9250ab3aae.png',
         }],
+        smallPromoteCarousel: [],
+        hotSale: {
+          page: 1,
+          totalPage: 3,
+          pageSize: 20,
+          total: 20,
+          hotSales: []
+        }
       }
     },
     methods: {
+      // 获取首页需要的数据
+      async getIndexData () {
+        let res = await this.$request({
+          url: 'product/index/data',
+          method: 'POST'
+        });
+        if (res.code === 200) {
+          const data = res.data;
+          this.category = data.category;
+          this.hotWords = data.hotWords;
+          this.orderStatusInfo = data.orderStatusInfo;
+          this.promoteCarousel = data.promoteCarousel;
+          this.smallPromoteCarousel = data.smallPromoteCarousel;
+          this.hotSale = data.hotSale;
+        } else {
+
+        }
+      },
       // 选择搜索类型
       selectSearchType (index) {
         let obj = this.searchTypeList[0]
@@ -424,18 +450,10 @@
         document.documentElement.scrollTop = height
       }
     },
-    async created () {
-      // let res = await this.$request({
-      //   url: 'product/category/list/tree',
-      //   method: 'GET'
-      // });
-      // if (res.code === 200) {
-      //   this.category = res.data;
-      // } else {
-
-      // }
+    created () {
       let json = require('../assets/category.json')
       this.category = json.data;
+      this.getIndexData();
     },
     mounted () {
       window.addEventListener('scroll', this.handleScroll, true)
@@ -1102,7 +1120,7 @@
 
           .member-nickurl {
             .member-nick-info {
-              font-size: 14pxpx;
+              font-size: 14px;
               margin-top: 4px;
               display: block;
               line-height: 17px;
@@ -1395,7 +1413,7 @@
               width: 200px;
               height: 280px;
               padding: 4px;
-              background: linear-gradient(180deg, rgba(240, 244, 248, .5), rgba( 255,255,255,.5));
+              background: linear-gradient(180deg, rgba(240, 244, 248, .5), rgba(255, 255, 255, .5));
 
               .seckill-item {
                 margin: 0 4px;
@@ -1715,7 +1733,7 @@
       }
 
       .el-backtop {
-        widows: 50px;
+        width: 50px;
         height: 50px;
         background-color: #ffffff;
         border-radius: 50%;

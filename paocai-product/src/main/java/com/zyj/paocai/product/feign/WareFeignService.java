@@ -1,6 +1,6 @@
 package com.zyj.paocai.product.feign;
 
-import com.zyj.paocai.common.entity.to.SkuHasStockVo;
+import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
 import com.zyj.paocai.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;

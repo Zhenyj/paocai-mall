@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.constant.Constant;
-import com.zyj.paocai.common.entity.to.SkuHasStockVo;
+import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.common.utils.R;
@@ -202,4 +202,11 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         return vo;
     }
 
+    @Override
+    public List<SkuInfoEntity> getHotSales(Integer pageSize, Integer page) {
+        // TODO 分析用户最近搜索或购买的商品
+        // 暂时获取所有商品数据
+        List<SkuInfoEntity> hotSales = baseMapper.getHotSales(pageSize, (page - 1) * pageSize);
+        return hotSales;
+    }
 }
