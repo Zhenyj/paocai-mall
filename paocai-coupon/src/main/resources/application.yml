@@ -1,5 +1,5 @@
 server:
-  port: 14000
+  port: 14888
 spring:
   application:
     name: paocai-coupon

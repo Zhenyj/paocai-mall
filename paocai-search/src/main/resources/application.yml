@@ -1,5 +1,5 @@
 server:
-  port: 13000
+  port: 13888
 spring:
   application:
     name: paocai-search
@@ -9,6 +9,9 @@ spring:
         server-addr: 192.168.136.12:8848
   thymeleaf:
     cache: false
+  redis:
+    host: 192.168.136.12
+    port: 6379
 # elasticsearch
 elasticsearch:
   hostname: 192.168.136.12

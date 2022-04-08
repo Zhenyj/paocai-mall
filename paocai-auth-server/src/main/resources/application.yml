@@ -1,5 +1,5 @@
 server:
-  port: 20000
+  port: 15888
 spring:
   application:
     name: paocai-auth-server
@@ -27,3 +27,6 @@ management:
 feign:
   sentinel:
     enabled: true
+logging:
+  level:
+    com.zyj.paocai: debug

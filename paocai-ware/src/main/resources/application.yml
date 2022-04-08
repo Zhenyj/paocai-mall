@@ -1,5 +1,5 @@
 server:
-  port: 11000
+  port: 11888
 spring:
   application:
     name: paocai-ware
@@ -40,6 +40,9 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.136.12:8848
+  redis:
+    host: 192.168.136.12
+    port: 6379
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   global-config:

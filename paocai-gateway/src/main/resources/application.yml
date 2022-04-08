@@ -44,6 +44,18 @@ spring:
             - Path=/api/ware/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
+        - id: auth_route
+          uri: lb://paocai-auth-server
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - RewritePath=/api/auth/(?<segment>.*),/$\{segment}
+        - id: cart_route
+          uri: lb://paocai-auth-server
+          predicates:
+            - Path=/api/cart/**
+          filters:
+            - RewritePath=/api/cart/(?<segment>.*),/$\{segment}
         - id: third_party_route
           uri: lb://paocai-thirdparty
           predicates:
@@ -56,38 +68,39 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>.*),/paocai-manager/$\{segment}
-        - id: paocai_host_route
+        - id: tl_paocai_host_route
           uri: lb://paocai-product
           predicates:
             - Host=paocai.mall.com,item.paocai.mall.com
-        - id: search_route
+        - id: tl_search_route
           uri: lb://paocai-search
           predicates:
             - Host=search.paocai.mall.com
-        - id: auth_route
+        - id: tl_auth_route
           uri: lb://paocai-auth
           predicates:
             - Host=auth.paocai.mall.com
-        - id: cart_route
+        - id: tl_cart_route
           uri: lb://paocai-cart
           predicates:
             - Host=cart.paocai.mall.com
-        - id: coupon_route
+        - id: tl_coupon_route
           uri: lb://paocai-coupon
           predicates:
             - Host=coupon.paocai.mall.com
-        - id: member_route
+        - id: tl_member_route
           uri: lb://paocai-member
           predicates:
             - Host=member.paocai.mall.com
-        - id: order_route
+        - id: tl_order_route
           uri: lb://paocai-order
           predicates:
             - Host=order.paocai.mall.com
-        - id: ware_route
+        - id: tl_ware_route
           uri: lb://paocai-ware
           predicates:
             - Host=ware.paocai.mall.com
+
 
 # 暴露所有端点
 management:
