@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
     private static final String CATEGORY_JSON = "categoryJson";
+    private static final String CATEGORY_LIST_TREE = "categoryListTree";
 
     @Autowired
     CategoryDao categoryDao;
@@ -56,6 +58,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public List<CategoryEntity> listTree() {
+        String categoryString = redisTemplate.opsForValue().get(CATEGORY_LIST_TREE);
+        if (StringUtils.hasText(categoryString)) {
+            List<CategoryEntity> list = JSON.parseObject(categoryString, new TypeReference<List<CategoryEntity>>() {
+            });
+            return list;
+        }
+
         // 获取所有分类
         List<CategoryEntity> entities = this.list();
 
@@ -67,6 +76,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }).sorted((menu1, menu2) -> {
             return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
+        redisTemplate.opsForValue().set(CATEGORY_LIST_TREE, JSON.toJSONString(list),
+                60*60*24*30, TimeUnit.SECONDS);
         return list;
     }
 
