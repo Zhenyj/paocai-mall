@@ -11,7 +11,6 @@ import java.util.Date;
  **/
 @Data
 public class MemberRespVo {
-    private static final long serialVersionUID = 3712983712983L;
 
     /** id */
     private Long id;
@@ -21,9 +20,6 @@ public class MemberRespVo {
 
     /** 用户名 */
     private String username;
-
-    /** 密码 */
-    private String password;
 
     /** 昵称 */
     private String nickname;
@@ -64,13 +60,4 @@ public class MemberRespVo {
 
     /** 启用状态 */
     private Integer status;
-
-    /** 社交用户的唯一id */
-    private String socialUid;
-
-    /** 访问令牌 */
-    private String accessToken;
-
-    /** 访问令牌的过期时间 */
-    private String expiresIn;
 }

@@ -6,7 +6,7 @@
  */
 import Vue from 'vue'
 import Router from 'vue-router'
-import { clearLoginInfo } from '@/utils'
+import cookies from 'vue-cookie'
 
 Vue.use(Router)
 
@@ -15,32 +15,31 @@ const _import = require('./import-' + process.env.NODE_ENV)
 
 // 全局路由(无需嵌套上左右整体布局)
 const globalRoutes = [{
-    path: '/404',
-    component: _import('common/404'),
-    name: '404',
-    meta: { title: '404未找到' }
-  }, {
-    path: '/login',
-    component: _import('common/login'),
-    name: 'login',
-    meta: { title: '登录' }
-  },{
-    path: '/regist',
-    component: _import('common/regist'),
-    name: 'regist',
-    meta: { title: '注册' }
-  },{
-    path: '/search',
-    component: _import('search'),
-    name: 'search',
-    meta: { title: '搜索' }
-  },{
-    path: '/product',
-    component: _import('product'),
-    name: 'product',
-    meta: { title: '商品' }
-  }
-]
+  path: '/404',
+  component: _import('common/404'),
+  name: '404',
+  meta: { title: '404未找到' }
+}, {
+  path: '/login',
+  component: _import('common/login'),
+  name: 'login',
+  meta: { title: '登录' }
+}, {
+  path: '/regist',
+  component: _import('common/regist'),
+  name: 'regist',
+  meta: { title: '注册' }
+}, {
+  path: '/search',
+  component: _import('search'),
+  name: 'search',
+  meta: { title: '搜索' }
+}, {
+  path: '/product',
+  component: _import('product'),
+  name: 'product',
+  meta: { title: '商品' }
+}]
 
 // 主入口路由(需嵌套上左右整体布局)
 const mainRoutes = {
@@ -60,17 +59,7 @@ const mainRoutes = {
       name: 'home',
       meta: { title: '泡菜商城' }
     }
-  ],
-  // beforeEnter (to, from, next) {
-  //   let token = Vue.cookie.get('token')
-  //   if (!token || !/\S/.test(token)) {
-  //     clearLoginInfo()
-  //     next({
-  //       name: 'login'
-  //     })
-  //   }
-  //   next()
-  // }
+  ]
 }
 
 const router = new Router({

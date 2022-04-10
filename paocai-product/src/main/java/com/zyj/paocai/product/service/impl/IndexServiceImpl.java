@@ -55,7 +55,7 @@ public class IndexServiceImpl implements IndexService {
     ThreadPoolExecutor executor;
 
     @Override
-    public HomePageData getMain() throws ExecutionException, InterruptedException {
+    public HomePageData getHomeData() throws ExecutionException, InterruptedException {
         HomePageData vo = new HomePageData();
         // 获取三级分裂
         CompletableFuture<Void> categoryFuture = CompletableFuture.runAsync(() -> {

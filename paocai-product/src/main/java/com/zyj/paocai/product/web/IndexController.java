@@ -32,8 +32,8 @@ public class IndexController {
 
     @RequestMapping("/product/index/data")
     @ResponseBody
-    public R<HomePageData> main() throws ExecutionException, InterruptedException {
-        HomePageData vo = indexService.getMain();
+    public R<HomePageData> getHomeData() throws ExecutionException, InterruptedException {
+        HomePageData vo = indexService.getHomeData();
         return R.ok(vo);
     }
 

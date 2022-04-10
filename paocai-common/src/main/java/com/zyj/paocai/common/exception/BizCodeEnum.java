@@ -41,6 +41,7 @@ public enum BizCodeEnum {
     PHONE_EXIST_EXCEPTION(15002, "手机号已存在"),
     EMAIL_EXIST_EXCEPTION(15003, "邮箱已存在"),
     LOGIN_ACCT_PASSWORD_INVALID_EXCEPTION(15003, "账号密码错误"),
+    TOKEN_EXCEPTION(15004,"token无效"),
     // 库存服务
     WARE_SERVICE_EXCEPTION(8000, "库存服务异常"),
     NO_STOCK_EXCEPTION(8001, "商品库存不足");

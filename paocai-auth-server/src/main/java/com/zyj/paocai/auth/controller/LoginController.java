@@ -1,9 +1,11 @@
 package com.zyj.paocai.auth.controller;
 
 import com.zyj.paocai.auth.feign.MemberFeignService;
-import com.zyj.paocai.common.entity.to.UserLoginTo;
+import com.zyj.paocai.auth.utils.JwtUtils;
 import com.zyj.paocai.auth.vo.UserRegisterVo;
+import com.zyj.paocai.common.constant.AuthConstant;
 import com.zyj.paocai.common.constant.Constant;
+import com.zyj.paocai.common.entity.to.UserLoginTo;
 import com.zyj.paocai.common.entity.to.UserRegisterTo;
 import com.zyj.paocai.common.entity.vo.MemberRespVo;
 import com.zyj.paocai.common.exception.BizCodeEnum;
@@ -14,8 +16,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -25,6 +31,7 @@ import javax.validation.Valid;
  **/
 @RestController
 public class LoginController {
+
     @Autowired
     private StringRedisTemplate redisTemplate;
 
@@ -51,6 +58,7 @@ public class LoginController {
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
             return R.error(r.getCode(), r.getMsg());
         }
+
         return R.ok();
     }
 
@@ -63,7 +71,8 @@ public class LoginController {
      * @return
      */
     @PostMapping("/login")
-    public R<MemberRespVo> login(@RequestBody @Valid UserLoginTo userLoginTo, BindingResult result, HttpSession session) {
+    public R<MemberRespVo> login(@RequestBody @Valid UserLoginTo userLoginTo, BindingResult result,
+                                 HttpSession session, HttpServletResponse response) {
         // 校验
         if (result.hasErrors()) {
             return R.error(BizCodeEnum.VALID_EXCEPTION.getCode(), result.getFieldError().getDefaultMessage());
@@ -72,6 +81,43 @@ public class LoginController {
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
             return R.error(r.getCode(), r.getMsg());
         }
-        return R.ok(r.getData());
+        MemberRespVo member = r.getData();
+        // 将用户信息放入session中（redis）
+        session.setAttribute(AuthConstant.LOGIN_USER, member);
+        // 过期时间一天
+        session.setMaxInactiveInterval(60 * 60 * 24);
+        String token = JwtUtils.getToken(member);
+        Cookie tokenCookie = new Cookie("token", token);
+        tokenCookie.setMaxAge(60 * 60 * 24 * 7);
+        tokenCookie.setDomain("paocai.mall.com");
+        tokenCookie.setPath("/");
+        response.addCookie(tokenCookie);
+        return R.ok(member);
+    }
+
+    /**
+     * 从token中解析出用户信息返回
+     * @param request
+     * @return
+     */
+    @RequestMapping("/user/cookie")
+    public R<MemberRespVo> getUserFromJwt(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("token")) {
+                try {
+                    // 从token中解析出用户信息返回
+                    MemberRespVo member = JwtUtils.validateToken(cookie.getValue());
+                    if (member == null) {
+                        return R.error(BizCodeEnum.TOKEN_EXCEPTION.getCode(), BizCodeEnum.TOKEN_EXCEPTION.getMsg());
+                    }
+                    return R.ok(member);
+                } catch (Exception e) {
+                    return R.error(BizCodeEnum.TOKEN_EXCEPTION.getCode(), BizCodeEnum.TOKEN_EXCEPTION.getMsg());
+                }
+            }
+        }
+        // 请求未携带token
+        return R.error(BizCodeEnum.TOKEN_EXCEPTION.getCode(), BizCodeEnum.TOKEN_EXCEPTION.getMsg());
     }
 }

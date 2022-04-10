@@ -68,38 +68,38 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>.*),/paocai-manager/$\{segment}
-        - id: tl_paocai_host_route
-          uri: lb://paocai-product
-          predicates:
-            - Host=paocai.mall.com,item.paocai.mall.com
-        - id: tl_search_route
-          uri: lb://paocai-search
-          predicates:
-            - Host=search.paocai.mall.com
-        - id: tl_auth_route
-          uri: lb://paocai-auth
-          predicates:
-            - Host=auth.paocai.mall.com
-        - id: tl_cart_route
-          uri: lb://paocai-cart
-          predicates:
-            - Host=cart.paocai.mall.com
-        - id: tl_coupon_route
-          uri: lb://paocai-coupon
-          predicates:
-            - Host=coupon.paocai.mall.com
-        - id: tl_member_route
-          uri: lb://paocai-member
-          predicates:
-            - Host=member.paocai.mall.com
-        - id: tl_order_route
-          uri: lb://paocai-order
-          predicates:
-            - Host=order.paocai.mall.com
-        - id: tl_ware_route
-          uri: lb://paocai-ware
-          predicates:
-            - Host=ware.paocai.mall.com
+#        - id: tl_paocai_host_route
+#          uri: lb://paocai-product
+#          predicates:
+#            - Host=paocai.mall.com,item.paocai.mall.com
+#        - id: tl_search_route
+#          uri: lb://paocai-search
+#          predicates:
+#            - Host=search.paocai.mall.com
+#        - id: tl_auth_route
+#          uri: lb://paocai-auth
+#          predicates:
+#            - Host=auth.paocai.mall.com
+#        - id: tl_cart_route
+#          uri: lb://paocai-cart
+#          predicates:
+#            - Host=cart.paocai.mall.com
+#        - id: tl_coupon_route
+#          uri: lb://paocai-coupon
+#          predicates:
+#            - Host=coupon.paocai.mall.com
+#        - id: tl_member_route
+#          uri: lb://paocai-member
+#          predicates:
+#            - Host=member.paocai.mall.com
+#        - id: tl_order_route
+#          uri: lb://paocai-order
+#          predicates:
+#            - Host=order.paocai.mall.com
+#        - id: tl_ware_route
+#          uri: lb://paocai-ware
+#          predicates:
+#            - Host=ware.paocai.mall.com
 
 
 # 暴露所有端点

@@ -8,10 +8,13 @@ import '@/element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 import router from '@/router'
 import { request } from '@/utils/request'
+import { getLoginInfo } from './utils/index'
 
 Vue.use(VueCookie)
 
 Vue.prototype.$request = request;
+// 获取用户信息
+Vue.prototype.$getLoginInfo = getLoginInfo;
 
 new Vue({
   el: '#app',

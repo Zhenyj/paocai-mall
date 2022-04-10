@@ -1,6 +1,35 @@
 import Vue from 'vue'
 import router from '@/router'
 import store from '@/store'
+import cookies from 'vue-cookie'
+import { request } from './request'
+
+
+/**
+ * 获取用户信息
+ * @returns 用户信息
+ */
+export const getLoginInfo = async () => {
+  // 从session中获取
+  let loginInfo = sessionStorage.getItem('loginInfo')
+  if (loginInfo != null && loginInfo != '') {
+    return JSON.parse(loginInfo);
+  }
+  if (cookies.get('token') != null && cookies.get('token') != '') {
+    let res = await request({
+      url: 'auth/user/cookie',
+      method: 'POST'
+    })
+    if (res.code !== 200) {
+      return null;
+    }
+    loginInfo = res.data;
+    // 放入session,JSON字符串
+    sessionStorage.setItem('loginInfo', JSON.stringify(loginInfo))
+    return loginInfo;
+  }
+  return null;
+};
 
 /**
  * 获取uuid

@@ -14,5 +14,5 @@ public interface IndexService {
      * 获取主页数据
      * @return
      */
-    HomePageData getMain() throws ExecutionException, InterruptedException;
+    HomePageData getHomeData() throws ExecutionException, InterruptedException;
 }

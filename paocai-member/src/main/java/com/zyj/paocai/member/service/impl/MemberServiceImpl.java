@@ -104,6 +104,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         for (MemberEntity member : members) {
             if (passwordEncoder.matches(password, member.getPassword())) {
+                // 不将密码返回
+                member.setPassword("");
                 return member;
             }
         }

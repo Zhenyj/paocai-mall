@@ -38,6 +38,7 @@ ul {
 
 body a{
   text-decoration: none;
+  cursor: pointer;
 }
 body a:hover{
   text-decoration: none;

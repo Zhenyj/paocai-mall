@@ -21,26 +21,14 @@ instance.interceptors.request.use(config => {
   return Promise.reject(error)
 })
 
-/**
- * 响应拦截
- */
-instance.interceptors.response.use(response => {
-  if (response.data && response.data.code === 401) { // 401, token失效
-    router.push({ name: 'login' })
-  }
-  return response
-}, error => {
-  return Promise.reject(error)
-})
-
 export const request = options => {
   return new Promise((resolve, reject) => {
     instance({
-        ...options,
-        url: options.url
-      }).then(res => {
-        resolve(res.data)
-      })
+      ...options,
+      url: options.url
+    }).then(res => {
+      resolve(res.data)
+    })
       .catch(err => {
         reject(err.data)
       }).then(() => {
