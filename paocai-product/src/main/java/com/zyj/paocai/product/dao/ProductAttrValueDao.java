@@ -1,9 +1,12 @@
 package com.zyj.paocai.product.dao;
 
+import com.zyj.paocai.common.entity.to.es.SkuEsModel;
 import com.zyj.paocai.product.entity.ProductAttrValueEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * spu属性值
@@ -20,4 +23,6 @@ public interface ProductAttrValueDao extends BaseMapper<ProductAttrValueEntity> 
      * @param spuId
      */
     void deleteBySpuId(@Param("spuId") Long spuId);
+
+    List<SkuEsModel.Attrs> getSearchAttrs(@Param("spuId") Long spuId);
 }

@@ -120,6 +120,11 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }
     }
 
+    /**
+     * 批量获取属性
+     * @param attrIds
+     * @return
+     */
     @Override
     public List<Long> selectSearchAttrIds(List<Long> attrIds) {
         return baseMapper.selectSearchAttrIds(attrIds);

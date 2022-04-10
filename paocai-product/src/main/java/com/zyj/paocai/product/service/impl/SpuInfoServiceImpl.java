@@ -195,11 +195,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         // 3、发送远程调用，库存系统是否有库存
         Map<Long, Boolean> skuStockMap = null;
-        try{
+        try {
             R<List<SkuHasStockVo>> r = wareFeignService.getSkuHasStockBatch(skuIds);
-            skuStockMap = r.getData().stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId,SkuHasStockVo::getHasStock));
-        }catch (Exception e){
-            log.error("库存服务查询异常:原因{}",e);
+            skuStockMap = r.getData().stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock));
+        } catch (Exception e) {
+            log.error("库存服务查询异常:原因{}", e);
             throw new RuntimeException(e);
         }
 
@@ -213,9 +213,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             esModel.setCatalogId(sku.getCatalogId());
 
             // 是否有库存
-            if(finalSkuStockMap != null){
+            if (finalSkuStockMap != null) {
                 esModel.setHasStock(finalSkuStockMap.get(sku.getSkuId()));
-            }else{
+            } else {
                 esModel.setHasStock(false);
             }
             // 热度评分，默认0
@@ -235,10 +235,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         // 5、将数据发送给es进行保存，paocai-search
         R r = searchFeignService.productStatusUp(upProducts);
-        if(Constant.SUCCESS_CODE.equals(r.getCode())){
+        if (Constant.SUCCESS_CODE.equals(r.getCode())) {
             // 远程调用成功,修改spu上架状态
             baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_NEW.getCode());
-        }else{
+        } else {
             // 远程调用失败
             // TODO 重复调用问题?接口幂等性,重试机制
             /*
@@ -248,21 +248,18 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     }
 
+    /**
+     * 获取spu相关可搜索属性
+     *
+     * @param spuId
+     * @return
+     */
     private List<SkuEsModel.Attrs> getAttrs(Long spuId) {
-        List<ProductAttrValueEntity> baseAttr = productAttrValueService.baseAttrListForSpu(spuId);
-        List<Long> attrIds = baseAttr.stream().map(attr -> {
-            return attr.getAttrId();
-        }).collect(Collectors.toList());
-        List<Long> searchAttrIds = attrService.selectSearchAttrIds(attrIds);
-        Set<Long> idSet = new HashSet<>(searchAttrIds);
-        List<SkuEsModel.Attrs> attrsList = baseAttr.stream().filter(item -> {
-            return idSet.contains(item.getAttrId());
-        }).map(item -> {
-            SkuEsModel.Attrs attrs1 = new SkuEsModel.Attrs();
-            BeanUtils.copyProperties(item, attrs1);
-            return attrs1;
-        }).collect(Collectors.toList());
-        return attrsList;
+        List<SkuEsModel.Attrs> attrs = productAttrValueService.getSearchAttrs(spuId);
+        if (attrs == null || attrs.size() == 0) {
+            log.info("spu:{}没有相关搜索属性", spuId);
+        }
+        return attrs;
     }
 
     /**

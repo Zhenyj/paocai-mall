@@ -1,6 +1,7 @@
 package com.zyj.paocai.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zyj.paocai.common.entity.to.es.SkuEsModel;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.product.entity.ProductAttrValueEntity;
 
@@ -39,5 +40,11 @@ public interface ProductAttrValueService extends IService<ProductAttrValueEntity
      */
     void updateBaseAttrForSpu(List<ProductAttrValueEntity> entities, Long spuId);
 
+    /**
+     * 获取spu相关可搜索属性
+     * @param spuId
+     * @return
+     */
+    List<SkuEsModel.Attrs> getSearchAttrs( Long spuId);
 }
 

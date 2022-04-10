@@ -392,7 +392,7 @@ public class MallSearchServiceImpl implements MallSearchService {
         attrAgg.subAggregation(attrIdAgg);
         sourceBuilder.aggregation(attrAgg);
 
-        System.out.println(sourceBuilder);
+        log.info(sourceBuilder.toString());
         SearchRequest request = new SearchRequest(new String[]{EsConstant.PRODUCT_INDEX}, sourceBuilder);
         return request;
     }

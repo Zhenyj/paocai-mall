@@ -13,11 +13,23 @@
         <result property="attrSort" column="attr_sort"/>
         <result property="quickShow" column="quick_show"/>
     </resultMap>
+    <resultMap id="SearchAttrs" type="com.zyj.paocai.common.entity.to.es.SkuEsModel$Attrs">
+        <result property="attrId" column="attr_id"/>
+        <result property="attrName" column="attr_name"/>
+        <result property="attrValue" column="attr_value"/>
+    </resultMap>
     <delete id="deleteBySpuId">
         DELETE
         FROM pms_product_attr_value
         WHERE spu_id = #{spuId}
     </delete>
+    <select id="getSearchAttrs" resultMap="SearchAttrs">
+        SELECT pav.attr_id, pav.attr_name, pav.attr_value
+        FROM `pms_product_attr_value` pav
+                 LEFT JOIN pms_attr pa ON pav.attr_id = pa.attr_id
+        WHERE pa.search_type = 1
+          AND pav.spu_id = #{spuId}
+    </select>
 
 
 </mapper>

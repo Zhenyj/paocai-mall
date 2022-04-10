@@ -513,6 +513,7 @@
 <script>
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
+import { getLoginInfo } from '../utils';
 export default {
   name: 'home',
   components: { CommonHeader, CommonFooter },
@@ -564,6 +565,13 @@ export default {
     }
   },
   methods: {
+    // 获取用户登录信息
+    async getLoginInfo () {
+      const loginInfo = await this.$getLoginInfo();
+      if (loginInfo != null) {
+        this.loginInfo = loginInfo;
+      }
+    },
     // 获取首页需要的数据
     async getIndexData () {
       let res = await this.$request({
@@ -618,11 +626,7 @@ export default {
     }
   },
   async created () {
-    const loginInfo = await this.$getLoginInfo();
-    if (loginInfo != null) {
-      this.loginInfo = loginInfo;
-    }
-    console.log(loginInfo);
+    this.getLoginInfo();
     this.getIndexData();
   },
   mounted () {

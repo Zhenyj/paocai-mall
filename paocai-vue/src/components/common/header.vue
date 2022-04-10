@@ -61,7 +61,7 @@
           </li>
           <li
             class="side-nav-menu site-nav-multi-menu"
-            v-if="loginInfo.id"
+            v-if="loginInfo.id != ''"
           >
             <div class="site-nav-menu-hd">
               <div class="site-nav-user">
@@ -93,7 +93,7 @@
                   <div class="login-info-left">
                     <div class="user-head-image">
                       <img
-                        v-if="!loginInfo.header && loginInfo.header != ''"
+                        v-if="loginInfo.id != '' && loginInfo.header != ''"
                         :src="loginInfo.header"
                       >
                       <img
