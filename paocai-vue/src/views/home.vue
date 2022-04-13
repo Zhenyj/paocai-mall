@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="home-page">
     <!-- 头部组件 -->
     <common-header :login-info="loginInfo"></common-header>
     <!-- 主要内容 -->
@@ -545,15 +545,7 @@ export default {
       scrollTop: 0, //屏幕高度
       category: [],
       cateIndex: -1,
-      promoteCarousel: [{
-        url: 'http://www.lyxgxx.cn/public/uploads/attach/2019/06/22/s_5d0d8c761f794.JPG',
-      }, {
-        url: 'http://rule.lyxgxx.cn:8088/UploadFolder/GoodsImg/G2020010300001062_goodsimgs.jpg',
-      }, {
-        url: 'http://rule.lyxgxx.cn:8088/UploadFolder/GoodsImg/G2020112800000265_goodsimgs.jpg',
-      }, {
-        url: 'http://www.lyxgxx.cn/public/uploads/attach/2020/05/23/5ec9250ab3aae.png',
-      }],
+      promoteCarousel: [],
       smallPromoteCarousel: [],
       hotSale: {
         page: 1,
@@ -640,6 +632,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+#home-page {
+  background: 0 36px repeat url(../assets/images/bg.png) !important;
+}
 .top {
   padding-top: 25px;
   height: 125px;
@@ -1459,6 +1454,7 @@ export default {
 
       .mypao-content {
         a {
+          color: #333;
           display: block;
         }
 
@@ -1937,12 +1933,5 @@ export default {
       font-size: 20px;
     }
   }
-}
-</style>
-<style type="text/css">
-html,
-body {
-  height: 2000px;
-  background: 0 36px repeat url(../assets/images/bg.png);
 }
 </style>

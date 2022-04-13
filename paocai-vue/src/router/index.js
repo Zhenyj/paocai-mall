@@ -31,12 +31,12 @@ const globalRoutes = [{
   meta: { title: '注册' }
 }, {
   path: '/search',
-  component: _import('search'),
+  component: _import('search/search'),
   name: 'search',
   meta: { title: '搜索' }
 }, {
   path: '/product',
-  component: _import('product'),
+  component: _import('product/product'),
   name: 'product',
   meta: { title: '商品' }
 }]
