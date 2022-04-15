@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  **/
 
 @Configuration
-public class PaocaimallElasticSearchConfig {
+public class ElasticSearchConfig {
 
     @Value("${elasticsearch.hostname}")
     private String hostname;

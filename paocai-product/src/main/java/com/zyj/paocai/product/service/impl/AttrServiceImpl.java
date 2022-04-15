@@ -74,7 +74,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         if (attrInfoVo == null) {
             return null;
         }
-        attrInfoVo.setCatelogPath(categoryService.getCatelogPath(attrInfoVo.getCatelogId()));
+        attrInfoVo.setCatelogPath(categoryService.getCatalogPath(attrInfoVo.getCatelogId()));
         return attrInfoVo;
     }
 

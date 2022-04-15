@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.to.es.SkuEsModel;
 import com.zyj.paocai.common.utils.R;
-import com.zyj.paocai.search.config.PaocaimallElasticSearchConfig;
+import com.zyj.paocai.search.config.ElasticSearchConfig;
 import com.zyj.paocai.search.constant.EsConstant;
 import com.zyj.paocai.search.feign.ProductFeignService;
 import com.zyj.paocai.search.service.MallSearchService;
@@ -79,7 +79,7 @@ public class MallSearchServiceImpl implements MallSearchService {
         SearchResult result = null;
         try {
             // 检索请求
-            SearchResponse response = client.search(request, PaocaimallElasticSearchConfig.COMMON_OPTIONS);
+            SearchResponse response = client.search(request, ElasticSearchConfig.COMMON_OPTIONS);
             // 分析数据封装成特定格式
             result = buildSearchResult(param, response);
         } catch (IOException e) {

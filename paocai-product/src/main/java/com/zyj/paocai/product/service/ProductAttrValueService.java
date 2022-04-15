@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyj.paocai.common.entity.to.es.SkuEsModel;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.product.entity.ProductAttrValueEntity;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
 
 import java.util.List;
 import java.util.Map;
@@ -46,5 +47,12 @@ public interface ProductAttrValueService extends IService<ProductAttrValueEntity
      * @return
      */
     List<SkuEsModel.Attrs> getSearchAttrs( Long spuId);
+
+    /**
+     * 获取spu快速展示属性
+     * @param spuId
+     * @return
+     */
+    List<ProductAttrValueEntity> getQuickShowAttrBySpuId(Long spuId);
 }
 

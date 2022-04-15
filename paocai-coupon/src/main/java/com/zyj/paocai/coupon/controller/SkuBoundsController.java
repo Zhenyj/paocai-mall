@@ -26,6 +26,16 @@ public class SkuBoundsController {
     private SkuBoundsService skuBoundsService;
 
     /**
+     * 根据skuId获取sku积分信息
+     * @param skuId
+     * @return
+     */
+    @RequestMapping("/bounds/info")
+    public R<SkuBoundsEntity> getBySkuId(@RequestParam("skuId") Long skuId){
+        SkuBoundsEntity skuBounds = skuBoundsService.getBySkuId(skuId);
+        return R.ok(skuBounds);
+    }
+    /**
      * 列表
      */
     @RequestMapping("/list")
@@ -35,12 +45,11 @@ public class SkuBoundsController {
         return R.ok(page);
     }
 
-
     /**
      * 信息
      */
     @RequestMapping("/info/{id}")
-    public R info(@PathVariable("id") Long id){
+    public R<SkuBoundsEntity> info(@PathVariable("id") Long id){
 		SkuBoundsEntity skuBounds = skuBoundsService.getById(id);
 
         return R.ok(skuBounds);

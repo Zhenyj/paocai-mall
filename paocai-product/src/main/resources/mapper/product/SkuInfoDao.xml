@@ -34,6 +34,25 @@
             LIMIT #{limit}
         OFFSET #{offset}
     </select>
+    <select id="getSkuDetail" resultType="com.zyj.paocai.common.entity.vo.SkuDetailVo">
+        SELECT sku.sku_id,
+               sku.spu_id,
+               sku.sku_name,
+               sku.sku_desc,
+               sku.catalog_id,
+               brand.`name` brand_name,
+               sku.brand_id,
+               sku.sku_default_img,
+               sku.sku_title,
+               sku.sku_subtitle,
+               sku.price,
+               sku.sale_count,
+               spu.weight
+        FROM pms_sku_info sku
+                 LEFT JOIN pms_spu_info spu ON sku.spu_id = spu.id
+                 LEFT JOIN pms_brand brand ON sku.brand_id = brand.brand_id
+        WHERE sku.sku_id = #{skuId}
+    </select>
 
 
 </mapper>

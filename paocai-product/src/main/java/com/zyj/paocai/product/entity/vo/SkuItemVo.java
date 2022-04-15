@@ -1,8 +1,8 @@
 package com.zyj.paocai.product.entity.vo;
 
+import com.zyj.paocai.common.entity.vo.SkuBoundsVo;
+import com.zyj.paocai.common.entity.vo.SkuDetailVo;
 import com.zyj.paocai.product.entity.SkuImagesEntity;
-import com.zyj.paocai.product.entity.SkuInfoEntity;
-import com.zyj.paocai.product.entity.SpuInfoDescEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class SkuItemVo {
     /** sku基本信息 */
-    private SkuInfoEntity info;
+    private SkuDetailVo skuInfo;
 
     /** 是否有库存 */
     private boolean hasStock = true;
@@ -25,12 +25,19 @@ public class SkuItemVo {
     /** spu销售属性组合 */
     private List<SkuItemSaleAttrVo> saleAttrs;
 
-    /** spu描述信息 */
-    private SpuInfoDescEntity desp;
+    /** spu描述图片信息 */
+    private List<String> descImages;
+
+    /** spu介绍参数(快速展示) */
+    private List<SpuBaseAttrVo> introduceParameters;
 
     /** spu规格参数信息 */
     private List<SpuItemAttrGroupVo> groupAttrs;
 
+    /** 商品spu积分 */
+    private SkuBoundsVo bounds;
+
+    /** 秒杀信息 */
     private SeckillInfoVo seckillInfo;
 
     @Data

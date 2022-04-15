@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyj.paocai.common.entity.vo.CatalogBaseVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.product.dao.CategoryDao;
@@ -77,12 +78,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
         redisTemplate.opsForValue().set(CATEGORY_LIST_TREE, JSON.toJSONString(list),
-                60*60*24*30, TimeUnit.SECONDS);
+                60 * 60 * 24 * 30, TimeUnit.SECONDS);
         return list;
     }
 
     @Override
-    public Long[] getCatelogPath(Long catelogId) {
+    public Long[] getCatalogPath(Long catelogId) {
         Long catId = catelogId;
         List<Long> list = new ArrayList<>(3);
         list.add(catelogId);
@@ -171,6 +172,32 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             // 更新
             categoryBrandRelationService.updateCategory(category);
         }
+    }
+
+    /**
+     * 获取分类路径
+     *
+     * @param catalogId
+     * @return
+     */
+    @Override
+    public List<CatalogBaseVo> getCatalogBaseVoPath(Long catalogId) {
+        Long catId = catalogId;
+        List<CatalogBaseVo> list = new ArrayList<>(3);
+        while (true) {
+            CategoryEntity entity = getById(catId);
+            if (entity == null) {
+                throw new RuntimeException("不存在分类id：" + catId + "的分类");
+            }
+            list.add(new CatalogBaseVo(entity.getCatId(), entity.getName()));
+            Long parentCid = entity.getParentCid();
+            if (parentCid != null && parentCid == 0) {
+                break;
+            }
+            catId = parentCid;
+        }
+        Collections.reverse(list);
+        return list;
     }
 
     /**

@@ -87,7 +87,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         vo.setDescript(attrGroupEntity.getDescript());
         vo.setIcon(attrGroupEntity.getIcon());
         vo.setSort(attrGroupEntity.getSort());
-        vo.setCatelogPath(categoryService.getCatelogPath(attrGroupEntity.getCatelogId()));
+        vo.setCatelogPath(categoryService.getCatalogPath(attrGroupEntity.getCatelogId()));
 
         return vo;
     }

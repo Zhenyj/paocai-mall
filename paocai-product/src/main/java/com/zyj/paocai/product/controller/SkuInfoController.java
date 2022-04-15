@@ -1,16 +1,17 @@
 package com.zyj.paocai.product.controller;
 
-import com.zyj.paocai.product.entity.SkuInfoEntity;
-import com.zyj.paocai.product.service.SkuInfoService;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.product.entity.SkuInfoEntity;
+import com.zyj.paocai.product.entity.vo.SkuItemVo;
+import com.zyj.paocai.product.service.SkuInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -25,6 +26,12 @@ import java.util.Map;
 public class SkuInfoController {
     @Autowired
     private SkuInfoService skuInfoService;
+
+    @RequestMapping("/item")
+    public SkuItemVo searchSku(@RequestParam("skuId") Long skuId) throws ExecutionException, InterruptedException {
+        SkuItemVo vo =  skuInfoService.getItem(skuId);
+        return vo;
+    }
 
     @PostMapping("/skunameinfos")
     R<Map<Long,String>> getSkuNameInfos(@RequestBody List<Long> skuIds){

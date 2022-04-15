@@ -16,5 +16,12 @@ import java.util.Map;
 public interface SkuBoundsService extends IService<SkuBoundsEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 根据skuId获取sku积分信息
+     * @param skuId
+     * @return
+     */
+    SkuBoundsEntity getBySkuId(Long skuId);
 }
 

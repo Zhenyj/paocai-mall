@@ -2,7 +2,7 @@ package com.zyj.paocai.search.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.zyj.paocai.common.entity.to.es.SkuEsModel;
-import com.zyj.paocai.search.config.PaocaimallElasticSearchConfig;
+import com.zyj.paocai.search.config.ElasticSearchConfig;
 import com.zyj.paocai.search.constant.EsConstant;
 import com.zyj.paocai.search.service.ProductSaveService;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class ProductSaveServiceImpl implements ProductSaveService {
             bulkRequest.add(indexRequest);
         }
         BulkResponse bulk =
-                restHighLevelClient.bulk(bulkRequest, PaocaimallElasticSearchConfig.COMMON_OPTIONS);
+                restHighLevelClient.bulk(bulkRequest, ElasticSearchConfig.COMMON_OPTIONS);
 
         // TODO 如果批量错误
         boolean b = bulk.hasFailures();

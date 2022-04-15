@@ -28,4 +28,14 @@ public class SkuBoundsServiceImpl extends ServiceImpl<SkuBoundsDao, SkuBoundsEnt
         return new PageUtils(page);
     }
 
+    /**
+     * 根据skuId获取sku积分信息
+     * @param skuId
+     * @return
+     */
+    @Override
+    public SkuBoundsEntity getBySkuId(Long skuId) {
+        return baseMapper.selectOne(new QueryWrapper<SkuBoundsEntity>().eq("sku_id",skuId));
+    }
+
 }
