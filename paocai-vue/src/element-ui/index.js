@@ -76,7 +76,11 @@ import {
   Loading,
   MessageBox,
   Message,
-  Notification
+  Notification,
+  Empty,
+  Descriptions,
+  DescriptionsItem,
+  Result,
 } from 'element-ui';
 
 Vue.use(Pagination);
@@ -152,6 +156,10 @@ Vue.use(Calendar);
 Vue.use(Backtop);
 Vue.use(PageHeader);
 Vue.use(CascaderPanel);
+Vue.use(Empty);
+Vue.use(Descriptions);
+Vue.use(DescriptionsItem);
+Vue.use(Result);
 
 Vue.use(Loading.directive);
 

@@ -1,0 +1,489 @@
+{
+  "products": [
+    {
+      "skuId": 1690,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 墨羽 8GB+128GB",
+      "skuPrice": 2399,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1691,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 墨羽 8GB+256GB",
+      "skuPrice": 2599,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1692,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 墨羽 12GB+256GB",
+      "skuPrice": 2799,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1693,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 幽芒 8GB+128GB",
+      "skuPrice": 2399,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1694,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 幽芒 8GB+256GB",
+      "skuPrice": 2599,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1695,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 幽芒 12GB+256GB",
+      "skuPrice": 2799,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1696,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 银迹 8GB+128GB",
+      "skuPrice": 2399,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1697,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 银迹 8GB+256GB",
+      "skuPrice": 2599,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1698,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 银迹 12GB+256GB",
+      "skuPrice": 2799,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1699,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 幻境 8GB+128GB",
+      "skuPrice": 2399,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1700,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 幻境 8GB+256GB",
+      "skuPrice": 2599,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    },
+    {
+      "skuId": 1701,
+      "spuId": 1671,
+      "skuTitle": "Redmi K50 幻境 12GB+256GB",
+      "skuPrice": 2799,
+      "skuImg": "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+      "saleCount": 0,
+      "hasStock": true,
+      "hotScore": 0,
+      "brandId": 2,
+      "catalogId": 225,
+      "brandName": "红米",
+      "brandImg": null,
+      "catalogName": "手机",
+      "attrs": [
+        {
+          "attrId": 1292,
+          "attrName": "CPU",
+          "attrValue": "天玑8100"
+        },
+        {
+          "attrId": 1281,
+          "attrName": "上市年份",
+          "attrValue": "2022"
+        },
+        {
+          "attrId": 1282,
+          "attrName": "品牌",
+          "attrValue": "红米"
+        },
+        {
+          "attrId": 1290,
+          "attrName": "屏幕刷新率",
+          "attrValue": "120Hz"
+        }
+      ]
+    }
+  ],
+  "pageNum": 1,
+  "total": 12,
+  "totalPages": 0,
+  "brands": [
+    {
+      "brandId": 2,
+      "brandName": "红米",
+      "brandImg": null
+    }
+  ],
+  "attrs": [
+    {
+      "attrId": 1281,
+      "attrName": "上市年份",
+      "attrValue": ["2022"]
+    },
+    {
+      "attrId": 1282,
+      "attrName": "品牌",
+      "attrValue": ["红米"]
+    },
+    {
+      "attrId": 1290,
+      "attrName": "屏幕刷新率",
+      "attrValue": ["120Hz"]
+    },
+    {
+      "attrId": 1292,
+      "attrName": "CPU",
+      "attrValue": ["天玑8100"]
+    }
+  ],
+  "catalogs": [
+    {
+      "catalogId": 225,
+      "catalogName": "手机"
+    }
+  ],
+  "pageNavs": null,
+  "navs": [],
+  "attrIds": []
+}
