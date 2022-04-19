@@ -70,5 +70,6 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
      * @return
      */
     List<SkuInfoEntity> getHotSales(Integer pageSize, Integer page);
+
 }
 

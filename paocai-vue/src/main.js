@@ -10,6 +10,7 @@ import router from '@/router'
 import { request } from '@/utils/request'
 import { getLoginInfo } from './utils/index'
 
+
 Vue.use(VueCookie)
 
 Vue.prototype.$request = request;

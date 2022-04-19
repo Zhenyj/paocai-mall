@@ -75,6 +75,11 @@ public class SkuDetailVo implements Serializable {
     private Long saleCount;
 
     /**
+     * 评论数
+     */
+    private Long commentCount;
+
+    /**
      * 重量
      */
     private BigDecimal weight;

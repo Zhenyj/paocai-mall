@@ -19,7 +19,7 @@ public class EsConstant {
      */
     public static final Integer NO_STOCK = 0;
 
-    public static final Integer PAGE_SIZE = 16;
+    public static final Integer PAGE_SIZE = 30;
 
 
 }

@@ -10,10 +10,10 @@ PUT paocai_product
       },
       "skuTitle": {
         "type": "text",
-        "analyzer": "ik_smart"
+        "analyzer": "ik_max_word"
       },
       "skuPrice": {
-        "type": "keyword"
+        "type": "double"
       },
       "skuImg": {
         "type": "keyword"
@@ -25,6 +25,9 @@ PUT paocai_product
         "type": "boolean"
       },
       "hotScore": {
+        "type": "long"
+      },
+      "commentCount": {
         "type": "long"
       },
       "brandId": {

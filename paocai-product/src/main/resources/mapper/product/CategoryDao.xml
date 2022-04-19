@@ -3,7 +3,7 @@
 
 <mapper namespace="com.zyj.paocai.product.dao.CategoryDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zyj.paocai.product.entity.CategoryEntity" id="categoryMap">
         <result property="catId" column="cat_id"/>
         <result property="name" column="name"/>
@@ -15,5 +15,25 @@
         <result property="productUnit" column="product_unit"/>
         <result property="productCount" column="product_count"/>
     </resultMap>
+    <sql id="baseColumn">
+        category
+        .
+        cat_id
+        ,
+	category.`name`,
+	category.parent_cid,
+	category.cat_level,
+	category.show_status,
+	category.sort,
+	category.icon
+    </sql>
+    <select id="getCategoryBySpuId" resultType="com.zyj.paocai.product.entity.CategoryEntity">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        `pms_category` category
+        LEFT JOIN pms_spu_info spu ON category.cat_id = spu.catalog_id
+        WHERE spu.`id`=#{spuId}
+    </select>
 
 </mapper>

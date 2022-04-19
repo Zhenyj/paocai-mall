@@ -201,6 +201,42 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     /**
+     * 根据spuId获取分类信息
+     *
+     * @param spuId
+     * @return
+     */
+    @Override
+    public CategoryEntity getCategoryBySpuId(Long spuId) {
+        CategoryEntity category = categoryDao.getCategoryBySpuId(spuId);
+        if (category == null) {
+            throw new RuntimeException("没有spu相关分类信息,spuId:" + spuId);
+        }
+        return category;
+    }
+
+    /**
+     * 获取同级分类
+     *
+     * @param catalogId
+     * @return
+     */
+    @Override
+    public List<CategoryEntity> getSameLevelCategory(Long catalogId) {
+        CategoryEntity category = getById(catalogId);
+        if (category == null) {
+            throw new RuntimeException("不存在该分类,分类id:" + catalogId);
+        }
+        List<CategoryEntity> list = getSameLevelCategoryByParentId(category.getParentCid());
+        return list;
+    }
+
+    @Override
+    public List<CategoryEntity> getSameLevelCategoryByParentId(Long parentId) {
+        return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", parentId));
+    }
+
+    /**
      * @param categoryEntities
      * @param parentCid
      * @return

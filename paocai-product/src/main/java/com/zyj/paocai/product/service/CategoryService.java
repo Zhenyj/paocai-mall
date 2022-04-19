@@ -57,5 +57,26 @@ public interface CategoryService extends IService<CategoryEntity> {
      * @return
      */
     List<CatalogBaseVo> getCatalogBaseVoPath(Long catalogId);
+
+    /**
+     * 根据spuId获取分类信息
+     * @param spuId
+     * @return
+     */
+    CategoryEntity getCategoryBySpuId(Long spuId);
+
+    /**
+     * 获取同级分类
+     * @param catalogId
+     * @return
+     */
+    List<CategoryEntity> getSameLevelCategory(Long catalogId);
+
+    /**
+     * 根据父类id获取同级分类
+     * @param parentId
+     * @return
+     */
+    List<CategoryEntity> getSameLevelCategoryByParentId(Long parentId);
 }
 

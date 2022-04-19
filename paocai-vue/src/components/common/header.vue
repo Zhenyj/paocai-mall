@@ -93,7 +93,7 @@
                   <div class="login-info-left">
                     <div class="user-head-image">
                       <img
-                        v-if="loginInfo.id != '' && loginInfo.header != ''"
+                        v-if="loginInfo.id != '' && loginInfo.header && loginInfo.header != ''"
                         :src="loginInfo.header"
                       >
                       <img
@@ -126,7 +126,7 @@
                   href="#"
                   target="_top"
                 >
-                  我的淘宝
+                  我的泡菜
                 </a>
                 <i class="iconfont icon-arrow-down"></i>
               </div>

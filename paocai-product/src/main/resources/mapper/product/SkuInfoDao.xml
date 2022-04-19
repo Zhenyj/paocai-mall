@@ -16,42 +16,71 @@
         <result property="skuSubtitle" column="sku_subtitle"/>
         <result property="price" column="price"/>
         <result property="saleCount" column="sale_count"/>
+        <result property="commentCount" column="comment_count"/>
     </resultMap>
+    <sql id="baseColumn">
+        sku
+        .
+        `sku_id`
+        ,sku.`spu_id`,
+               sku.`sku_name`,
+               sku.`sku_desc`,
+               sku.`catalog_id`,
+               sku.`brand_id`,
+               sku.`sku_default_img`,
+               sku.`sku_title`,
+               sku.`sku_subtitle`,
+               sku.`price`,
+               sku.`sale_count`,
+            sku.`comment_count`
+    </sql>
     <select id="getHotSales" resultType="com.zyj.paocai.product.entity.SkuInfoEntity">
-        SELECT `sku_id`,
-               `spu_id`,
-               `sku_name`,
-               `sku_desc`,
-               `catalog_id`,
-               `brand_id`,
-               `sku_default_img`,
-               `sku_title`,
-               `sku_subtitle`,
-               `price`,
-               `sale_count`
-        FROM `pms_sku_info`
-        ORDER BY `sku_id` DESC
-            LIMIT #{limit}
+        SELECT
+        <include refid="baseColumn"/>
+        FROM `pms_sku_info` AS sku
+        ORDER BY sku.`sku_id` DESC
+        LIMIT #{limit}
         OFFSET #{offset}
     </select>
     <select id="getSkuDetail" resultType="com.zyj.paocai.common.entity.vo.SkuDetailVo">
-        SELECT sku.sku_id,
-               sku.spu_id,
-               sku.sku_name,
-               sku.sku_desc,
-               sku.catalog_id,
-               brand.`name` brand_name,
-               sku.brand_id,
-               sku.sku_default_img,
-               sku.sku_title,
-               sku.sku_subtitle,
-               sku.price,
-               sku.sale_count,
-               spu.weight
+        SELECT<include refid="baseColumn"/>,
+        spu.`weight`
         FROM pms_sku_info sku
-                 LEFT JOIN pms_spu_info spu ON sku.spu_id = spu.id
-                 LEFT JOIN pms_brand brand ON sku.brand_id = brand.brand_id
+        LEFT JOIN pms_spu_info spu ON sku.spu_id = spu.id
+        LEFT JOIN pms_brand brand ON sku.brand_id = brand.brand_id
         WHERE sku.sku_id = #{skuId}
+    </select>
+    <select id="searchSkuByKeyword" resultType="com.zyj.paocai.product.entity.SkuInfoEntity">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        pms_sku_info AS sku
+        WHERE
+        sku_name LIKE CONCAT( '%', #{keyword}, '%' ) UNION
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        pms_sku_info AS sku
+        WHERE
+        sku_title LIKE CONCAT( '%', #{keyword}, '%' ) UNION
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        pms_sku_info AS sku
+        WHERE
+        sku_subtitle LIKE CONCAT( '%', #{keyword}, '%' ) UNION
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        pms_sku_info AS sku LEFT JOIN pms_brand AS brand ON sku.brand_id = brand.brand_id
+        WHERE brand.`name` LIKE CONCAT( '%', #{keyword}, '%' )
+    </select>
+    <select id="searchSkuByCatalogId" resultType="com.zyj.paocai.product.entity.SkuInfoEntity">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        pms_sku_info AS sku
+        WHERE sku.`catalog_id`= #{catalogId}
     </select>
 
 

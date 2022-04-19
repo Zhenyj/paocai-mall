@@ -21,6 +21,8 @@ management:
     web:
       exposure:
         include: '*'
-feign:
-  sentinel:
-    enabled: true
+paocai:
+  thread:
+    core-pool-size: 20
+    maximum-pool-size: 200
+    keep-alive-time: 10

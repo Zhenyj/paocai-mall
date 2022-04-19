@@ -68,6 +68,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     BrandService brandService;
 
     @Autowired
+    SpuCommentService spuCommentService;
+
+    @Autowired
     SearchFeignService searchFeignService;
 
     @Autowired
@@ -189,6 +192,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             throw new RuntimeException("不存在spu_id:" + spuId + "对应的sku商品信息");
         }
         List<Long> skuIds = skus.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
+        // 获取品牌信息
+        BrandEntity brand = brandService.getBrandBySpuId(spuId);
+        // 获取分类信息
+        CategoryEntity category = categoryService.getCategoryBySpuId(spuId);
+
 
         // 查询当前sku的所有规格属性，同个spu下的规格属性是一样的，所以只需要查一遍即可
         List<SkuEsModel.Attrs> attrsList = getAttrs(spuId);
@@ -212,19 +220,20 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             esModel.setSkuImg(sku.getSkuDefaultImg());
             esModel.setCatalogId(sku.getCatalogId());
 
+            Long skuId = sku.getSkuId();
             // 是否有库存
             if (finalSkuStockMap != null) {
-                esModel.setHasStock(finalSkuStockMap.get(sku.getSkuId()));
+                esModel.setHasStock(finalSkuStockMap.get(skuId));
             } else {
                 esModel.setHasStock(false);
             }
             // 热度评分，默认0
             esModel.setHotScore(0L);
 
-            // 4、查询品牌和分类的名字信息
-            BrandEntity brand = brandService.getById(sku.getBrandId());
+
+            // 4、品牌和分类的名字信息
             esModel.setBrandName(brand.getName());
-            CategoryEntity category = categoryService.getById(sku.getCatalogId());
+            esModel.setBrandImg(brand.getLogo());
             esModel.setCatalogName(category.getName());
 
             // 设置检索属性

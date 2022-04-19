@@ -11,7 +11,7 @@ import java.util.List;
  * 商品检索条件vo
  *
  * @author lulx
- * @date 2022-01-13 17:25
+ * @date 2022-04-16 15:50
  **/
 @Data
 @AllArgsConstructor
@@ -21,6 +21,7 @@ public class SearchParam {
 
     /** 匹配关键字 */
     private String keyword;
+
     /** 三级分类id */
     private Long catalog3Id;
 
@@ -31,9 +32,6 @@ public class SearchParam {
      * sort=hotScore_asc/desc
      */
     private String sort;
-
-    /** 是否只显示有货 */
-    private Integer hasStock;
 
     /**
      * 价格区间
@@ -48,11 +46,26 @@ public class SearchParam {
      * 商品属性
      * attrs=属性id_属性值
      */
-    private List<String> attrs;
+    private List<SearchResult.AttrVo> attrs;
+
+    /** 是否只显示有货 */
+    private Boolean hasStock;
+
+    /** 泡菜物流 */
+    private Boolean paocaiLogistics;
+
+    /** 货到付款 */
+    private Boolean payOnDeliver;
+
+    /** 新品 */
+    private Boolean newProduct;
+
+    /** 会员专享 */
+    private Boolean vip;
 
     /** 页码 */
     private Integer pageNum = 1;
 
-    /** 原生所有查询属性 */
-    private String queryString;
+    /** 每页数据量 */
+    private Integer pageSize;
 }

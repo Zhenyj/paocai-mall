@@ -1,12 +1,9 @@
 package com.zyj.paocai.product.dao;
 
-import com.zyj.paocai.product.entity.CategoryEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zyj.paocai.product.entity.vo.CategoryVo;
+import com.zyj.paocai.product.entity.CategoryEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * 商品三级分类
@@ -18,4 +15,10 @@ import java.util.List;
 @Mapper
 public interface CategoryDao extends BaseMapper<CategoryEntity> {
 
+    /**
+     * 根据spuId获取分类信息
+     * @param spuId
+     * @return
+     */
+    CategoryEntity getCategoryBySpuId(@Param("spuId") Long spuId);
 }

@@ -16,5 +16,12 @@ import java.util.Map;
 public interface BrandService extends IService<BrandEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 通过spuId获取品牌信息
+     * @param spuId
+     * @return
+     */
+    BrandEntity getBrandBySpuId(Long spuId);
 }
 

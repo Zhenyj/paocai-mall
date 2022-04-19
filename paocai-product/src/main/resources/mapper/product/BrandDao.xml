@@ -3,7 +3,7 @@
 
 <mapper namespace="com.zyj.paocai.product.dao.BrandDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zyj.paocai.product.entity.BrandEntity" id="brandMap">
         <result property="brandId" column="brand_id"/>
         <result property="name" column="name"/>
@@ -13,6 +13,26 @@
         <result property="firstLetter" column="first_letter"/>
         <result property="sort" column="sort"/>
     </resultMap>
+    <sql id="baseColumn">
+        brand
+        .
+        brand_id
+        ,
+            brand.`name`,
+            brand.logo,
+            brand.descript,
+            brand.show_status,
+            brand.first_letter,
+            brand.sort
+    </sql>
+    <select id="getBrandBySpuId" resultType="com.zyj.paocai.product.entity.BrandEntity">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        `pms_brand` brand
+        LEFT JOIN pms_spu_info spu ON brand.brand_id = spu.brand_id
+        WHERE spu.`id`=#{spuId}
+    </select>
 
 
 </mapper>

@@ -14,23 +14,23 @@ public class SkuEsModel {
 
     /**
      * "skuId": {
-     * "type": "long"
+     *      "type": "long"
      * }
      */
     private Long skuId;
 
     /**
      * "spuId": {
-     * "type": "keyword"
+     *      "type": "keyword"
      * }
      */
     private Long spuId;
 
     /**
      * "skuTitle": {
-     * *         "type": "text",
-     * *         "analyzer": "ik_smart"
-     * *       },
+     *      "type": "text",
+     *      "analyzer": "ik_smart"
+     * },
      */
     private String skuTitle;
 
@@ -51,6 +51,7 @@ public class SkuEsModel {
     private String skuImg;
 
     /**
+     * 销量
      * "saleCount": {
      * "type": "long"
      * },
@@ -58,6 +59,7 @@ public class SkuEsModel {
     private Long saleCount;
 
     /**
+     * 是否有库存
      * "hasStock": {
      *      "type": "boolean"
      *  },
@@ -65,11 +67,20 @@ public class SkuEsModel {
     private Boolean hasStock;
 
     /**
+     * 评分
      * "hotScore": {
      *      "type": "long"
      *  },
      */
     private Long hotScore;
+
+    /**
+     * 评论数
+     * "commentNum": {
+     *      "type": "long"
+     * },
+     */
+    private Long commentCount;
 
     /**
      * "brandId": {
@@ -112,6 +123,9 @@ public class SkuEsModel {
      */
     private String catalogName;
 
+    /**
+     * 相关可搜索属性
+     */
     private List<Attrs> attrs;
 
 

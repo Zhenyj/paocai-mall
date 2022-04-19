@@ -6,7 +6,7 @@
       <div class="top">
         <div class="top-wrap">
           <div class="logo">
-            <a href="#">
+            <a href="/">
               <img src="../../assets/logo.png">
             </a>
           </div>
@@ -37,7 +37,7 @@
                     <button
                       type="button"
                       class="btn-search"
-                      @click="search"
+                      @click="resetSearch"
                     >搜索</button>
                   </div>
                   <div class="search-panel-fields">
@@ -46,8 +46,9 @@
                         <input
                           class="search-combobox-input"
                           id="keyword"
-                          v-model="keyword"
+                          v-model="searchParam.keyword"
                           placeholder=""
+                          @keyup.enter="resetSearch"
                         />
                       </div>
                     </div>
@@ -58,69 +59,128 @@
           </div>
         </div>
       </div>
-      <!-- 面包屑导航 -->
+      <!-- 面包屑导航和已筛选属性 -->
       <div class="crumbs-bar-wrap">
-        <div class="crumbs-bar">
+        <div class="crumbs-bar clearfix">
           <div
-            class="crumbs-nav"
-            v-if="catePath.length>0"
+            class="crumbs-nav clearfix"
+            v-if="searchParam.catalog3Id != '' && catalogs && catalogs.length > 0"
           >
             <el-breadcrumb separator-class="el-icon-arrow-right">
-              <el-breadcrumb-item class="cate-level-one">{{catePath[0].name}}
+              <el-breadcrumb-item class="cate-level-one">
+                {{catalogs[0].catalogName}}
               </el-breadcrumb-item>
-              <el-breadcrumb-item v-if="catePath.length > 1">
+              <el-breadcrumb-item v-if="catalogs.length > 1">
+                {{catalogs[1].catalogName}}
+              </el-breadcrumb-item>
+              <el-breadcrumb-item v-if="catalogs.length>2">
                 <span
                   class=""
                   @mouseenter.self="addMenuOpen"
                   @mouseleave.self="removeMenuOpen"
                 >
                   <span class="menu-drop">
-                    <span class="menu-selected">{{catePath[1].name}}</span><i
+                    <span
+                      class="menu-selected">{{catalogs[2].catalogName}}</span><i
                       class="iconfont icon-arrow-down"
                     ></i>
                   </span>
                   <div
                     class="menu-drop-main"
-                    v-if="catalogs.catalogTwo && catalogs.catalogTwo.length >0"
+                    v-if="catalogThreeList && catalogThreeList.length >0"
                   >
                     <ul class="menu-drop-list">
                       <li
-                        v-for="(item,index) in catalogs.catalogTwo"
+                        v-for="(item,index) in catalogThreeList"
                         :key="index"
                       >
-                        <span>{{item.name}}</span>
-                      </li>
-                    </ul>
-                  </div>
-                </span>
-              </el-breadcrumb-item>
-              <el-breadcrumb-item v-if="catePath.length>2">
-                <span
-                  class=""
-                  @mouseenter.self="addMenuOpen"
-                  @mouseleave.self="removeMenuOpen"
-                >
-                  <span class="menu-drop">
-                    <span class="menu-selected">{{catePath[2].name}}</span><i
-                      class="iconfont icon-arrow-down"
-                    ></i>
-                  </span>
-                  <div
-                    class="menu-drop-main"
-                    v-if="catalogs.catalogThree && catalogs.catalogThree.length >0"
-                  >
-                    <ul class="menu-drop-list">
-                      <li
-                        v-for="(item,index) in catalogs.catalogThree"
-                        :key="index"
-                      >
-                        <span>{{item.name}}</span>
+                        <a
+                          :href="'/search?catalog3Id='+item.catalogId">{{item.catalogName}}</a>
                       </li>
                     </ul>
                   </div>
                 </span>
               </el-breadcrumb-item>
             </el-breadcrumb>
+            <div class="attr-filter-wrap">
+              <ul class="clearfix">
+                <li v-show="brandList.length > 0">
+                  <span
+                    class="crumb-select-item"
+                    :title="brandNames.join('、')"
+                  >
+                    <b>品牌：</b>
+                    <em>{{brandNames.join('、')}}</em>
+                    <i
+                      class="el-icon-close"
+                      @click="removeBrandFilter"
+                    ></i>
+                  </span>
+                </li>
+                <li
+                  v-for="(v,i) in attrList"
+                  :key="i"
+                >
+                  <span
+                    class="crumb-select-item"
+                    :title="v.attrValue.join('、')"
+                  >
+                    <b>{{v.attrName+'：'}}</b>
+                    <em>{{v.attrValue.join('、')}}</em>
+                    <i
+                      class="el-icon-close"
+                      @click="removeAttrFilter(v.attrId)"
+                    ></i>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div
+            class="crumbs-nav clearfix"
+            v-else
+          >
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+              <el-breadcrumb-item>
+                全部结果
+              </el-breadcrumb-item>
+              <el-breadcrumb-item>
+                <b>{{'"'+searchParam.keyword+'"'}}</b>
+              </el-breadcrumb-item>
+            </el-breadcrumb>
+            <div class="attr-filter-wrap clearfix">
+              <ul>
+                <li v-show="brandList.length > 0">
+                  <span
+                    class="crumb-select-item"
+                    :title="brandNames.join('、')"
+                  >
+                    <b>品牌：</b>
+                    <em>{{brandNames.join('、')}}</em>
+                    <i
+                      class="el-icon-close"
+                      @click="removeBrandFilter"
+                    ></i>
+                  </span>
+                </li>
+                <li
+                  v-for="(v,i) in attrList"
+                  :key="i"
+                >
+                  <span
+                    class="crumb-select-item"
+                    :title="v.attrValue.join('、')"
+                  >
+                    <b>{{v.attrName+'：'}}</b>
+                    <em>{{v.attrValue.join('、')}}</em>
+                    <i
+                      class="el-icon-close"
+                      @click="removeAttrFilter(v.attrId)"
+                    ></i>
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -129,7 +189,10 @@
           <!-- 属性筛选条件 -->
           <div class="selector">
             <!-- 品牌 -->
-            <div class="selector-line s-brand">
+            <div
+              class="selector-line s-brand"
+              v-show="brands.length > 0"
+            >
               <div class="sl-wrap">
                 <div class="sl-key">
                   <strong>品牌</strong>
@@ -137,11 +200,17 @@
                 <div class="sl-value">
                   <div class="sl-v-logos">
                     <ul class="value-list">
-                      <li v-for="(item,index) in 16">
-                        <a href=""><img
-                            src="https://img30.360buyimg.com/popshop/jfs/t1/156223/15/22684/3178/61764659Ebfccc8c1/e84d202cc34091a5.jpg"
-                            alt=""
-                          />小米（MI）</a>
+                      <li
+                        v-for="(item,index) in brands"
+                        :key="index"
+                        :class="{'active':brandId.indexOf(item.brandId) != -1}"
+                        @click="filterBrand(item)"
+                      >
+                        <a><span class="brand-img"><img
+                              :src="item.brandImg"
+                              :alt="item.bandName"
+                            /></span><span
+                            class="brand-name">{{item.brandName}}</span></a>
                       </li>
                     </ul>
                   </div>
@@ -157,19 +226,24 @@
               </div>
             </div>
             <!-- 主要筛选属性 -->
-            <div class="selector-line">
+            <div
+              class="selector-line"
+              v-for="(v1,i1) in attrs"
+              :key="i1"
+              v-if="i1 < 4"
+            >
               <div class="sl-wrap">
                 <div class="sl-key">
-                  <strong>CPU</strong>
+                  <strong>{{v1.attrName}}</strong>
                 </div>
                 <div class="sl-value">
                   <div class="sl-v-list">
                     <ul class="value-list">
-                      <li><a href="">骁龙888</a></li>
-                      <li><a href="">骁龙8 Gen 1</a></li>
-                      <li><a href="">骁龙870</a></li>
-                      <li><a href="">天玑8100</a></li>
-                      <li><a href="">天玑9000</a></li>
+                      <li
+                        v-for="(v2,i2) in v1.attrValue"
+                        :key="i2"
+                        @click="filterAttrs(v1.attrId,v1.attrName,v2)"
+                      ><a>{{v2}}</a></li>
                     </ul>
                   </div>
                 </div>
@@ -184,7 +258,10 @@
               </div>
             </div>
             <!-- 更多属性选择 -->
-            <div class="selector-line s-senior">
+            <div
+              class="selector-line s-senior"
+              v-if="attrs.length>4"
+            >
               <div class="sl-wrap">
                 <div class="sl-key">
                   <span>高级选项</span>
@@ -195,13 +272,13 @@
                       <div
                         class="trig-item"
                         ref="trig-item"
-                        v-for="(item,index) in 6"
-                        :key="index"
-                        :class="{'':index === 0}"
-                        @mouseenter.self="addTrigCurr(index)"
-                        @mouseleave="removeTrigCurr(index)"
+                        v-for="(v1,i1) in attrs"
+                        :key="i1"
+                        v-if="i1 >= 4"
+                        @mouseenter.self="addTrigCurr(i1)"
+                        @mouseleave="removeTrigCurr(i1)"
                       >
-                        <span>充电功率</span>
+                        <span>{{v1.attrName}}</span>
                         <i class="iconfont icon-arrow-down"></i>
                       </div>
                     </div>
@@ -211,22 +288,19 @@
                   <div
                     class="sl-tab-cont-item"
                     ref="sl-tab-cont-item"
-                    v-for="(item,index) in 6"
-                    :key="index"
+                    v-for="(v1,i1) in attrs"
+                    :key="i1"
                     style="display:none"
-                    @mouseenter.self="addTrigCurr(index)"
-                    @mouseleave="removeTrigCurr(index)"
+                    @mouseenter.self="addTrigCurr(i1)"
+                    @mouseleave="removeTrigCurr(i1)"
                   >
                     <div class="sl-v-list">
                       <ul class="value-list">
-                        <li>
-                          <a href="">100W以上</a>
-                        </li>
-                        <li>
-                          <a href="">50-100W</a>
-                        </li>
-                        <li>
-                          <a href="">50W一下</a>
+                        <li
+                          v-for="(v2,i2) in v1.attrValue"
+                          key="i2"
+                        >
+                          <a href="">{{v2}}</a>
                         </li>
                       </ul>
                     </div>
@@ -242,63 +316,90 @@
                 <!-- 过滤选项 -->
                 <div class="filter">
                   <div class="f-line f-line-top">
+                    <!-- 排序 -->
                     <div class="f-sort">
                       <a
-                        href=""
-                        class="curr"
+                        :class="{'curr':sortField==='hotScore'}"
+                        ref="f-sort-type"
+                        @click="changeSort('hotScore','desc')"
                       >
                         <span class="fs-tit">综合</span>
                         <i class="iconfont icon-xiajiang"></i>
                       </a>
-                      <a href="">
+                      <a
+                        :class="{'curr':sortField==='saleCount'}"
+                        ref="f-sort-type"
+                        @click="changeSort('saleCount','desc')"
+                      >
                         <span class="fs-tit">销量</span>
                         <i class="iconfont icon-xiajiang"></i>
                       </a>
-                      <a href="">
+                      <a
+                        :class="{'curr':sortField==='commentCount'}"
+                        ref="f-sort-type"
+                        @click="changeSort('commentCount','desc')"
+                      >
                         <span class="fs-tit">评论数</span>
                         <i class="iconfont icon-xiajiang"></i>
                       </a>
-                      <a href="">
-                        <span class="fs-tit">新品</span>
-                        <i class="iconfont icon-xiajiang"></i>
-                      </a>
-                      <a href="">
+                      <a
+                        :class="{'currSkuPrice':sortField==='skuPrice'}"
+                        ref="f-sort-type"
+                      >
                         <span class="fs-tit">价格</span>
                         <div class="fs-price">
-                          <i class="el-icon-caret-top"></i>
-                          <i class="el-icon-caret-bottom"></i>
+                          <i
+                            class="el-icon-caret-top"
+                            :class="{'active':sortField==='skuPrice' && sortType === 'asc'}"
+                            @click="changeSort('skuPrice','asc')"
+                          ></i>
+                          <i
+                            class="el-icon-caret-bottom"
+                            :class="{'active':sortField==='skuPrice' && sortType === 'desc'}"
+                            @click="changeSort('skuPrice','desc')"
+                          ></i>
                         </div>
                       </a>
+                    </div>
+                    <!-- 价格范围 -->
+                    <div class="price-scope">
+
                     </div>
                   </div>
                   <div class="f-line">
                     <div class="f-feature">
                       <ul>
                         <li>
-                          <el-checkbox v-model="paocaiDeliverChecked">泡菜物流
+                          <el-checkbox v-model="paocaiLogistics">泡菜物流
                           </el-checkbox>
                         </li>
                         <li>
-                          <el-checkbox v-model="payOnDeliverChecked">货到付款
+                          <el-checkbox v-model="payOnDeliver">货到付款
                           </el-checkbox>
                         </li>
                         <li>
-                          <el-checkbox v-model="hasStockChecked">仅显示有货
+                          <el-checkbox v-model="hasStock">仅显示有货
                           </el-checkbox>
                         </li>
                         <li>
-                          <el-checkbox v-model="newChecked">新品</el-checkbox>
+                          <el-checkbox v-model="newProduct">新品
+                          </el-checkbox>
                         </li>
                         <li>
-                          <el-checkbox v-model="vipChecked">会员专享</el-checkbox>
+                          <el-checkbox v-model="vip">会员专享</el-checkbox>
                         </li>
                       </ul>
                     </div>
                   </div>
                 </div>
                 <div
+                  id="product-list"
                   class="product-list"
-                  v-show="products.length>0"
+                  v-loading="loading"
+                  v-loading.body="loading"
+                  v-loading.lock="loading"
+                  element-loading-text="拼命加载中"
+                  element-loading-spinner="el-icon-loading"
                 >
                   <div
                     class="item"
@@ -312,7 +413,7 @@
                       <div class="img-wrapper">
                         <img :src="item.skuImg">
                       </div>
-                      <h4>{{item.skuTitle}}</h4>
+                      <h4 v-html="item.skuTitle"></h4>
                       <p class="info">
                         <span class="price">
                           <i class="iconfont icon-money"></i>
@@ -320,7 +421,8 @@
                         </span>
                       </p>
                       <div class="comment">
-                        <span class="comment-num">5万+</span>条评价
+                        <span
+                          class="comment-num">{{item.commentCount}}</span>条评价
                       </div>
                       <div class="store">
                         <a class="store-name">泡菜官方自营店</a>
@@ -339,7 +441,7 @@
                       :page-sizes="pageSizeList"
                       :page-size="pageSize"
                       layout="total, sizes, prev, pager, next, jumper"
-                      :total="400"
+                      :total="total"
                     >
                     </el-pagination>
                   </div>
@@ -365,7 +467,11 @@ export default {
       loginInfo: {
         id: ''
       },
-      keyword: '',
+      // 请求参数
+      searchParam: {
+        keyword: '',
+        catalog3Id: ''
+      },
       searchTypeIndex: 0,
       searchTypeList: [{
         searchType: 0,
@@ -374,106 +480,44 @@ export default {
         searchType: 1,
         searchTypeName: '店铺'
       }],
-      pageSizeList: [20, 30, 40, 50, 100],
-      pageSize: 20,
+      pageSizeList: [30, 50, 70, 100],
+      pageSize: 30,
       pageNum: 1,
-      total: 400,
+      total: 0,
       totalPages: 0,
-      // 商品果
+      // 商品
       products: [],
       // 筛选属性
       attrs: [],
-      // 相关分类路径的其他分类
-      catalogs: {
-        catId: 2,
-        catLevel: 1,
-        name: '手机',
-        parentCid: 0,
-        productCount: 0,
-        showStatus: 1,
-        sort: 0,
-        catalogTwo: [
-          {
-            catId: 34,
-            catLevel: 2,
-            name: '手机通讯',
-            parentCid: 2,
-            productCount: 0,
-            showStatus: 1,
-            sort: 0
-          },
-          {
-            catId: 35,
-            catLevel: 2,
-            name: '运营商',
-            parentCid: 2,
-            productCount: 0,
-            showStatus: 1,
-            sort: 0
-          },
-          {
-            catId: 36,
-            catLevel: 2,
-            name: '手机配件',
-            parentCid: 2,
-            productCount: 0,
-            showStatus: 1,
-            sort: 0
-          }
-        ],
-        catalogThree: [
-          {
-            catId: 225,
-            catLevel: 3,
-            name: '手机',
-            parentCid: 34,
-            productCount: 0,
-            showStatus: 1,
-            sort: 0
-          },
-          {
-            catId: 226,
-            catLevel: 3,
-            name: '对讲机',
-            parentCid: 34,
-            productCount: 0,
-            showStatus: 1,
-            sort: 0
-          }
-        ]
-      },
-      // 已选择的分类路径
-      catePath: [{
-        catId: 2,
-        catLevel: 1,
-        name: '手机',
-        parentCid: 0,
-        productCount: 0,
-        showStatus: 1,
-        sort: 0
-      }, {
-        catId: 34,
-        catLevel: 2,
-        name: '手机通讯',
-        parentCid: 2,
-        productCount: 0,
-        showStatus: 1,
-        sort: 0
-      }, {
-        catId: 225,
-        catLevel: 3,
-        name: '手机',
-        parentCid: 34,
-        productCount: 0,
-        showStatus: 1,
-        sort: 0
-      }],
+      // 已选择
+      attrList: [],
+      // 已选择的属性id
       attrIds: [],
-      paocaiDeliverChecked: false,
-      payOnDeliverChecked: false,
-      hasStockChecked: false,
-      newChecked: false,
-      vipChecked: false
+      // 相关分类路径的其他分类
+      catalogs: [],
+      // 相关品牌信息
+      brands: [],
+      // 已选择的品牌
+      brandList: [],
+      // 已选择的品牌id
+      brandId: [],
+      // 已选择的品牌名
+      brandNames: [],
+      min: '',
+      max: '',
+      // 泡菜物流
+      paocaiLogistics: false,
+      // 货到付款
+      payOnDeliver: false,
+      // 仅显示有货
+      hasStock: false,
+      // 新品
+      newProduct: false,
+      // 会员专享
+      vip: false,
+      sortField: 'hotScore',
+      sortType: 'desc',
+      loading: true
     }
   },
   methods: {
@@ -491,19 +535,151 @@ export default {
       this.searchTypeList[index] = obj;
       this.$forceUpdate();
     },
-    // 保存滚动值，这是兼容的写法
-    handleScroll () {
-      this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+    // 构造请求参数
+    buildSearchParam () {
+      let searchParam = this.$route.query;
+      searchParam = {
+        ...searchParam,
+        brandId: this.brandId,
+        attrs: this.attrList,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        hasStock: this.hasStock,
+        paocaiLogistics: this.paocaiLogistics,
+        payOnDeliver: this.payOnDeliver,
+        newProduct: this.newProduct,
+        vip: this.vip
+      }
+      // 价格区间
+      let skuPrice = '_';
+      if (this.min != '') {
+        skuPrice = this.min + skuPrice;
+      }
+      if (this.max != '') {
+        skuPrice = skuPrice + this.max;
+      }
+      if (skuPrice != '_') {
+        searchParam.skuPrice = skuPrice;
+      }
+      // 排序
+      if (this.sortField != '' && this.sortType != '') {
+        searchParam.sort = this.sortField + '_' + this.sortType
+      }
+      this.searchParam = searchParam;
+      this.search();
     },
     // 搜索
-    search () {
-      console.log('search...')
+    async search () {
+      if (this.searchParam.keyword == '' && (!this.searchParam.catalog3Id || this.searchParam.catalog3Id == '')) {
+        return;
+      }
+      this.loading = true;
+      try {
+        let res = await this.$request({
+          url: 'search/item',
+          data: this.searchParam,
+          method: 'POST'
+        });
+        let data = res.data;
+        this.products = data.products;
+        this.pageNum = data.pageNum;
+        this.total = data.total;
+        this.totalPages = data.totalPages;
+        this.brands = data.brands;
+        this.catalogs = data.catalogs;
+        this.catalogThreeList = data.catalogThreeList;
+        let attrs = data.attrs;
+        let attrIds = data.attrIds;
+        if (attrIds.length > 0) {
+          // 过滤掉已选择的属性
+          attrs = attrs.filter(attr => {
+            return attrIds.indexOf(attr.attrId) === -1;
+          });
+        }
+        this.attrs = attrs;
+        this.attrIds = attrIds;
+      } finally {
+        setTimeout(() => {
+          this.loading = false;
+        }, 300);
+      }
+    },
+    resetSearch () {
+      window.location.href = "/search?keyword=" + this.searchParam.keyword;
+    },
+    // 过滤品牌
+    filterBrand (brand) {
+      let brandList = this.brandList;
+      let index = -1;
+      brandList.forEach((v1, i1) => {
+        if (v1.brandId === brand.brandId) {
+          index = i1;
+        }
+      })
+      if (index === -1) {
+        brandList.push(brand);
+      } else {
+        // 截去品牌id
+        brandList = brandList.slice(0, index).concat(brandList.slice(index + 1, brandList.length));
+      }
+      this.brandList = brandList;
+      let brandId = [];
+      let brandNames = [];
+      // 品牌
+      if (brandList.length > 0) {
+        this.brandList.forEach((v, i) => {
+          brandId.push(v.brandId);
+          brandNames.push(v.brandName);
+        });
+      }
+      this.brandId = brandId;
+      this.searchParam.brandId = brandId;
+      this.brandNames = brandNames;
+      this.search();
+    },
+    removeBrandFilter () {
+      this.brandList = [];
+      this.brandId = [];
+      this.searchParam.brandId = [];
+      this.search();
+    },
+    // 筛选属性
+    filterAttrs (attrId, attrName, attrValue) {
+      // 单选
+      let attr = {};
+      attr.attrId = attrId;
+      attr.attrName = attrName;
+      attr.attrValue = [attrValue];
+      let attrList = this.attrList;
+      attrList.push(attr);
+      this.attrList = attrList;
+      this.searchParam.attrs = attrList;
+      this.search();
+    },
+    removeAttrFilter (attrId) {
+      let attrList = this.attrList;
+      attrList = attrList.filter(item => {
+        return item.attrId != attrId;
+      })
+      this.attrList = attrList;
+      this.searchParam.attrs = attrList;
+      this.search();
+    },
+    changeSort (sortField, sortType) {
+      this.sortField = sortField;
+      this.sortType = sortType;
+      this.searchParam.sort = sortField + '_' + sortType;
+      this.search();
     },
     handleSizeChange (val) {
-      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.searchParam.pageSize = val;
+      this.search();
     },
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`);
+      this.pageNum = val;
+      this.searchParam.pageNum = val;
+      this.search();
     },
     // 分类路径选择显示
     addMenuOpen (e) {
@@ -517,7 +693,6 @@ export default {
     addTrigCurr (index) {
       this.$refs['trig-item'][index].classList.add("trig-curr");
       let items = this.$refs['sl-tab-cont-item']
-      console.log(items);
       for (let item of items) {
         item.style.display = "none";
       }
@@ -530,14 +705,15 @@ export default {
   },
   created () {
     this.getLoginInfo();
-    const searchResult = require('../../assets/search_result.json');
-    this.products = searchResult.products
-    this.pageNum = searchResult.pageNum
-    this.total = searchResult.total
-    this.totalPages = searchResult.totalPages
-    this.brands = searchResult.brands
-    this.attrs = searchResult.attrs
-    this.attrIds = searchResult.attrIds
+    this.buildSearchParam();
+  },
+  computed: {
+  },
+  watch: {
+    hasStock (val) {
+      this.searchParam.hasStock = val;
+      this.search();
+    }
   }
 }
 </script>
@@ -697,8 +873,10 @@ export default {
                     text-indent: 10px;
                     height: 40px;
                     line-height: 40px;
-                    width: 460px;
+                    width: 624px;
                     border: none;
+                    border-radius: 0 20px 20px 0;
+                    padding-right: 90px;
                     outline: 0;
                     background: #fff;
                     color: #000;
@@ -940,14 +1118,17 @@ export default {
     padding-left: 15px;
     z-index: 6;
     .crumbs-nav {
-      height: 35px;
       padding-top: 5px;
       font-family: "microsoft yahei";
+      // display: flex;
+      // flex-direction: row;
+      // justify-content: flex-start;
+      // flex-wrap: wrap;
       /deep/ .el-breadcrumb {
-        display: flex;
-        justify-content: flex-start;
-        flex-direction: row;
-        align-items: center;
+        height: 35px;
+        line-height: 35px;
+        float: left;
+        margin-right: 15px;
       }
       .cate-level-one {
         font-size: 18px;
@@ -974,7 +1155,7 @@ export default {
       }
       .menu-drop-main {
         position: absolute;
-        top: 20px;
+        top: 29px;
         left: 0;
         width: 340px;
         display: none;
@@ -989,14 +1170,14 @@ export default {
           li {
             width: 100px;
             margin-right: 10px;
-            span {
+            a {
               display: block;
               height: 25px;
               line-height: 25px;
               font-size: 12px;
               cursor: pointer;
             }
-            span:hover {
+            a:hover {
               color: #f40;
             }
           }
@@ -1011,6 +1192,7 @@ export default {
           font-size: 12px;
           cursor: pointer;
           position: relative;
+          background-color: #fff;
         }
         .iconfont::before {
           color: #f40;
@@ -1032,6 +1214,61 @@ export default {
       /deep/ .el-icon-arrow-right {
         font-size: 14px;
       }
+      .attr-filter-wrap {
+        ul {
+          li {
+            float: left;
+            height: 35px;
+            display: flex;
+            align-items: center;
+          }
+          .crumb-select-item {
+            float: left;
+            position: relative;
+            border: 1px solid #ddd;
+            font-size: 12px;
+            cursor: pointer;
+            background: #f3f3f3;
+            padding-right: 25px;
+            padding-left: 5px;
+            margin-right: 10px;
+            height: 24px;
+            line-height: 24px;
+
+            span {
+              height: 24px;
+              line-height: 24px;
+            }
+
+            b {
+              font-weight: 400;
+            }
+            em {
+              color: #e4393c;
+              font-style: normal;
+            }
+            .el-icon-close {
+              position: absolute;
+              right: -1px;
+              top: -1px;
+              height: 24px;
+              width: 24px;
+              line-height: 24px;
+              text-align: center;
+              font-size: 14px;
+            }
+          }
+          .crumb-select-item:hover {
+            border-color: #e4393c;
+            background: #fff;
+          }
+
+          .crumb-select-item:hover .el-icon-close {
+            background-color: #e4393c;
+            color: #fff;
+          }
+        }
+      }
     }
   }
 }
@@ -1044,6 +1281,8 @@ export default {
       border-top: 1px solid #ddd;
       background: #fff;
       margin-bottom: 10px;
+      font: 12px/150% tahoma, arial, Microsoft YaHei, Hiragino Sans GB,
+        "\u5b8b\u4f53", sans-serif;
       .selector-line {
         .sl-wrap {
           line-height: 34px;
@@ -1086,7 +1325,6 @@ export default {
 
                   a {
                     display: block;
-                    border: 1px solid #fff;
                     height: 46px;
                     width: 114px;
                     text-overflow: ellipsis;
@@ -1094,9 +1332,16 @@ export default {
                     color: #005aa0;
                     line-height: 48px;
                     overflow: unset;
-                    img {
-                      margin: 5px 6px;
-                      vertical-align: top;
+                    span {
+                      display: inline-block;
+                      height: 46px;
+                      width: 114px;
+                      img {
+                        height: 34px;
+                        max-width: 100px;
+                        margin: 5px 6px;
+                        vertical-align: top;
+                      }
                     }
                   }
                   a:hover {
@@ -1110,8 +1355,12 @@ export default {
                   border-color: #f40;
                   box-shadow: 2px 2px 3px rgb(0 0 0 / 12%);
                 }
-                li:hover img {
-                  margin-left: -114px;
+                li:hover a {
+                  transform: translateX(-100%);
+                }
+                .active {
+                  z-index: 5;
+                  border-color: #f40;
                 }
               }
             }
@@ -1311,8 +1560,8 @@ export default {
                 float: left;
                 padding: 0 9px;
                 height: 23px;
+                line-height: 23px;
                 border: 1px solid #ccc;
-                line-height: 19px;
                 margin-right: -1px;
                 background: #fff;
                 color: #333;
@@ -1345,6 +1594,10 @@ export default {
                 color: #fff !important;
               }
 
+              a.currSkuPrice {
+                border-color: #f40;
+              }
+
               .fs-price {
                 float: right;
                 height: 23px;
@@ -1357,6 +1610,9 @@ export default {
                   height: 8px;
                 }
                 i:hover {
+                  color: #f40;
+                }
+                .active {
                   color: #f40;
                 }
               }
@@ -1395,6 +1651,7 @@ export default {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
+            min-height: 200px;
             .item {
               border-radius: 12px;
               padding: 7px 7px 15px 7px;
@@ -1427,8 +1684,7 @@ export default {
                 h4 {
                   margin-top: 9px;
                   line-height: 22px;
-                  min-height: 22px;
-                  max-height: 44px;
+                  height: 44px;
                   font-size: 16px;
                   color: #111111;
                   font-weight: normal;
@@ -1492,6 +1748,13 @@ export default {
 
             .item:hover h4 {
               color: #ff5500;
+            }
+
+            /deep/ .el-icon-loading {
+              font-size: 40px;
+            }
+            /deep/ .el-loading-text {
+              font-size: 24px;
             }
           }
           .page {

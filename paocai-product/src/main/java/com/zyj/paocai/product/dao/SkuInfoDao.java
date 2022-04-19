@@ -26,4 +26,18 @@ public interface SkuInfoDao extends BaseMapper<SkuInfoEntity> {
      * @return
      */
     SkuDetailVo getSkuDetail(@Param("skuId") Long skuId);
+
+    /**
+     * 通过搜索关键字获取相关sku
+     * @param keyword
+     * @return
+     */
+    List<SkuInfoEntity> searchSkuByKeyword(@Param("keyword") String keyword);
+
+    /**
+     * 通过搜索关键字和三级分类获取相关sku
+     * @param catalogId
+     * @return
+     */
+    List<SkuInfoEntity> searchSkuByCatalogId(@Param("catalogId") Long catalogId);
 }

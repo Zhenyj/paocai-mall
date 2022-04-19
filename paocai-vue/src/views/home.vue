@@ -36,20 +36,20 @@
                 </div>
                 <div class="search-panel">
                   <div class="search-button">
-                    <button
-                      type="button"
+                    <a
                       class="btn-search"
-                      @click="search"
-                    >搜索</button>
+                      :href="'/search?keyword='+keyword"
+                    >搜索</a>
                   </div>
                   <div class="search-panel-fields">
                     <div class="search-combobox">
                       <div class="search-combobox-input-wrap">
                         <input
                           class="search-combobox-input"
-                          id="key"
-                          v-model="key"
+                          id="keyword"
+                          v-model="keyword"
                           placeholder=""
+                          @keyup.enter="search"
                         />
                       </div>
                     </div>
@@ -60,14 +60,14 @@
               <div class="search-ft">
                 <div class="hotword">
                   <div class="search-hots-lines">
-                    <div
+                    <a
                       class="hots-item"
                       v-for="(item,index) in hotWords"
                       :key="index"
-                      @click="searchHot(item)"
+                      :href="'/search?keyword='+item"
                     >
                       {{item}}
-                    </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -104,7 +104,7 @@
           <div class="main-inner">
             <div
               class="category"
-              @mouseout="outCateMenu"
+              @mouseleave="outCateMenu"
             >
               <ul class="category-bd">
                 <li
@@ -112,7 +112,7 @@
                   :class="{'cate-menu-item-on':cateIndex==index}"
                   v-for="(item,index) in category"
                   :key="index"
-                  @mouseover="selectCateMenu(index)"
+                  @mouseenter="selectCateMenu(index)"
                 >{{item.name}}</li>
               </ul>
               <div
@@ -123,7 +123,7 @@
                   class="cate-part"
                   v-for="(item1,index1) in category"
                   :key="index1"
-                  v-show="cateIndex==index1"
+                  v-show="cateIndex===index1"
                 >
                   <div class="cate-detail">
                     <dl
@@ -133,15 +133,14 @@
                     >
                       <dt class="cate-detail-tit">
                         <a
-                          href="#"
+                          :href="'search?catalog3Id='+item2.catId"
                           target="_blank"
                         >{{item2.name}}</a>
                         <i class="iconfont icon-arrow-right"></i>
                       </dt>
                       <dd class="cate-detail-con">
                         <a
-                          href="#"
-                          target="_blank"
+                          :href="'search?catalog3Id='+item3.catId"
                           class="cate-detail-con-lk"
                           v-for="(item3,index3) in item2.children"
                           :key="index3"
@@ -219,7 +218,7 @@
                 >
                   <img
                     class="member-avatar"
-                    v-if="loginInfo.id != '' && loginInfo.header != ''"
+                    v-if="loginInfo.id != '' && loginInfo.header &&  loginInfo.header != ''"
                     :src="loginInfo.header"
                   >
                   <img
@@ -453,29 +452,41 @@
             </span></h3>
         </div>
         <div class="list">
-          <div
-            class="item"
-            v-for="(item,index) in hotSale.hotSales"
-            :key="index"
-          >
-            <a
-              href=""
-              class="hotsale-item"
+          <ul>
+            <li
+              class="item"
+              v-for="(item,index) in hotSale.hotSales"
+              :key="index"
             >
-              <div class="img-wrapper">
-                <img :src="item.skuDefaultImg">
-              </div>
-              <h4>{{item.skuName +' '+ item.skuTitle}}</h4>
-              <p class="info">
-                <span class="price">
-                  <i class="iconfont icon-money"></i>
-                  {{item.price}}
-                </span>
-              </p>
-            </a>
-          </div>
+              <a
+                href=""
+                class="hotsale-item"
+              >
+                <div class="img-wrapper">
+                  <img :src="item.skuDefaultImg">
+                </div>
+                <h4>{{item.skuTitle}}</h4>
+                <p class="info">
+                  <span class="price">
+                    <i class="iconfont icon-money"></i>
+                    {{item.price}}
+                  </span>
+                </p>
+              </a>
+            </li>
+          </ul>
         </div>
-        <div class="hotsale-ft">
+        <div></div>
+        <div
+          class="hotsale-ft"
+          v-show="loading"
+        >
+          <i class="el-icon-loading"></i>
+        </div>
+        <div
+          class="hotsale-ft"
+          v-show="noMore"
+        >
           <i class="hotsale-end">END</i>
         </div>
       </div>
@@ -540,20 +551,22 @@ export default {
         searchType: 2,
         searchTypeName: '泡泡'
       }],
-      key: '',
+      keyword: '',
       hotWords: ['新款连衣裙', '四件套', '潮流T恤', '时尚女鞋', '短裤', '半身裙', '男士外套', '墙纸', '行车记录仪', '新款男鞋', '耳机', '时尚女包', '沙发'],
       scrollTop: 0, //屏幕高度
       category: [],
       cateIndex: -1,
       promoteCarousel: [],
       smallPromoteCarousel: [],
+      maxPage: 5,
       hotSale: {
         page: 1,
         totalPage: 3,
         pageSize: 20,
         total: 20,
         hotSales: []
-      }
+      },
+      loading: false
     }
   },
   methods: {
@@ -595,11 +608,22 @@ export default {
     },
     // 搜索
     search () {
-      console.log('search...')
+      if (this.keyword.trim() === '') {
+        return;
+      }
+      this.$router.push({ name: 'search', query: { keyword: this.keyword } })
     },
     // 保存滚动值，这是兼容的写法
     handleScroll () {
+      console.log(1);
       this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      var wScrollY = window.scrollY; //当前滚动条位置
+      var wInnerH = window.innerHeight; //设备窗口的高度（不会变）
+      var bscrollH = document.body.scrollHeight; //滚动条总高度
+      if (!this.loading && !this.noMore && wScrollY + wInnerH >= bscrollH - 10) {
+        //你需要做的动作
+        this.loadHotSale();
+      }
     },
     selectCateMenu (index) {
       this.cateIndex = index;
@@ -615,6 +639,23 @@ export default {
     },
     toRegist () {
       this.$router.push({ name: 'regist' })
+    },
+    async loadHotSale () {
+      this.loading = true;
+      const page = this.hotSale.page + 1;
+      const pageSize = this.hotSale.pageSize;
+      try {
+        const res = await this.$request({
+          url: 'product/skuinfo/hotsale?page=' + page + '&pageSize=' + pageSize,
+          method: 'GET'
+        });
+        this.hotSale.page = page;
+        this.hotSale.hotSales = this.hotSale.hotSales.concat(res.data);
+      } finally {
+        setTimeout(() => {
+          this.loading = false;
+        }, 2000);
+      }
     }
   },
   async created () {
@@ -627,6 +668,14 @@ export default {
   destroyed () {
     // 离开该页面需要移除这个监听的事件，不然会报错
     window.removeEventListener('scroll', this.handleScroll)
+  },
+  computed: {
+    noMore () {
+      return this.hotSale.page >= this.maxPage;
+    },
+    disabled () {
+      return this.loading || this.noMore()
+    }
   }
 }
 </script>
@@ -756,13 +805,16 @@ export default {
               overflow: hidden;
 
               .btn-search {
+                display: block;
                 font: 12px/1.5 tahoma, arial, "Hiragino Sans GB", "\5b8b\4f53",
                   sans-serif;
                 font-size: 18px;
                 font-weight: 700;
+                text-align: center;
                 color: #fff;
                 cursor: pointer;
-                height: 100%;
+                height: 36px;
+                line-height: 36px;
                 border: none;
                 width: 100%;
                 background-image: linear-gradient(
@@ -788,8 +840,10 @@ export default {
                     text-indent: 10px;
                     height: 40px;
                     line-height: 40px;
-                    width: 460px;
+                    width: 554px;
+                    padding-right: 90px;
                     border: none;
+                    border-radius: 0 20px 20px 0;
                     outline: 0;
                     background: #fff;
                     color: #000;
@@ -950,13 +1004,16 @@ export default {
               overflow: hidden;
 
               .btn-search {
+                display: block;
                 font: 12px/1.5 tahoma, arial, "Hiragino Sans GB", "\5b8b\4f53",
                   sans-serif;
                 font-size: 18px;
                 font-weight: 700;
+                text-align: center;
                 color: #fff;
                 cursor: pointer;
-                height: 100%;
+                height: 36px;
+                line-height: 36px;
                 border: none;
                 width: 100%;
                 background-image: linear-gradient(
@@ -982,8 +1039,9 @@ export default {
                     text-indent: 10px;
                     height: 40px;
                     line-height: 40px;
-                    width: 460px;
+                    width: 554px;
                     border: none;
+                    border-radius: 0 20px 20px 0;
                     outline: 0;
                     background: #fff;
                     color: #000;
@@ -1105,7 +1163,12 @@ export default {
           padding: 6px 0 3px 0;
 
           .cate-menu-item {
+            flex: 1;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
             padding-left: 20px;
+            line-height: 100%;
             cursor: pointer;
           }
 
@@ -1124,7 +1187,7 @@ export default {
           z-index: 999;
           top: 0;
           left: 210px;
-          width: 998px;
+          width: 990px;
           height: 525px;
           background-color: #fff;
           border: 1px solid #f7f7f7;
@@ -1350,6 +1413,7 @@ export default {
             a {
               width: 66px;
               text-align: center;
+              color: #333;
 
               strong {
                 display: block;
@@ -1775,7 +1839,12 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
     min-height: 652px;
-
+    padding-bottom: 10px;
+    ul {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
     .item {
       border-radius: 12px;
       padding: 7px 7px 0 7px;
@@ -1807,13 +1876,14 @@ export default {
         }
 
         h4 {
+          width: 216px;
           margin-top: 9px;
           line-height: 22px;
           height: 44px;
           font-size: 16px;
           color: #111111;
-          font-weight: normal;
           transition: color 0.3s;
+          font-weight: normal;
           overflow: hidden;
         }
 
@@ -1853,6 +1923,7 @@ export default {
     height: 80px;
     background: #fff;
     position: relative;
+    text-align: center;
 
     .hotsale-end {
       position: absolute;
@@ -1884,6 +1955,11 @@ export default {
       border-top: 1px solid #e6e6e6;
       width: 60px;
       top: 50%;
+    }
+
+    .el-icon-loading {
+      font-size: 30px;
+      color: #ccccd0;
     }
   }
 }

@@ -12,12 +12,11 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-
 /**
  * spu信息
  *
  * @author lulx
- * @email 
+ * @email
  * @date 2022-03-15 21:19:43
  */
 @RestController
@@ -28,11 +27,12 @@ public class SpuInfoController {
 
     /**
      * 上架商品
+     *
      * @param spuId
      * @return
      */
     @PostMapping("/{spuId}/up")
-    public R up(@PathVariable("spuId") Long spuId){
+    public R up(@PathVariable("spuId") Long spuId) {
         spuInfoService.up(spuId);
         return R.ok();
     }
@@ -41,8 +41,7 @@ public class SpuInfoController {
      * 列表
      */
     @RequestMapping("/list")
-    
-    public R<PageUtils> list(@RequestParam Map<String, Object> params){
+    public R<PageUtils> list(@RequestParam Map<String, Object> params) {
         PageUtils page = spuInfoService.queryPage(params);
 
         return R.ok(page);
@@ -53,9 +52,8 @@ public class SpuInfoController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-    
-    public R info(@PathVariable("id") Long id){
-		SpuInfoEntity spuInfo = spuInfoService.getById(id);
+    public R info(@PathVariable("id") Long id) {
+        SpuInfoEntity spuInfo = spuInfoService.getById(id);
 
         return R.ok(spuInfo);
     }
@@ -64,8 +62,8 @@ public class SpuInfoController {
      * 新增商品
      */
     @RequestMapping("/save")
-    public R save(@RequestBody SpuSaveVo vo){
-		spuInfoService.saveSpuInfo(vo);
+    public R save(@RequestBody SpuSaveVo vo) {
+        spuInfoService.saveSpuInfo(vo);
 
         return R.ok();
     }
@@ -74,9 +72,8 @@ public class SpuInfoController {
      * 修改
      */
     @RequestMapping("/update")
-    
-    public R update(@RequestBody SpuInfoEntity spuInfo){
-		spuInfoService.updateById(spuInfo);
+    public R update(@RequestBody SpuInfoEntity spuInfo) {
+        spuInfoService.updateById(spuInfo);
 
         return R.ok();
     }
@@ -85,11 +82,21 @@ public class SpuInfoController {
      * 删除
      */
     @RequestMapping("/delete")
-    
-    public R delete(@RequestBody Long[] ids){
-		spuInfoService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Long[] ids) {
+        spuInfoService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }
 
+    @RequestMapping("/up/test")
+    public R batchUp() {
+        for (int i = 1300; i <= 1665; i++) {
+            try {
+                spuInfoService.up(Long.valueOf(i));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return R.ok();
+    }
 }

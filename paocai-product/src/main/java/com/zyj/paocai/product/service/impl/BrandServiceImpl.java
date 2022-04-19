@@ -9,6 +9,7 @@ import com.zyj.paocai.product.dao.BrandDao;
 import com.zyj.paocai.product.entity.BrandEntity;
 import com.zyj.paocai.product.service.BrandService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,6 +19,9 @@ import java.util.Map;
 @Slf4j
 @Service("brandService")
 public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
+
+    @Autowired
+    BrandDao brandDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -34,6 +38,21 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 通过spuId获取品牌信息
+     *
+     * @param spuId
+     * @return
+     */
+    @Override
+    public BrandEntity getBrandBySpuId(Long spuId) {
+        BrandEntity brand = brandDao.getBrandBySpuId(spuId);
+        if (brand == null) {
+            throw new RuntimeException("没有spu相关品牌信息,spuId:" + spuId);
+        }
+        return brand;
     }
 
 }

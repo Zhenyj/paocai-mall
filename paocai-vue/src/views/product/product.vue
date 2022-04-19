@@ -6,7 +6,7 @@
       <div class="top">
         <div class="top-wrap">
           <div class="logo">
-            <a href="#">
+            <a href="/">
               <img src="../../assets/logo.png">
             </a>
           </div>
@@ -29,6 +29,7 @@
                           class="search-combobox-input"
                           id="keyword"
                           v-model="keyword"
+                          @keyup.enter="search"
                         />
                       </div>
                     </div>
@@ -621,7 +622,7 @@ export default {
     },
     // 搜索
     search () {
-
+      this.$router.push({ name: 'search', query: { keyword: this.keyword } })
     },
     // 商品轮播图往前
     specForward () {
@@ -921,7 +922,8 @@ export default {
                     text-indent: 10px;
                     height: 40px;
                     line-height: 40px;
-                    width: 600px;
+                    width: 700px;
+                    padding-right: 90px;
                     border: none;
                     outline: 0;
                     background: #fff;

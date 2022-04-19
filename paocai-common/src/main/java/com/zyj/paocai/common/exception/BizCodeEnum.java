@@ -44,7 +44,9 @@ public enum BizCodeEnum {
     TOKEN_EXCEPTION(15004,"token无效"),
     // 库存服务
     WARE_SERVICE_EXCEPTION(8000, "库存服务异常"),
-    NO_STOCK_EXCEPTION(8001, "商品库存不足");
+    NO_STOCK_EXCEPTION(8001, "商品库存不足"),
+    // 搜索服务
+    SEARCH_SERVICE_EXCEPTION(13000,"搜索服务异常");
 
     private int code;
     private String msg;
