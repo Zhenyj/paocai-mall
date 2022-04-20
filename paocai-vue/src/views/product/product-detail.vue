@@ -5,7 +5,7 @@
         <div class="desc-wrap">
           <div class="p-parameter">
             <el-descriptions
-              :title="'品牌'+skuInfo.brandName"
+              :title="'品牌：'+skuInfo.brandName"
               :column="3"
             >
               <el-descriptions-item label="商品名称">{{skuInfo.skuName}}

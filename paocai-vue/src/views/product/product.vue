@@ -40,13 +40,22 @@
           </div>
         </div>
       </div>
-      <div v-if="!skuInfo.skuId">
+      <div v-if="!loading &&!skuInfo.skuId">
         <el-empty
           description="暂无商品数据或商品已下架"
           :image-size="400"
         ></el-empty>
       </div>
-      <div v-else>
+      <div
+        v-else
+        class="prod-container"
+        v-loading="loading"
+        v-loading.body="loading"
+        v-loading.lock="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(255, 255, 255)"
+      >
         <!-- 面包屑导航 -->
         <div class="crumb-wrap">
           <div class="w">
@@ -61,14 +70,14 @@
               </el-breadcrumb>
             </div>
             <div class="contact">
-              <div class="contact-item">
-                <a href="">小米官方自营店</a>
+              <div class="contact-item item-name">
+                <a style="font-weight=700">{{skuInfo.brandName}}</a>
               </div>
               <div class="contact-item">
-                <a href=""><i class="iconfont icon-kefu"></i>联系客服</a>
+                <a><i class="iconfont icon-kefu"></i>联系客服</a>
               </div>
               <div class="contact-item">
-                <a href=""><i class="iconfont icon-collection-fill"></i>关注店铺</a>
+                <a><i class="iconfont icon-collection-fill"></i>关注店铺</a>
               </div>
             </div>
           </div>
@@ -82,7 +91,7 @@
               @mouseleave="carouselStart"
             >
               <div class="main-img">
-                <el-image :src="images[carouselIndex].imgUrl">
+                <el-image :src="currImage">
                   <div
                     slot="error"
                     class="image-slot"
@@ -133,11 +142,14 @@
           </div>
           <div class="info-wrap">
             <div class="sku-name">
-              {{skuInfo.skuTitle}}
+              {{skuInfo.skuTitle+' '+ (skuInfo.skuSubtitle?skuInfo.skuSubtitle:'')}}
             </div>
-            <div class="news">
+            <div
+              class="news"
+              v-if="skuInfo.skuSubtitle && skuInfo.skuSubtitle!=''"
+            >
               <div class="item">
-                【品质好物】天玑8100年度旗舰处理器，三星2K直屏，支持光学防抖【点击抢购】<a href="#">查看<i
+                {{skuInfo.skuSubtitle}}<a href="#">查看<i
                     class="el-icon-arrow-right"
                   ></i></a>
               </div>
@@ -177,6 +189,7 @@
                 <div
                   class="address-selector"
                   v-show="showAddSelector"
+                  @mouseleave="showAddSelector = false"
                 >
                   <div class="address-dialog">
                     <el-tabs
@@ -246,7 +259,10 @@
               </dl>
             </div>
             <!-- 积分信息 -->
-            <div class="bounds-wrap">
+            <div
+              class="bounds-wrap"
+              v-if="bounds"
+            >
               <div class="bounds-item grow-bounds">
                 送成长积分<span>{{bounds.growBounds}}</span>
               </div>
@@ -268,7 +284,8 @@
                     :key="i2"
                     class="attr-item"
                     :title="v2.attrValue"
-                    :class="{'selected' : v2.skuIds.indexOf(skuInfo.skuId)!=-1}"
+                    :class="{'selected' : v2.checked}"
+                    @click="changeAttr(v2.checked,i1,i2)"
                   >{{v2.attrValue}}</div>
                 </div>
               </div>
@@ -305,7 +322,7 @@
           <div class="aside">
             <div class="m-aside">
               <div class="mt">
-                <h3>小米官方自营店</h3>
+                <h3>{{skuInfo.brandName}}</h3>
                 <i class="iconfont icon-kefu"></i>
               </div>
               <div class="mc">
@@ -349,236 +366,21 @@ export default {
         id: ''
       },
       keyword: '',
-      skuInfo: {
-        skuId: 1701,
-        spuId: 1671,
-        skuName: "Redmi K50",
-        skuDesc: null,
-        catalogId: 225,
-        catalogPath: [
-          {
-            catalogId: 2,
-            catalogName: "手机"
-          },
-          {
-            catalogId: 34,
-            catalogName: "手机通讯"
-          },
-          {
-            catalogId: 225,
-            catalogName: "手机"
-          }
-        ],
-        brandId: 2,
-        brandName: "红米",
-        skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
-        skuTitle: "Redmi K50 幻境 12GB+256GB",
-        skuSubtitle: "天玑8100 2K柔性直屏 OIS光学防抖 67W快充 5500mAh大电量",
-        price: 2799,
-        saleCount: 0,
-        weight: 0.201
-      },
+      skuId: '',
+      skuInfo: {},
       hasStock: true,
-      images: [
-        {
-          id: 1701,
-          skuId: 1701,
-          imgUrl: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
-          imgSort: null,
-          defaultImg: 1
-        },
-        {
-          id: 1699,
-          skuId: 1701,
-          imgUrl: "https://img11.360buyimg.com/n1/s450x450_jfs/t1/111702/32/25107/323769/623c20f0E5f9362d7/7635640d1df6616a.jpg",
-          imgSort: null,
-          defaultImg: 0
-        },
-        {
-          id: 1700,
-          skuId: 1701,
-          imgUrl: "https://img11.360buyimg.com/n1/s450x450_jfs/t1/115706/11/22118/324010/623c20f0Eb3f5cd60/00aa42fb88c91f8d.jpg",
-          imgSort: null,
-          defaultImg: 0
-        }
-      ],
-      saleAttrs: [
-        {
-          attrId: 1288,
-          attrName: "颜色",
-          attrValues: [
-            {
-              skuIds: "1690,1691,1692",
-              attrValue: "墨羽"
-            },
-            {
-              skuIds: "1699,1700,1701",
-              attrValue: "幻境"
-            },
-            {
-              skuIds: "1693,1694,1695",
-              attrValue: "幽芒"
-            },
-            {
-              skuIds: "1696,1697,1698",
-              attrValue: "银迹"
-            }
-          ]
-        },
-        {
-          attrId: 1291,
-          attrName: "版本",
-          attrValues: [
-            {
-              skuIds: "1692,1695,1698,1701",
-              attrValue: "12GB+256GB"
-            },
-            {
-              skuIds: "1690,1693,1696,1699",
-              attrValue: "8GB+128GB"
-            },
-            {
-              skuIds: "1691,1694,1697,1700",
-              attrValue: "8GB+256GB"
-            }
-          ]
-        }
-      ],
-      descImages: [
-        "https://img30.360buyimg.com/sku/jfs/t1/219151/20/15066/215160/62331980E84bad091/6e2c0a1fa012f009.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/86181/39/22556/233158/62331980Eb2b73503/ccb0de162521a60a.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/116489/7/22678/197566/62331980E2e397502/f12f7a2b34cce02e.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/126774/16/22581/242468/62331980E32ca5223/55a65a8a4244423e.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/117436/2/21571/210196/62331980E63152806/86da06857bd941a0.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/213173/5/14991/105272/62331980Eb1e34009/21e514957140b8ed.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/102195/8/25800/125036/62331980Ee25d766b/d5217b686cf24063.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/191928/25/21570/81977/62331980Ee58d3486/bc380ff04f62b18f.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/115555/31/21890/283461/62331980Eab5294c9/3ed64550c231fd49.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/110338/36/24866/40538/62331980E78555416/5cefd8fc19cc0b57.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/145404/4/25201/108158/62331980Eeb0ff926/8e13dfb746e0308e.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/109832/5/26077/179494/62331980E1b5aefaf/b7ebc96d9adcdd3c.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/102534/5/26071/131879/62331980E921cb07c/c9a9f9d0cf70c7c6.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/109060/28/27344/187444/6250f057E88892a72/bbcc94ad68837671.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/117832/38/22039/106595/62331980E80a9b463/ac93ceaf1dd9fd9e.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/218362/8/14799/138393/62331980E6ce8cf08/b9944df59f172cc0.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/108520/31/25457/221817/62331980E51471709/515855b50577abae.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/97382/19/26288/217420/62331980E5a22e6af/830ca44f7ce96c44.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/88690/6/24872/243920/62331980Eaec8524d/3f1d2f37ad36678c.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/219465/37/15066/168879/62331980E859d45a0/c5c6443e870e0e98.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/214597/4/15046/58798/62331980E65ba4d64/8bfd525e8d9388e1.jpg",
-        "https://img30.360buyimg.com/sku/jfs/t1/113952/34/22208/232990/62331980E1b912e48/1d65be176e68e183.jpg"
-      ],
-      groupAttrs: [
-        {
-          groupName: "基本信息",
-          attrs: [
-            {
-              attrName: "上市年份",
-              attrValue: "2022"
-            },
-            {
-              attrName: "品牌",
-              attrValue: "红米"
-            },
-            {
-              attrName: "入网型号",
-              attrValue: "以官网信息为准"
-            }
-          ]
-        },
-        {
-          groupName: "主体",
-          attrs: [
-            {
-              attrName: "机身宽度",
-              attrValue: "76mm"
-            },
-            {
-              attrName: "机身重量",
-              attrValue: "201g"
-            },
-            {
-              attrName: "机身厚度",
-              attrValue: "8.5mm"
-            },
-            {
-              attrName: "机身长度",
-              attrValue: "163mm"
-            },
-            {
-              attrName: "CPU",
-              attrValue: "天玑8100"
-            }
-          ]
-        },
-        {
-          groupName: "屏幕",
-          attrs: [
-            {
-              attrName: "屏幕尺寸",
-              attrValue: "6.67英寸"
-            },
-            {
-              attrName: "屏幕刷新率",
-              attrValue: "120Hz"
-            }
-          ]
-        }
-      ],
-      introduceParameters: [
-        {
-          attrName: "机身宽度",
-          attrValue: "76mm"
-        },
-        {
-          attrName: "机身重量",
-          attrValue: "201g"
-        },
-        {
-          attrName: "机身厚度",
-          attrValue: "8.5mm"
-        },
-        {
-          attrName: "机身长度",
-          attrValue: "163mm"
-        },
-        {
-          attrName: "CPU",
-          attrValue: "天玑8100"
-        },
-        {
-          attrName: "上市年份",
-          attrValue: "2022"
-        },
-        {
-          attrName: "品牌",
-          attrValue: "红米"
-        },
-        {
-          attrName: "入网型号",
-          attrValue: "以官网信息为准"
-        },
-        {
-          attrName: "屏幕尺寸",
-          attrValue: "6.67英寸"
-        },
-        {
-          attrName: "屏幕刷新率",
-          attrValue: "120Hz"
-        }
-      ],
-      bounds: {
-        id: 12,
-        skuId: 1701,
-        growBounds: 250,
-        buyBounds: 250,
-        work: null
-      },
+      images: [],
+      currImage: '',
+      saleAttrs: [],
+      descImages: [],
+      groupAttrs: [],
+      introduceParameters: [],
+      bounds: null,
       seckillInfo: null,
       // 选购数量
       buyNum: 1,
-      //
-      carouselIndex: 0,
+      // 轮播图当前索引
+      carouselIndex: -1,
       // 轮播时间
       carouselInterval: 4000,
       // 用于定时器
@@ -609,7 +411,8 @@ export default {
         }
       },
       attrTabActiveName: 'province',
-      showAddSelector: false
+      showAddSelector: false,
+      loading: true
     }
   },
   methods: {
@@ -621,11 +424,92 @@ export default {
       }
     },
     // 获取商品详细信息
-    async getSkuInfo () { },
+    async getSkuInfo () {
+      this.loading = true;
+      try {
+        let param = this.$route.query;
+        if (!param.skuId || param.skuId == '') {
+          return;
+        }
+        const skuId = param.skuId;
+        this.skuId = skuId;
+        const res = await this.$request({
+          url: 'product/skuinfo/item?skuId=' + skuId,
+          method: 'GET'
+        });
+        if (res.code !== 200) {
+          this.$message({
+            type: 'info',
+            message: res.msg
+          });
+        }
+        const data = res.data;
+        this.skuInfo = data.skuInfo;
+        if (data.bounds) {
+          this.bounds = data.bounds;
+        }
+        this.descImages = data.descImages;
+        this.groupAttrs = data.groupAttrs;
+        this.hasStock = data.hasStock;
+        this.images = data.images;
+        if (data.images.length > 0) {
+          this.carouselIndex = 0;
+        }
+        this.introduceParameters = data.introduceParameters;
+        let saleAttrs = data.saleAttrs;
+        if (saleAttrs.length > 0) {
+          saleAttrs.forEach((v1, i1) => {
+            v1.attrValues.forEach((v2, i2) => {
+              if (v2.skuIds.indexOf(skuId) !== -1) {
+                v2.checked = true;
+              } else {
+                v2.checked = false;
+              }
+            });
+          });
+        }
+        this.saleAttrs = saleAttrs;
+        this.seckillInfo = data.seckillInfo;
+      } finally {
+        this.loading = false;
+      }
+    },
     // 搜索
     search () {
       if (this.keyword.trim() !== '') {
         this.$router.push({ name: 'search', query: { keyword: this.keyword } })
+      }
+    },
+    changeAttr (checked, index1, index2) {
+      if (checked) {
+        return;
+      }
+      let saleAttrs = this.saleAttrs;
+      try {
+        let skuIds = saleAttrs[index1].attrValues[index2].skuIds.split(',');
+        if (skuIds.length > 0) {
+          saleAttrs.forEach((v1, i1) => {
+            if (i1 !== index1) {
+              v1.attrValues.forEach((v2, i2) => {
+                if (v2.checked) {
+                  skuIds = v2.skuIds.split(',').filter(v3 => {
+                    return skuIds.indexOf(v3) !== -1;
+                  })
+                  // break----用return false;
+                  // continue --用return true; 
+                  return false;
+                }
+              });
+            }
+          });
+          if (skuIds.length === 1) {
+            window.location.href = "/product?skuId=" + skuIds[0];
+            return;
+          }
+        }
+        this.$message.error('商品数据错误或商品已被下架');
+      } catch (e) {
+        this.$message.error('商品数据错误或商品已被下架');
       }
     },
     // 商品轮播图往前
@@ -816,6 +700,23 @@ export default {
       this.addrForm.region.name = region;
       this.addrForm.region.index = index;
       this.showAddSelector = false;
+    },
+    //控制页面 弹层显示时调用 noScroll()停止页面滚动 ，弹层消失时调用 canScroll()开启页面滚动
+    //停止页面滚动
+    noScroll () {
+      let mo = function (e) {
+        e.preventDefault();
+      };
+      document.body.style.overflow = "hidden";
+      document.addEventListener("touchmove", mo, false); // 禁止页面滑动
+    },
+    //开启页面滚动
+    canScroll () {
+      let mo = function (e) {
+        e.preventDefault();
+      };
+      document.body.style.overflow = ""; // 出现滚动条
+      document.removeEventListener("touchmove", mo, false);
     }
   },
   created () {
@@ -832,6 +733,11 @@ export default {
   computed: {
     showPrice () {
       return parseFloat(this.skuInfo.price).toFixed(2);
+    }
+  },
+  watch: {
+    carouselIndex (val) {
+      this.currImage = this.images[val].imgUrl
     }
   }
 }
@@ -964,6 +870,19 @@ export default {
     }
   }
 }
+
+.prod-container {
+  min-height: 200px;
+  /deep/ .el-icon-loading {
+    font-size: 35px;
+  }
+  /deep/ .el-loading-text {
+    font-size: 22px;
+  }
+  /deep/ .el-loading-spinner {
+    top: 100px;
+  }
+}
 .crumb-wrap {
   background: #f2f2f2;
   width: 100%;
@@ -983,8 +902,11 @@ export default {
       line-height: 44px;
       display: flex;
       justify-content: flex-end;
+
       .contact-item {
         margin-right: 15px;
+        font-size: 12px;
+        font-family: Arial, Microsoft YaHei, sans-serif;
         a {
           color: #666;
         }
@@ -1002,6 +924,10 @@ export default {
         .icon-collection-fill {
           color: #f40;
         }
+      }
+      .item-name {
+        font-size: 14px;
+        font-weight: 700;
       }
     }
   }

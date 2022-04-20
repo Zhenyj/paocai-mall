@@ -35,9 +35,9 @@ public class SkuInfoController {
      * @throws InterruptedException
      */
     @RequestMapping("/item")
-    public SkuItemVo getItem(@RequestParam("skuId") Long skuId) throws ExecutionException, InterruptedException {
+    public R<SkuItemVo> getItem(@RequestParam("skuId") Long skuId) throws ExecutionException, InterruptedException {
         SkuItemVo vo =  skuInfoService.getItem(skuId);
-        return vo;
+        return R.ok(vo);
     }
 
     @PostMapping("/skunameinfos")
