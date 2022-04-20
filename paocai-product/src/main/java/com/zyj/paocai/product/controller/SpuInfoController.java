@@ -88,6 +88,10 @@ public class SpuInfoController {
         return R.ok();
     }
 
+    /**
+     * 上架测试商品数据
+     * @return
+     */
     @RequestMapping("/up/test")
     public R batchUp() {
         for (int i = 1300; i <= 1665; i++) {

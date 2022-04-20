@@ -118,6 +118,21 @@
                   </span>
                 </li>
                 <li
+                  v-show="searchParam.skuPrice && searchParam.skuPrice.trim() != '' && searchParam.skuPrice.trim() != '_'"
+                >
+                  <span
+                    class="crumb-select-item"
+                    :title="searchParamSkuPrice"
+                  >
+                    <b>价格：</b>
+                    <em>{{searchParamSkuPrice}}</em>
+                    <i
+                      class="el-icon-close"
+                      @click="removePriceFilter"
+                    ></i>
+                  </span>
+                </li>
+                <li
                   v-for="(v,i) in attrList"
                   :key="i"
                 >
@@ -145,7 +160,7 @@
                 全部结果
               </el-breadcrumb-item>
               <el-breadcrumb-item>
-                <b>{{'"'+searchParam.keyword+'"'}}</b>
+                <b>{{(searchParam.keyword && searchParam.keyword!='')?'"'+searchParam.keyword+'"':'""'}}</b>
               </el-breadcrumb-item>
             </el-breadcrumb>
             <div class="attr-filter-wrap clearfix">
@@ -160,6 +175,21 @@
                     <i
                       class="el-icon-close"
                       @click="removeBrandFilter"
+                    ></i>
+                  </span>
+                </li>
+                <li
+                  v-show="searchParam.skuPrice && searchParam.skuPrice.trim() != '' && searchParam.skuPrice.trim() != '_'"
+                >
+                  <span
+                    class="crumb-select-item"
+                    :title="searchParamSkuPrice"
+                  >
+                    <b>价格：</b>
+                    <em>{{searchParamSkuPrice}}</em>
+                    <i
+                      class="el-icon-close"
+                      @click="removePriceFilter"
                     ></i>
                   </span>
                 </li>
@@ -362,8 +392,46 @@
                       </a>
                     </div>
                     <!-- 价格范围 -->
-                    <div class="price-scope">
-
+                    <div
+                      class="price-scope"
+                      ref="price-scope"
+                    >
+                      <div
+                        class="f-price-set"
+                        @mouseenter="addPriceFocus"
+                      >
+                        <div class="price-input price-min">
+                          <el-input
+                            placeholder="￥"
+                            v-model="min"
+                            min="0"
+                          >
+                          </el-input>
+                        </div>
+                        <span>-</span>
+                        <div class="price-input price-max">
+                          <el-input
+                            placeholder="￥"
+                            v-model="max"
+                          >
+                          </el-input>
+                        </div>
+                      </div>
+                      <div
+                        class="f-price-edit"
+                        @mouseleave="removePriceFocus"
+                      >
+                        <el-button
+                          type="danger"
+                          plain
+                          @click="clearPriceScope"
+                        >清空</el-button>
+                        <el-button
+                          type="primary"
+                          plain
+                          @click="changePriceScope"
+                        >确认</el-button>
+                      </div>
                     </div>
                   </div>
                   <div class="f-line">
@@ -405,11 +473,9 @@
                     class="item"
                     v-for="(item,index) in products"
                     :key="index"
+                    @click="toDetail(item.skuId)"
                   >
-                    <a
-                      href=""
-                      class="hotsale-item"
-                    >
+                    <a class="hotsale-item">
                       <div class="img-wrapper">
                         <img :src="item.skuImg">
                       </div>
@@ -417,7 +483,7 @@
                       <p class="info">
                         <span class="price">
                           <i class="iconfont icon-money"></i>
-                          {{item.skuPrice}}
+                          {{item.skuPrice | priceFilter}}
                         </span>
                       </p>
                       <div class="comment">
@@ -480,8 +546,8 @@ export default {
         searchType: 1,
         searchTypeName: '店铺'
       }],
-      pageSizeList: [30, 50, 70, 100],
-      pageSize: 30,
+      pageSizeList: [20, 30, 50, 100],
+      pageSize: 20,
       pageNum: 1,
       total: 0,
       totalPages: 0,
@@ -517,7 +583,8 @@ export default {
       vip: false,
       sortField: 'hotScore',
       sortType: 'desc',
-      loading: true
+      loading: true,
+      timer: null
     }
   },
   methods: {
@@ -665,6 +732,12 @@ export default {
       this.searchParam.attrs = attrList;
       this.search();
     },
+    removePriceFilter () {
+      this.min = '';
+      this.max = '';
+      this.searchParam.skuPrice = '';
+      this.search();
+    },
     changeSort (sortField, sortType) {
       this.sortField = sortField;
       this.sortType = sortType;
@@ -701,6 +774,44 @@ export default {
     removeTrigCurr (index) {
       this.$refs['trig-item'][index].classList.remove('trig-curr');
       this.$refs['sl-tab-cont-item'][index].style.display = "none";
+    },
+    toDetail (skuId) {
+      if (skuId && skuId != '') {
+        this.$router.push({ name: 'product', query: { skuId: skuId } });
+      }
+    },
+    addPriceFocus () {
+      this.$refs['price-scope'].classList.add('f-price-focus');
+    },
+    removePriceFocus () {
+      this.$refs['price-scope'].classList.remove('f-price-focus');
+    },
+    // 确认筛选价格变动
+    changePriceScope () {
+      let searchParam = this.searchParam;
+      let skuPrice = '_';
+      if (this.min !== '') {
+        skuPrice = this.min + skuPrice;
+      }
+      if (this.max !== '') {
+        skuPrice = skuPrice + this.max;
+      }
+      if (skuPrice !== '_' && skuPrice !== searchParam.skuPrice) {
+        searchParam.skuPrice = skuPrice;
+        this.searchParam = searchParam;
+        this.search();
+      }
+    },
+    // 移除价格筛选
+    clearPriceScope () {
+      this.min = '';
+      this.max = '';
+      let searchParam = this.searchParam;
+      if (searchParam.skuPrice && searchParam.skuPrice.trim() !== '') {
+        searchParam.skuPrice = '';
+        this.searchParam = searchParam;
+        this.search();
+      }
     }
   },
   created () {
@@ -708,11 +819,47 @@ export default {
     this.buildSearchParam();
   },
   computed: {
+    searchParamSkuPrice () {
+      if (!this.searchParam.skuPrice) {
+        return "";
+      }
+      let skuPrice = this.searchParam.skuPrice.trim();
+      if (skuPrice === '' || skuPrice === '_') {
+        return "";
+      }
+      let s = skuPrice.split('_');
+      if (s[0] === '') {
+        return '0-' + s[1];
+      } else if (s[1] === '') {
+        return s[0] + '以上'
+      } else {
+        return s[0] + '-' + s[1];
+      }
+    }
   },
   watch: {
     hasStock (val) {
       this.searchParam.hasStock = val;
       this.search();
+    },
+    'searchParam.skuPrice' () {
+      this.search();
+    },
+    min (val) {
+      if (this.timer != '') {
+        clearTimeout(this.timer);
+      }
+      this.timer = setTimeout(() => {
+        if (val < 0) {
+          console.log(val);
+          this.min = 0;
+        }
+      }, 500);
+    }
+  },
+  filters: {
+    priceFilter (price) {
+      return Math.floor(price * 100) / 100;
     }
   }
 }
@@ -1544,23 +1691,28 @@ export default {
             border-top: 1px solid #ddd;
             margin-bottom: 5px;
             .f-line {
-              height: 37px;
+              height: auto;
               padding: 6px 8px;
               border-bottom: 1px solid #e7e3e7;
               background: #f9f9f9;
               zoom: 1;
+              overflow: hidden;
             }
             .f-line-top {
               background: #f1f1f1;
+              display: flex;
+              z-index: 9999;
             }
             .f-sort {
-              float: left;
               margin-right: 13px;
+              display: flex;
+              justify-content: flex-start;
+
               a {
-                float: left;
+                display: inline-block;
                 padding: 0 9px;
-                height: 23px;
-                line-height: 23px;
+                height: 25px;
+                line-height: 25px;
                 border: 1px solid #ccc;
                 margin-right: -1px;
                 background: #fff;
@@ -1603,11 +1755,14 @@ export default {
                 height: 23px;
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start;
+                justify-content: center;
                 margin-left: 3px;
+
                 i {
+                  font-size: 12px;
                   font-weight: 700;
-                  height: 8px;
+                  height: 10px;
+                  width: 10px;
                 }
                 i:hover {
                   color: #f40;
@@ -1617,6 +1772,74 @@ export default {
                 }
               }
             }
+
+            .price-scope {
+              margin-left: 20px;
+              position: relative;
+              height: 25px;
+              .f-price-set {
+                display: flex;
+                width: 136px;
+                height: 25px;
+                position: relative;
+                z-index: 99;
+                .price-input {
+                  /deep/ .el-input__inner {
+                    display: inline;
+                    height: 25px;
+                    width: 60px;
+                    border-color: #ccc;
+                    height: 25px;
+                    line-height: 25px;
+                    border: 1px solid #ccc;
+                    padding: 3px;
+                  }
+                }
+                span {
+                  display: inline-block;
+                  height: 25px;
+                  width: 5px;
+                  line-height: 25px;
+                  margin: 0 5px;
+                }
+              }
+              .f-price-edit {
+                display: none;
+                z-index: 9;
+                position: relative;
+                top: -31px;
+                left: -12px;
+                background-color: #fff;
+                width: 270px;
+                height: 37px;
+                padding: 5px 10px 0 160px;
+                border: 1px solid #999;
+                box-shadow: 0px 3px 3px rgb(0 0 0 / 10%);
+                zoom: 1;
+
+                .el-button {
+                  height: 25px;
+                  width: 40px;
+                  font-size: 10px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+                .el-button--danger {
+                  float: left;
+                }
+                .el-button--primary {
+                  float: right;
+                }
+              }
+            }
+
+            .f-price-focus {
+              .f-price-edit {
+                display: block;
+              }
+            }
+
             .f-feature {
               height: 25px;
               ul {

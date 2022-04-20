@@ -620,9 +620,13 @@ export default {
         this.loginInfo = loginInfo;
       }
     },
+    // 获取商品详细信息
+    async getSkuInfo () { },
     // 搜索
     search () {
-      this.$router.push({ name: 'search', query: { keyword: this.keyword } })
+      if (this.keyword.trim() !== '') {
+        this.$router.push({ name: 'search', query: { keyword: this.keyword } })
+      }
     },
     // 商品轮播图往前
     specForward () {
@@ -815,8 +819,8 @@ export default {
     }
   },
   created () {
+    this.getSkuInfo();
     this.getLoginInfo();
-
     this.initAddrData();
   },
   mounted () {
