@@ -460,7 +460,14 @@
                     </div>
                   </div>
                 </div>
+                <div v-if="!loading && products.length ===0">
+                  <el-empty
+                    description="没有找到符合条件的商品或商家，换个关键词试试吧"
+                    :image-size="250"
+                  ></el-empty>
+                </div>
                 <div
+                  v-else
                   id="product-list"
                   class="product-list"
                   v-loading="loading"
@@ -647,6 +654,13 @@ export default {
           data: this.searchParam,
           method: 'POST'
         });
+        if (res.code !== 200) {
+          this.$message({
+            type: 'info',
+            message: res.msg
+          });
+          return;
+        }
         let data = res.data;
         this.products = data.products;
         this.pageNum = data.pageNum;
@@ -666,13 +680,14 @@ export default {
         this.attrs = attrs;
         this.attrIds = attrIds;
       } finally {
-        setTimeout(() => {
-          this.loading = false;
-        }, 300);
+        this.loading = false;
       }
     },
     resetSearch () {
-      window.location.href = "/search?keyword=" + this.searchParam.keyword;
+      let keyword = this.searchParam.keyword.trim();
+      if (keyword !== '') {
+        window.location.href = '/search?keyword=' + keyword;
+      }
     },
     // 过滤品牌
     filterBrand (brand) {
