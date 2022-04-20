@@ -245,8 +245,11 @@ export default {
         });
       }
       if (res.code !== 200) {
-        // 登录失败
-        console.log(res.msg);
+        this.$message({
+          type: 'info',
+          message: res.msg
+        });
+        return;
       }
       // 登录成功
       // 保存用户至当前回话缓存

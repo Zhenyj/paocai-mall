@@ -583,17 +583,20 @@ export default {
         url: 'product/index/data',
         method: 'POST'
       });
-      if (res.code === 200) {
-        const data = res.data;
-        this.category = data.category;
-        this.hotWords = data.hotWords;
-        this.orderStatusInfo = data.orderStatusInfo;
-        this.promoteCarousel = data.promoteCarousel;
-        this.smallPromoteCarousel = data.smallPromoteCarousel;
-        this.hotSale = data.hotSale;
-      } else {
-
+      if (res.code !== 200) {
+        this.$message({
+          type: 'info',
+          message: res.msg
+        });
+        return;
       }
+      const data = res.data;
+      this.category = data.category;
+      this.hotWords = data.hotWords;
+      this.orderStatusInfo = data.orderStatusInfo;
+      this.promoteCarousel = data.promoteCarousel;
+      this.smallPromoteCarousel = data.smallPromoteCarousel;
+      this.hotSale = data.hotSale;
     },
     // 选择搜索类型
     selectSearchType (index) {
@@ -649,6 +652,13 @@ export default {
           url: 'product/skuinfo/hotsale?page=' + page + '&pageSize=' + pageSize,
           method: 'GET'
         });
+        if (res.code !== 200) {
+          this.$message({
+            type: 'info',
+            message: res.msg
+          });
+          return;
+        }
         this.hotSale.page = page;
         this.hotSale.hotSales = this.hotSale.hotSales.concat(res.data);
       } finally {
