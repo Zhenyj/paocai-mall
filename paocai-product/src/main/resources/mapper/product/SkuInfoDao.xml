@@ -43,7 +43,7 @@
         OFFSET #{offset}
     </select>
     <select id="getSkuDetail" resultType="com.zyj.paocai.common.entity.vo.SkuDetailVo">
-        SELECT<include refid="baseColumn"/>,
+        SELECT<include refid="baseColumn"/>,brand.`name` AS brand_name,
         spu.`weight`
         FROM pms_sku_info sku
         LEFT JOIN pms_spu_info spu ON sku.spu_id = spu.id
