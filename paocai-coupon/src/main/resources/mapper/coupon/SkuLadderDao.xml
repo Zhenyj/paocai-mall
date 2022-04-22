@@ -11,6 +11,9 @@
         <result property="discount" column="discount"/>
         <result property="price" column="price"/>
         <result property="addOther" column="add_other"/>
+        <result property="status" column="status"/>
+        <result property="startTime" column="start_time"/>
+        <result property="expireTime" column="expire_time"/>
     </resultMap>
 
 

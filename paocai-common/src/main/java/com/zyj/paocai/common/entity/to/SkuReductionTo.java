@@ -4,6 +4,7 @@ import com.zyj.paocai.common.entity.vo.MemberPrice;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,5 +21,19 @@ public class SkuReductionTo {
     private BigDecimal fullPrice;
     private BigDecimal reducePrice;
     private int priceStatus;
+    /**
+     * 是否启用【0-关闭，1-启用】
+     */
+    private Integer status;
+
+    /**
+     * 开始时间
+     */
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    private Date expireTime;
     private List<MemberPrice> memberPrice;
 }

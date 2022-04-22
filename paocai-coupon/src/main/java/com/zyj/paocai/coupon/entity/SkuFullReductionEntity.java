@@ -2,11 +2,11 @@ package com.zyj.paocai.coupon.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.math.BigDecimal;
-import java.io.Serializable;
-
 import lombok.Data;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 商品满减信息
@@ -41,5 +41,20 @@ public class SkuFullReductionEntity implements Serializable {
 	 * 是否参与其他优惠
 	 */
 	private Integer addOther;
+
+	/**
+	 * 是否启用【0-关闭，1-启用】
+	 */
+	private Integer status;
+
+	/**
+	 * 开始时间
+	 */
+	private Date startTime;
+
+	/**
+	 * 结束时间
+	 */
+	private Date expireTime;
 
 }
