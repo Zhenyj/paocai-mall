@@ -11,6 +11,7 @@ import com.zyj.paocai.coupon.service.SkuLadderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -26,6 +27,16 @@ public class SkuLadderServiceImpl extends ServiceImpl<SkuLadderDao, SkuLadderEnt
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 获取sku当前启用的相关阶梯价格信息
+     * @param skuId
+     * @return
+     */
+    @Override
+    public List<SkuLadderEntity> getActiveLaddersBySkuId(Long skuId) {
+        return baseMapper.getActiveLaddersBySkuId(skuId);
     }
 
 }

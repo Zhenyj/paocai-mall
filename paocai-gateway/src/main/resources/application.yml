@@ -57,7 +57,7 @@ spring:
           filters:
             - RewritePath=/api/auth/(?<segment>.*),/$\{segment}
         - id: cart_route
-          uri: lb://paocai-auth-server
+          uri: lb://paocai-cart
           predicates:
             - Path=/api/cart/**
           filters:

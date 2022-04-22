@@ -1,5 +1,6 @@
 package com.zyj.paocai.product.feign;
 
+import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.to.SkuReductionTo;
 import com.zyj.paocai.common.entity.to.SpuBoundsTo;
 import com.zyj.paocai.common.entity.vo.SkuBoundsVo;
@@ -25,9 +26,27 @@ public interface CouponFeignService {
     R saveSpuBounds(@RequestBody SpuBoundsTo spuBoundsTo);
 
 
+    /**
+     * 保存sku满减信息
+     * @param skuReductionTo
+     * @return
+     */
     @PostMapping("/coupon/skufullreduction/saveinfo")
     R saveSkuReduction(@RequestBody SkuReductionTo skuReductionTo);
 
+    /**
+     * 获取商品积分信息
+     * @param skuId
+     * @return
+     */
     @RequestMapping("/coupon/skubounds/bounds/info")
     R<SkuBoundsVo> getBoundsBySkuId(@RequestParam("skuId") Long skuId);
+
+    /**
+     * 获取sku优惠信息
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/coupon/skufullreduction/sku_promotion/{skuId}")
+    R<SkuPromotionTo> getSkuPromotion(@PathVariable("skuId") Long skuId);
 }

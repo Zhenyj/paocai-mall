@@ -1,6 +1,7 @@
 package com.zyj.paocai.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.entity.vo.SkuDetailVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.product.entity.SkuInfoEntity;
@@ -71,5 +72,11 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
      */
     List<SkuInfoEntity> getHotSales(Integer pageSize, Integer page);
 
+    /**
+     * 获取购物车商品项信息
+     * @param skuId
+     * @return
+     */
+    CartSkuItem getCartSkuItem(Long skuId) throws ExecutionException, InterruptedException;
 }
 

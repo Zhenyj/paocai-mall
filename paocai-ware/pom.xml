@@ -24,6 +24,12 @@
             <groupId>com.zyj.paocai</groupId>
             <artifactId>paocai-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.session</groupId>
+                    <artifactId>spring-session-data-redis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

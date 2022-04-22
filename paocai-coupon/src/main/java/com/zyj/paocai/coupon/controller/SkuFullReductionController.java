@@ -1,5 +1,6 @@
 package com.zyj.paocai.coupon.controller;
 
+import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.to.SkuReductionTo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
@@ -25,6 +26,17 @@ import java.util.Map;
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
+
+    /**
+     * 获取sku优惠信息
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/sku_promotion/{skuId}")
+    public R<SkuPromotionTo> getSkuPromotion(@PathVariable("skuId") Long skuId){
+        SkuPromotionTo to = skuFullReductionService.getSkuPromotion(skuId);
+        return R.ok(to);
+    }
 
     /**
      * 保存sku优惠信息

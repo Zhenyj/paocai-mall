@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyj.paocai.coupon.entity.SkuLadderEntity;
 import com.zyj.paocai.common.utils.PageUtils;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,12 @@ import java.util.Map;
 public interface SkuLadderService extends IService<SkuLadderEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 获取sku当前启用的相关阶梯价格信息
+     * @param skuId
+     * @return
+     */
+    List<SkuLadderEntity> getActiveLaddersBySkuId(Long skuId);
 }
 

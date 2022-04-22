@@ -4,18 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.constant.Constant;
-import com.zyj.paocai.common.entity.vo.CatalogBaseVo;
-import com.zyj.paocai.common.entity.vo.SkuBoundsVo;
-import com.zyj.paocai.common.entity.vo.SkuDetailVo;
-import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
+import com.zyj.paocai.common.entity.to.SkuPromotionTo;
+import com.zyj.paocai.common.entity.vo.*;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.product.dao.SkuInfoDao;
-import com.zyj.paocai.product.entity.ProductAttrValueEntity;
-import com.zyj.paocai.product.entity.SkuImagesEntity;
-import com.zyj.paocai.product.entity.SkuInfoEntity;
-import com.zyj.paocai.product.entity.SpuInfoDescEntity;
+import com.zyj.paocai.product.entity.*;
 import com.zyj.paocai.product.entity.vo.SkuItemVo;
 import com.zyj.paocai.product.feign.CouponFeignService;
 import com.zyj.paocai.product.feign.WareFeignService;
@@ -279,5 +274,58 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         // 暂时获取所有商品数据
         List<SkuInfoEntity> hotSales = baseMapper.getHotSales(pageSize, (page - 1) * pageSize);
         return hotSales;
+    }
+
+    /**
+     * 获取购物车商品项信息
+     * @param skuId
+     * @return
+     */
+    @Override
+    public CartSkuItem getCartSkuItem(Long skuId) throws ExecutionException, InterruptedException {
+        CartSkuItem item = new CartSkuItem();
+        // 获取sku基本信息
+        CompletableFuture<Void> skuInfoFuture = CompletableFuture.runAsync(() -> {
+            SkuInfoEntity skuInfo = baseMapper.selectById(skuId);
+            if (skuInfo == null) {
+                throw new RuntimeException("商品信息不存在,skuId:" + skuId);
+            }
+            item.setSkuId(skuId);
+            item.setSkuName(skuInfo.getSkuName());
+            item.setSkuDefaultImg(skuInfo.getSkuDefaultImg());
+            item.setSkuTitle(skuInfo.getSkuTitle());
+            item.setSkuSubtitle(skuInfo.getSkuSubtitle());
+            item.setPrice(skuInfo.getPrice());
+        }, executor);
+
+        // 获取sku优惠信息
+        CompletableFuture<Void> skuPromotionFuture = CompletableFuture.runAsync(() -> {
+            R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
+            if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
+                throw new RuntimeException("商品优惠信息获取失败");
+            }
+            SkuPromotionTo data = r.getData();
+            item.setFullReductions(data.getReductions());
+            item.setLadders(data.getLadders());
+        });
+
+        // 获取sku销售属性
+        CompletableFuture<Void> attrsFuture = CompletableFuture.runAsync(() -> {
+            List<SkuSaleAttrValueEntity> saleAttrs = skuSaleAttrValueService.getSaleAttrsBySkuId(skuId);
+            if(!CollectionUtils.isEmpty(saleAttrs)){
+                List<AttrBaseVo> attrs = saleAttrs.stream().map(saleAttr -> {
+                    AttrBaseVo attr = new AttrBaseVo();
+                    attr.setAttrId(saleAttr.getAttrId());
+                    attr.setAttrName(saleAttr.getAttrName());
+                    attr.setAttrValue(saleAttr.getAttrValue());
+                    return attr;
+                }).collect(Collectors.toList());
+                item.setAttrs(attrs);
+            }
+        }, executor);
+
+        CompletableFuture.allOf(skuInfoFuture,skuPromotionFuture,attrsFuture).get();
+
+        return item;
     }
 }

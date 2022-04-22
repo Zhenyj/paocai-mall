@@ -1,7 +1,7 @@
 <template>
   <div>
     <common-header :login-info="loginInfo"></common-header>
-    <div class="product-content">
+    <div class="product-page">
       <!-- 顶部搜索栏 -->
       <div class="top">
         <div class="top-wrap">
@@ -71,7 +71,7 @@
             </div>
             <div class="contact">
               <div class="contact-item item-name">
-                <a style="font-weight=700">{{skuInfo.brandName}}</a>
+                <a>{{skuInfo.brandName}}</a>
               </div>
               <div class="contact-item">
                 <a><i class="iconfont icon-kefu"></i>联系客服</a>
@@ -310,9 +310,10 @@
               </div>
               <div class="choose-action">
                 <div class="action-item action-buy">立即购买</div>
-                <div class="action-item action-basket"><i
-                    class="iconfont icon-cart"
-                  ></i>加入购物车
+                <div
+                  class="action-item action-basket"
+                  @click="addToCart"
+                ><i class="iconfont icon-cart"></i>加入购物车
                 </div>
               </div>
             </div>
@@ -496,7 +497,7 @@ export default {
                     return skuIds.indexOf(v3) !== -1;
                   })
                   // break----用return false;
-                  // continue --用return true; 
+                  // continue --用return true;
                   return false;
                 }
               });
@@ -511,6 +512,15 @@ export default {
       } catch (e) {
         this.$message.error('商品数据错误或商品已被下架');
       }
+    },
+    async addToCart () {
+      const brandId = this.skuInfo.brandId;
+      const skuId = this.skuId;
+      const num = this.buyNum >= 1 ? this.buyNum : 1;
+      const res = await this.$request({
+        url: 'cart/add_to_cart?brandId=' + brandId + '&skuId=' + skuId + '&num=' + num
+      });
+      console.log(res);
     },
     // 商品轮播图往前
     specForward () {
@@ -1348,6 +1358,7 @@ export default {
       .choose-action {
         padding: 10px 0 0 66px;
         margin: 10px 0 0;
+        cursor: pointer;
         display: flex;
 
         .action-item {

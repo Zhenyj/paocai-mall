@@ -1,4 +1,4 @@
-package com.zyj.paocai.search.config;
+package com.zyj.paocai.order.config;
 
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 
 /**
  * @author lulx
- * @date 2022-01-22 16:37
+ * @date 2022-04-22 14:07
  **/
 @Configuration
 public class SessionConfig implements BeanClassLoaderAware {
@@ -40,4 +40,5 @@ public class SessionConfig implements BeanClassLoaderAware {
     public void setBeanClassLoader(ClassLoader classLoader) {
         this.loader = classLoader;
     }
+
 }

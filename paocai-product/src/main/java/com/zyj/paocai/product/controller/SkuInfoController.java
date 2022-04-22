@@ -1,5 +1,7 @@
 package com.zyj.paocai.product.controller;
 
+import com.zyj.paocai.common.constant.Constant;
+import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.product.entity.SkuInfoEntity;
@@ -26,6 +28,17 @@ import java.util.concurrent.ExecutionException;
 public class SkuInfoController {
     @Autowired
     private SkuInfoService skuInfoService;
+
+    @GetMapping("/skuItem/{skuId}")
+    public R<CartSkuItem> getCartSkuItem(@PathVariable("skuId") Long skuId){
+        CartSkuItem cartSkuItem = null;
+        try {
+            cartSkuItem = skuInfoService.getCartSkuItem(skuId);
+        } catch (Exception e) {
+            return R.error(Constant.ERROR_CODE,e.getMessage());
+        }
+        return R.ok(cartSkuItem);
+    }
 
     /**
      * 获取sku详细信息，详情页数据

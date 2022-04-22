@@ -3,8 +3,11 @@ package com.zyj.paocai.coupon.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zyj.paocai.common.entity.vo.MemberPrice;
+import com.zyj.paocai.common.entity.to.SkuFullReductionTo;
+import com.zyj.paocai.common.entity.to.SkuLadderTo;
+import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.to.SkuReductionTo;
+import com.zyj.paocai.common.entity.vo.MemberPrice;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.coupon.dao.SkuFullReductionDao;
@@ -19,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,6 +36,7 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
 
     @Autowired
     SkuLadderService skuLadderService;
+
     @Autowired
     MemberPriceService memberPriceService;
 
@@ -43,6 +48,16 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 获取sku当前启用的相关满减信息
+     * @param skuId
+     * @return
+     */
+    @Override
+    public List<SkuFullReductionEntity> getActiveReductionsBySkuId(Long skuId) {
+        return baseMapper.getActiveReductionsBySkuId(skuId);
     }
 
     /**
@@ -68,6 +83,43 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
         saveMemberPrice(skuReductionTo, memberPrice);
     }
 
+    /**
+     * 获取sku优惠信息
+     * @param skuId
+     * @return
+     */
+    @Override
+    public SkuPromotionTo getSkuPromotion(Long skuId) {
+        SkuPromotionTo skuPromotionTo = new SkuPromotionTo();
+        // 获取满减信息
+        List<SkuFullReductionEntity> reductionEntities = getActiveReductionsBySkuId(skuId);
+        if(!CollectionUtils.isEmpty(reductionEntities)){
+            List<SkuFullReductionTo> reductionTos = reductionEntities.stream().map(item -> {
+                SkuFullReductionTo to = new SkuFullReductionTo();
+                BeanUtils.copyProperties(item, to);
+                return to;
+            }).collect(Collectors.toList());
+            skuPromotionTo.setReductions(reductionTos);
+        }
+        // 获取阶梯价格信息
+        List<SkuLadderEntity> ladderEntities = skuLadderService.getActiveLaddersBySkuId(skuId);
+        if(!CollectionUtils.isEmpty(ladderEntities)){
+            List<SkuLadderTo> ladders = ladderEntities.stream().map(item -> {
+                SkuLadderTo to = new SkuLadderTo();
+                BeanUtils.copyProperties(item, to);
+                return to;
+            }).collect(Collectors.toList());
+            skuPromotionTo.setLadders(ladders);
+        }
+        return skuPromotionTo;
+    }
+
+
+
+    /**
+     * 保存sku阶梯价格信息
+     * @param skuReductionTo
+     */
     private void saveSkuLadder(SkuReductionTo skuReductionTo) {
         SkuLadderEntity skuLadderEntity = new SkuLadderEntity();
         skuLadderEntity.setSkuId(skuReductionTo.getSkuId());
@@ -79,6 +131,11 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
         }
     }
 
+    /**
+     * 保存会员价格信息
+     * @param skuReductionTo
+     * @param memberPrice
+     */
     private void saveMemberPrice(SkuReductionTo skuReductionTo, List<MemberPrice> memberPrice) {
         List<MemberPriceEntity> memberPriceEntities = memberPrice.stream().map(item -> {
             MemberPriceEntity memberPriceEntity = new MemberPriceEntity();

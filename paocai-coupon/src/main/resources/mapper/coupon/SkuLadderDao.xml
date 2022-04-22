@@ -3,7 +3,7 @@
 
 <mapper namespace="com.zyj.paocai.coupon.dao.SkuLadderDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zyj.paocai.coupon.entity.SkuLadderEntity" id="skuLadderMap">
         <result property="id" column="id"/>
         <result property="skuId" column="sku_id"/>
@@ -15,6 +15,17 @@
         <result property="startTime" column="start_time"/>
         <result property="expireTime" column="expire_time"/>
     </resultMap>
+    <sql id="baseColumn">
+        id
+        ,sku_id,full_count,discount,price,add_other,`status`,start_time,expire_time
+    </sql>
+    <select id="getActiveLaddersBySkuId" resultType="com.zyj.paocai.coupon.entity.SkuLadderEntity">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        sms_sku_ladder
+        WHERE sku_id = #{skuId} AND `status` = 1 AND `start_time` &lt; now() AND `expire_time` &gt; now()
+    </select>
 
 
 </mapper>
