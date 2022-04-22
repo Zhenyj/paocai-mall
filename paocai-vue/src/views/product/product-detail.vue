@@ -37,7 +37,10 @@
         </div>
       </el-tab-pane>
       <el-tab-pane name="second"><span slot="label">规格与包装</span>
-        <div class="attr-wrap">
+        <div
+          class="attr-wrap"
+          v-if="groupAttrs && groupAttrs.length > 0"
+        >
           <div
             class="attr-group"
             v-for="(v1,i1) in groupAttrs"
@@ -50,6 +53,14 @@
                 <dt>{{v2.attrValue}}</dt>
               </dl>
             </div>
+          </div>
+        </div>
+        <div
+          class="attr-wrap"
+          v-else
+        >
+          <div class="attr-group">
+            <el-empty :image-size="150"></el-empty>
           </div>
         </div>
       </el-tab-pane>
@@ -193,9 +204,11 @@ export default {
         width: 750px;
         text-align: left;
         background-color: #fff;
-        img {
-          width: 750px;
-          height: auto;
+        .el-image {
+          /deep/ .el-image__inner {
+            width: 750px;
+            height: auto;
+          }
         }
       }
     }
@@ -203,7 +216,11 @@ export default {
 
   .attr-wrap {
     margin: 10px 0;
+    .el-empty {
+      width: 100%;
+    }
     .attr-group {
+      width: 100%;
       padding: 12px 0;
       line-height: 220%;
       color: #999;

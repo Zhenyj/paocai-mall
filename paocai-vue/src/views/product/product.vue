@@ -959,8 +959,6 @@ export default {
         .el-image {
           width: 450px;
           height: 450px;
-          img {
-          }
           /deep/ .image-slot {
             height: 100%;
             width: 100%;
@@ -982,10 +980,6 @@ export default {
         overflow: hidden;
         display: flex;
         justify-content: space-between;
-        .spec-forward {
-        }
-        .spec-backward {
-        }
         .spec-icon {
           font-size: 35px;
           line-height: 58px;
@@ -1167,12 +1161,6 @@ export default {
               position: relative;
               z-index: 2;
             }
-            .city {
-            }
-            .region {
-            }
-          }
-          .postage-info {
           }
         }
         .address-selector {
@@ -1220,10 +1208,6 @@ export default {
             }
           }
         }
-      }
-    }
-    .meta-weight {
-      .meta-panel {
       }
     }
     .bounds-wrap {
