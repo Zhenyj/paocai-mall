@@ -24,6 +24,7 @@
         FROM
         sms_sku_full_reduction
         WHERE sku_id = #{skuId} AND `status` = 1 AND `start_time` &lt; now() AND `expire_time` &gt; now()
+        ORDER BY reduce_price ASC
     </select>
 
 
