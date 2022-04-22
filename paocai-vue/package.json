@@ -1,8 +1,8 @@
 {
-  "name": "paocai-vue",
+  "name": "paocai-mall",
   "version": "1.0.0",
   "description": "泡菜商城客户端",
-  "author": "Zhenyj <1271167154@qq.com>",
+  "author": "Zhenyj <llx0605@qq.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

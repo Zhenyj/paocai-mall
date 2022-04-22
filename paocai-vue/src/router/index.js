@@ -39,6 +39,11 @@ const globalRoutes = [{
   component: _import('product/product'),
   name: 'product',
   meta: { title: '商品' }
+}, {
+  path: '/cart',
+  component: _import('cart/cart'),
+  name: 'cart',
+  meta: { title: '泡菜商城-我的购物车' }
 }]
 
 // 主入口路由(需嵌套上左右整体布局)

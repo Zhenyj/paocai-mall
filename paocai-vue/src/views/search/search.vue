@@ -1,5 +1,5 @@
 <template>
-  <div id="searach-page">
+  <div id="search-page">
     <common-header :login-info="loginInfo"></common-header>
     <div class="search-content">
       <!-- 顶部搜索栏 -->
@@ -644,7 +644,8 @@ export default {
     },
     // 搜索
     async search () {
-      if (this.searchParam.keyword == '' && (!this.searchParam.catalog3Id || this.searchParam.catalog3Id == '')) {
+      const searchParam = this.searchParam;
+      if (searchParam.keyword == '' && (!searchParam.catalog3Id || searchParam.catalog3Id == '')) {
         return;
       }
       this.loading = true;
@@ -667,7 +668,8 @@ export default {
         this.total = data.total;
         this.totalPages = data.totalPages;
         this.brands = data.brands;
-        this.catalogs = data.catalogs;
+        const catalogs = data.catalogs;
+        this.catalogs = catalogs;
         this.catalogThreeList = data.catalogThreeList;
         let attrs = data.attrs;
         let attrIds = data.attrIds;
@@ -679,6 +681,10 @@ export default {
         }
         this.attrs = attrs;
         this.attrIds = attrIds;
+        // 设置网页title
+        if (catalogs && catalogs.length > 0) {
+          document.title = catalogs[catalogs.length - 1].catalogName + '-泡菜商城';
+        }
       } finally {
         this.loading = false;
       }
