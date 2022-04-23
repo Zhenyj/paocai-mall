@@ -42,6 +42,9 @@ spring:
         server-addr: 192.168.136.12:8848
   thymeleaf:
     cache: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   redis:
     host: 192.168.136.12
     port: 6379

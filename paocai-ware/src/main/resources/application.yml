@@ -43,6 +43,9 @@ spring:
   redis:
     host: 192.168.136.12
     port: 6379
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   global-config:
@@ -56,4 +59,4 @@ management:
         include: '*'
 logging:
   level:
-    com.zyj.paocaimall: debug
+    com.zyj.paocai: debug

@@ -21,10 +21,13 @@ spring:
       cache-null-values: true #是否缓存空值，可以用去解决缓存穿透问题
   session:
     store-type: redis
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 # 修改日志级别，com.zyj.paocaimall包下的都会打印日志
 logging:
   level:
-    com.zyj.paocaimall: debug
+    com.zyj.paocai: debug
 management:
   endpoints:
     web:
