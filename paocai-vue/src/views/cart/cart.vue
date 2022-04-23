@@ -48,177 +48,204 @@
     <!-- 购物车内容 -->
     <div class="container">
       <div class="cart-layout">
-        <div class="cart">
-          <div class="cart-filter-bar">
-            <span class="switch-cart">{{'购物车（全部'+cart.totalCount+'）'}}</span>
-            <div class="cart-sum">
-              <span class="pay-text">已选商品（不含运费）</span>
-              <strong class="price">{{cart.totalAmount |showPrice}}</strong>
-              <a
-                href=""
-                class="submit-btn"
-                :class="{'submit-btn-disabled':cart.totalAmount <= 0}"
-              >结&nbsp;算</a>
-            </div>
-          </div>
-          <div class="cart-main">
-            <div class="cart-table-th">
-              <div class="th-wp">
-                <div class="th th-chk">
-                  <div class="select-all">
-                    <i
-                      class="iconfont"
-                      :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
-                    ></i>
-                    &nbsp;&nbsp;全选
-                  </div>
-                </div>
-                <div class="th th-item">
-                  <div class="td-inner">商品信息</div>
-                </div>
-                <div class="th th-info">&nbsp;</div>
-                <div class="th th-price">单价</div>
-                <div class="th th-amount">数量</div>
-                <div class="th th-sum">金额</div>
-                <div class="th th-op">操作</div>
+        <div
+          v-if="!loading && (cart===null || !cart.shops || cart.shops.length ===0 )"
+        >
+          <el-empty
+            description="您的购物车还是空的，赶紧行动吧！"
+            image="https://gtd.alicdn.com/tps/i3/T1TvXUXnNjXXXXXXXX-100-100.png"
+            :image-size="250"
+          ></el-empty>
+        </div>
+        <div
+          v-else
+          class="cart"
+          v-loading="loading"
+          v-loading.body="loading"
+          v-loading.lock="loading"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+        >
+          <div v-if="cart && cart.shops && cart.shops.length > 0">
+            <div class="cart-filter-bar">
+              <span
+                class="switch-cart">购物车（全部{{cart.skuCount?cart.skuCount:0}}）</span>
+              <div class="cart-sum">
+                <span class="pay-text">已选商品（不含运费）</span>
+                <strong class="price">{{cart.totalAmount |showPrice}}</strong>
+                <a
+                  href=""
+                  class="submit-btn"
+                  :class="{'submit-btn-disabled':cart.totalAmount <= 0}"
+                >结&nbsp;算</a>
               </div>
             </div>
-            <div class="cart-list">
-              <div
-                class="shop-item"
-                v-for="(shop,i1) in cart.shops"
-                :key="i1"
-              >
-                <div class="shop-body all-select">
-                  <div class="shop-header">
-                    <div class="shop-info">
-                      <i class="iconfont icon-checked"></i>
-                      &nbsp;&nbsp;店铺：<a>{{shop.brandName}}</a>
-                      <i class="iconfont icon-kefu"></i>
+            <div class="cart-main">
+              <div class="cart-table-th">
+                <div class="th-wp">
+                  <div class="th th-chk">
+                    <div class="select-all">
+                      <i
+                        class="iconfont"
+                        :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
+                      ></i>
+                      &nbsp;&nbsp;全选
                     </div>
                   </div>
-                  <div class="shop-content">
-                    <div class="item-list">
-                      <div
-                        class="bundle"
-                        v-for="(item,i2) in shop.items"
-                        :key="i2"
-                      >
+                  <div class="th th-item">
+                    <div class="td-inner">商品信息</div>
+                  </div>
+                  <div class="th th-info">&nbsp;</div>
+                  <div class="th th-price">单价</div>
+                  <div class="th th-amount">数量</div>
+                  <div class="th th-sum">金额</div>
+                  <div class="th th-op">操作</div>
+                </div>
+              </div>
+              <div class="cart-list">
+                <div
+                  class="shop-item"
+                  v-for="(shop,i1) in cart.shops"
+                  :key="i1"
+                >
+                  <div
+                    class="shop-body "
+                    :class="{'all-select':shop.allChecked}"
+                  >
+                    <div class="shop-header">
+                      <div class="shop-info">
+                        <i
+                          class="iconfont"
+                          :class="[shop.allChecked?'icon-checked':'icon-unchecked']"
+                        ></i>
+                        &nbsp;&nbsp;店铺：<a>{{shop.brandName}}</a>
+                        <i class="iconfont icon-kefu"></i>
+                      </div>
+                    </div>
+                    <div class="shop-content">
+                      <div class="item-list">
                         <div
-                          class="bundle-hd"
-                          v-if="(item.fullReductions && item.fullReductions.length>0)||(item.ladders && item.ladders.length>0)"
+                          class="bundle"
+                          v-for="(item,i2) in shop.items"
+                          :key="i2"
                         >
-                          <div class="td-chk"></div>
-                          <div class="bd-title">
-                            {{item.skuName}}
-                          </div>
-                          <div class="bd-promos">
-                            <div
-                              class="bd-has-promo"
-                              v-if="item.discount>0"
-                            >已享优惠：<span
-                                class="bd-has-promo-content">省￥{{item.discount | showPrice}}</span>&nbsp;&nbsp;
+                          <div
+                            class="bundle-hd"
+                            v-if="(item.fullReductions && item.fullReductions.length>0)||(item.ladders && item.ladders.length>0)"
+                          >
+                            <div class="td-chk"></div>
+                            <div class="bd-title">
+                              {{item.skuName}}
                             </div>
-                            <div
-                              class="act-promo"
-                              v-if="item.fullReductions && item.fullReductions.length > 0"
-                            >
-                              <div class="act-promo-wrapper">
-                                <ul class="act-promo-hint">
-                                  <li
-                                    v-for="(reduce,i3) in item.fullReductions"
-                                    :key="i3"
-                                  >{{'满'+reduce.fullPrice+'减'+reduce.reducePrice}}
-                                  </li>
-                                </ul>
+                            <div class="bd-promos">
+                              <div
+                                class="bd-has-promo"
+                                v-if="item.discount>0"
+                              >已享优惠：<span
+                                  class="bd-has-promo-content">省￥{{item.discount | showPrice}}</span>&nbsp;&nbsp;
                               </div>
-                            </div>
-                            <div
-                              class="
+                              <div
+                                class="act-promo"
+                                v-if="item.fullReductions && item.fullReductions.length > 0"
+                              >
+                                <div class="act-promo-wrapper">
+                                  <ul class="act-promo-hint">
+                                    <li
+                                      v-for="(reduce,i3) in item.fullReductions"
+                                      :key="i3"
+                                    >{{'满'+reduce.fullPrice+'减'+reduce.reducePrice}}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                              <div
+                                class="
                                     act-promo"
-                              v-if="item.ladders && item.ladders.length > 0"
-                            >
-                              <div class="act-promo-wrapper">
-                                <ul class="act-promo-hint">
-                                  <li
-                                    v-for="(lad,i3) in item.ladders"
-                                    :key="i3"
-                                  >{{'满'+lad.fullCount+'打'+lad.discount+'折,折后'+lad.price+'/件'}}
-                                  </li>
-                                </ul>
+                                v-if="item.ladders && item.ladders.length > 0"
+                              >
+                                <div class="act-promo-wrapper">
+                                  <ul class="act-promo-hint">
+                                    <li
+                                      v-for="(lad,i3) in item.ladders"
+                                      :key="i3"
+                                    >{{'满'+lad.fullCount+'打'+lad.discount+'折,折后'+lad.price+'元/件'}}
+                                    </li>
+                                  </ul>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="bundle-main">
-                          <div class="item-body">
-                            <div class="item-content">
-                              <div class="td td-chk">
-                                <i class="iconfont icon-unchecked"></i>
-                              </div>
-                              <div class="td td-item">
-                                <div class="item-pic">
-                                  <a>
-                                    <el-image
-                                      :src="'https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg'"
-                                    >
-                                      <div
-                                        slot="error"
-                                        class="image-slot"
+                          <div class="bundle-main">
+                            <div class="item-body">
+                              <div class="item-content">
+                                <div class="td td-chk">
+                                  <i class="iconfont icon-unchecked"></i>
+                                </div>
+                                <div class="td td-item">
+                                  <div class="item-pic">
+                                    <a>
+                                      <el-image
+                                        :src="'https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg'"
                                       >
-                                        <i class="el-icon-picture-outline"></i>
-                                      </div>
-                                    </el-image>
-                                  </a>
-                                </div>
-                                <div class="item-info">
-                                  <div class="item-basic-info">
-                                    <a
-                                      class="item-title"
-                                      title="Redmi K50 幻境
-                                      12GB+256GB"
-                                    >{{item.skuTitle}}</a>
+                                        <div
+                                          slot="error"
+                                          class="image-slot"
+                                        >
+                                          <i
+                                            class="el-icon-picture-outline"></i>
+                                        </div>
+                                      </el-image>
+                                    </a>
                                   </div>
-                                  <div class="item-other-info"></div>
+                                  <div class="item-info">
+                                    <div class="item-basic-info">
+                                      <a
+                                        class="item-title"
+                                        title="Redmi K50 幻境
+                                      12GB+256GB"
+                                      >{{item.skuTitle}}</a>
+                                    </div>
+                                    <div class="item-other-info"></div>
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="td td-info">
-                                <div class="item-props">
-                                  <p
-                                    class="sku-line"
-                                    v-for="(attr,i3) in item.attrs"
-                                  >{{attr.attrName +'：'+ attr.attrValue}}</p>
+                                <div class="td td-info">
+                                  <div class="item-props">
+                                    <p
+                                      class="sku-line"
+                                      v-for="(attr,i3) in item.attrs"
+                                    >{{attr.attrName +'：'+ attr.attrValue}}</p>
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="td td-price">
-                                <div class="price-line">
-                                  ￥{{item.price|showPrice}}
+                                <div class="td td-price">
+                                  <div class="price-line">
+                                    ￥{{item.price|showPrice}}
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="td td-amount">
-                                <el-input-number
-                                  v-model="item.count"
-                                  :min="1"
-                                ></el-input-number>
-                              </div>
-                              <div class="td td-sum">
-                                <div class="price-sum">
-                                  ￥2599.00
+                                <div class="td td-amount">
+                                  <el-input-number
+                                    v-model="item.count"
+                                    :min="1"
+                                  ></el-input-number>
                                 </div>
-                              </div>
-                              <div class="td td-op">
-                                <el-button
-                                  type="warning"
-                                  icon="el-icon-star-off"
-                                  circle
-                                  title="移入收藏夹"
-                                ></el-button>
-                                <el-button
-                                  type="danger"
-                                  icon="el-icon-delete"
-                                  circle
-                                  title="删除"
-                                ></el-button>
+                                <div class="td td-sum">
+                                  <div class="price-sum">
+                                    ￥{{item.totalPrice|showPrice}}
+                                  </div>
+                                </div>
+                                <div class="td td-op">
+                                  <el-button
+                                    type="warning"
+                                    icon="el-icon-star-off"
+                                    circle
+                                    title="移入收藏夹"
+                                  ></el-button>
+                                  <el-button
+                                    type="danger"
+                                    icon="el-icon-delete"
+                                    circle
+                                    title="删除"
+                                  ></el-button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -229,36 +256,36 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="float-bar-holder">
-            <div class="float-bar-left">
-              <div class="select-all">
-                <i
-                  class="iconfont"
-                  :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
-                ></i>&nbsp;全选
+            <div class="float-bar-holder">
+              <div class="float-bar-left">
+                <div class="select-all">
+                  <i
+                    class="iconfont"
+                    :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
+                  ></i>&nbsp;全选
+                </div>
+                <div class="operations">
+                  <a class="batch-delete">删除</a>
+                  <a class="batch-fav">移入收藏夹</a>
+                </div>
               </div>
-              <div class="operations">
-                <a class="batch-delete">删除</a>
-                <a class="batch-fav">移入收藏夹</a>
-              </div>
-            </div>
-            <div class="float-bar-right">
-              <div class="amount-sum">
-                <span class="txt">已选商品</span>
-                <em>0</em>
-                <span class="txt">件</span>
-              </div>
-              <div class="price-sum">
-                <span class="txt">合计（不含运费）：</span>
-                <strong class="price">{{cart.totalAmount|showPrice}}</strong>
-              </div>
-              <div class="btn-area">
-                <a
-                  href=""
-                  class="submit-btn"
-                  :class="{'submit-btn-disabled':cart.totalAmount <= 0}"
-                >结&nbsp;算</a>
+              <div class="float-bar-right">
+                <div class="amount-sum">
+                  <span class="txt">已选商品</span>
+                  <em>0</em>
+                  <span class="txt">件</span>
+                </div>
+                <div class="price-sum">
+                  <span class="txt">合计（不含运费）：</span>
+                  <strong class="price">{{cart.totalAmount|showPrice}}</strong>
+                </div>
+                <div class="btn-area">
+                  <a
+                    href=""
+                    class="submit-btn"
+                    :class="{'submit-btn-disabled':cart.totalAmount <= 0}"
+                  >结&nbsp;算</a>
+                </div>
               </div>
             </div>
           </div>
@@ -273,7 +300,7 @@
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
 export default {
-  name: 'cart',
+  name: 'myCart',
   components: { CommonHeader, CommonFooter },
   data () {
     return {
@@ -292,56 +319,11 @@ export default {
         searchTypeName: '泡泡'
       }],
       cart: {
-        // 总商品数量
-        totalCount: 1,
-        // 已选择商品数量
-        checkCount: 1,
-        // sku数量
-        skuCount: 1,
-        // 已选择商品的总价
-        totalAmount: 0,
-        shops: [{
-          brandId: 2,
-          brandName: '红米',
-          items: [{
-            skuId: 1701,
-            skuName: 'Redmi K50',
-            skuTitle: 'Redmi K50 幻境 12GB+256GB',
-            skuDefaultImg: 'https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg',
-            attrs: [{
-              attrId: 1291,
-              attrName: '版本',
-              attrValue: '12GB+256GB'
-            }, {
-              attrId: 1288,
-              attrName: '颜色',
-              attrValue: '幻境'
-            }],
-            price: 2599.00,
-            count: 2,
-            totalPrice: 5198.00,
-            fullReductions: [{
-              id: '1',
-              skuId: 1701,
-              fullPrice: 2000,
-              reducePrice: 120,
-              addOther: 0
-            }],
-            ladders: [{
-              id: '1',
-              skuId: 1701,
-              fullCount: 2,
-              discount: 9,
-              price: 2339.1,
-              addOther: 0
-            }],
-            discount: 100,
-            checked: true
-          }],
-          allChecked: true
-        }],
-        allChecked: true
-      }
+        skuCount: 0,
+        totalCount: 0,
+        allChecked: false
+      },
+      loading: true
     }
   },
   methods: {
@@ -354,24 +336,57 @@ export default {
     },
     // 选择搜索类型
     selectSearchType (index) {
-      let obj = this.searchTypeList[0]
-      this.searchTypeList[0] = this.searchTypeList[index]
-      this.searchTypeList[index] = obj
+      let obj = this.searchTypeList[0];
+      this.searchTypeList[0] = this.searchTypeList[index];
+      this.searchTypeList[index] = obj;
       this.$forceUpdate();
     },
     // 获取用户购物车数据
-    async getCartInfo () {
-
+    async getCart () {
+      this.loading = true;
+      try {
+        const res = await this.$request({
+          url: 'cart/my_cart',
+          method: 'GET'
+        });
+        if (res.code !== 200) {
+          this.$message({
+            type: 'info',
+            message: res.msg
+          });
+          return;
+        }
+        let cart = res.data;
+        if (cart == null) {
+          return;
+        }
+        // 初始化不选中
+        cart.allChecked = false;
+        cart.shops.forEach((v1, i1) => {
+          v1.allChecked = false;
+          v1.items.forEach((v2, i2) => {
+            v2.checked = false;
+          });
+        });
+        this.cart = cart;
+      } finally {
+        this.loading = false;
+      }
     }
   },
   created () {
     document.title = '泡菜商城-我的购物车';
     this.getLoginInfo();
-    this.getCartInfo();
+    this.getCart();
   },
   filters: {
     showPrice (price) {
       return parseFloat(price).toFixed(2);
+    }
+  },
+  watch: {
+    'cart.allChecked' (val) {
+      console.log(val);
     }
   }
 }
@@ -563,6 +578,12 @@ export default {
   width: 1200px;
   margin: 0 auto;
   .cart-layout {
+    /deep/ .el-icon-loading {
+      font-size: 40px;
+    }
+    /deep/ .el-loading-text {
+      font-size: 24px;
+    }
     .cart {
       min-height: 400px;
       background-color: #fff;

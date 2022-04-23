@@ -101,7 +101,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping("/user/cookie")
-    public R<MemberRespVo> getUserFromJwt(HttpServletRequest request) {
+    public R<MemberRespVo> getUserFromJwt(HttpServletRequest request,HttpSession session) {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("token")) {
@@ -111,6 +111,8 @@ public class LoginController {
                     if (member == null) {
                         return R.error(BizCodeEnum.TOKEN_EXCEPTION.getCode(), BizCodeEnum.TOKEN_EXCEPTION.getMsg());
                     }
+                    // 将用户信息放入session中（redis）
+                    session.setAttribute(AuthConstant.LOGIN_USER, member);
                     return R.ok(member);
                 } catch (Exception e) {
                     return R.error(BizCodeEnum.TOKEN_EXCEPTION.getCode(), BizCodeEnum.TOKEN_EXCEPTION.getMsg());

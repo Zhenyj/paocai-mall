@@ -25,6 +25,9 @@ public class CartInterceptor implements HandlerInterceptor {
         MemberRespVo member = (MemberRespVo) session.getAttribute(AuthConstant.LOGIN_USER);
         if (member == null) {
             throw new RuntimeException("对不起，请先登录后再进行操作！");
+            // 测试用
+//            member = new MemberRespVo();
+//            member.setId(1L);
         }
         threadLocal.set(member);
         return HandlerInterceptor.super.preHandle(request, response, handler);

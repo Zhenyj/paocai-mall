@@ -72,7 +72,7 @@ public class CartServiceImpl implements CartService {
                 totalCount = totalCount + item.getCount();
                 skuCount += 1;
                 R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
-                if (Constant.SUCCESS_CODE.equals(r.getCode())) {
+                if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
                     throw new RuntimeException(r.getMsg());
                 }
                 SkuPromotionTo skuPromotionTo = r.getData();
@@ -81,6 +81,8 @@ public class CartServiceImpl implements CartService {
                     item.setLadders(skuPromotionTo.getLadders());
                 }
             }
+            // 计算商品的价格、优惠等
+            shopItem.calculate();
         }
         cart.setShops(shopItems);
         cart.setSkuCount(skuCount);

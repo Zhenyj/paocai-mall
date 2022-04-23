@@ -1,5 +1,7 @@
 package com.zyj.paocai.cart.vo;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import java.util.List;
  * @author lulx
  * @date 2022-04-21 17:14
  **/
+@Data
 public class Cart {
     /**店铺*/
     private List<ShopItem> shops;

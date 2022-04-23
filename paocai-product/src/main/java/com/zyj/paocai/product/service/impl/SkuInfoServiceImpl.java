@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.constant.Constant;
-import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.vo.*;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
@@ -299,15 +298,15 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         }, executor);
 
         // 获取sku优惠信息
-        CompletableFuture<Void> skuPromotionFuture = CompletableFuture.runAsync(() -> {
-            R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
-            if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                throw new RuntimeException("商品优惠信息获取失败");
-            }
-            SkuPromotionTo data = r.getData();
-            item.setFullReductions(data.getReductions());
-            item.setLadders(data.getLadders());
-        });
+//        CompletableFuture<Void> skuPromotionFuture = CompletableFuture.runAsync(() -> {
+//            R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
+//            if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
+//                throw new RuntimeException("商品优惠信息获取失败");
+//            }
+//            SkuPromotionTo data = r.getData();
+//            item.setFullReductions(data.getReductions());
+//            item.setLadders(data.getLadders());
+//        });
 
         // 获取sku销售属性
         CompletableFuture<Void> attrsFuture = CompletableFuture.runAsync(() -> {
@@ -324,7 +323,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             }
         }, executor);
 
-        CompletableFuture.allOf(skuInfoFuture,skuPromotionFuture,attrsFuture).get();
+        CompletableFuture.allOf(skuInfoFuture,attrsFuture).get();
 
         return item;
     }

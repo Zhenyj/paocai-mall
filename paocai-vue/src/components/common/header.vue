@@ -72,8 +72,8 @@
                   class="site-nav-login-info-nick"
                 >
                   {{(!loginInfo.nickname || loginInfo.nickname == '') ?loginInfo.username:loginInfo.nickname}}
+                  <i class="iconfont icon-arrow-down"></i>
                 </a>
-                <i class="iconfont icon-arrow-down"></i>
               </div>
             </div>
             <div class="site-nav-menu-bd">
@@ -148,7 +148,7 @@
             <div class="site-nav-menu-hd">
               <div class="site-nav-user">
                 <a
-                  href="#"
+                  href="/cart"
                   target="_top"
                 >
                   <i class="iconfont icon-cart"></i>购物车
@@ -387,6 +387,9 @@ export default {
         vertical-align: middle;
 
         a {
+          display: inline-block;
+          height: 35px;
+          line-height: 35px;
           text-decoration: none;
           color: #6c6c6c;
           margin-right: 7px;
