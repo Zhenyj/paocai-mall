@@ -60,13 +60,15 @@
         <div
           v-else
           class="cart"
-          v-loading="loading"
-          v-loading.body="loading"
-          v-loading.lock="loading"
-          element-loading-text="拼命加载中"
-          element-loading-spinner="el-icon-loading"
         >
-          <div v-if="cart && cart.shops && cart.shops.length > 0">
+          <div
+            v-if="cart && cart.shops && cart.shops.length > 0"
+            v-loading="loading"
+            v-loading.body="loading"
+            v-loading.lock="loading"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+          >
             <div class="cart-filter-bar">
               <span
                 class="switch-cart">购物车（全部{{cart.skuCount?cart.skuCount:0}}）</span>
@@ -84,7 +86,10 @@
               <div class="cart-table-th">
                 <div class="th-wp">
                   <div class="th th-chk">
-                    <div class="select-all">
+                    <div
+                      class="select-all"
+                      @click="handleSelectAll(cart.allChecked)"
+                    >
                       <i
                         class="iconfont"
                         :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
@@ -179,13 +184,19 @@
                             <div class="item-body">
                               <div class="item-content">
                                 <div class="td td-chk">
-                                  <i class="iconfont icon-unchecked"></i>
+                                  <i
+                                    class="iconfont"
+                                    :class="[item.checked?'icon-checked':'icon-unchecked']"
+                                    @click="handleCheckSku(i1,i2)"
+                                  ></i>
                                 </div>
                                 <div class="td td-item">
                                   <div class="item-pic">
                                     <a>
                                       <el-image
                                         :src="'https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg'"
+                                        @click="navToProduct(item.skuId)"
+                                        :title="item.skuTitle"
                                       >
                                         <div
                                           slot="error"
@@ -201,8 +212,8 @@
                                     <div class="item-basic-info">
                                       <a
                                         class="item-title"
-                                        title="Redmi K50 幻境
-                                      12GB+256GB"
+                                        :href="'/product?skuId='+item.skuId"
+                                        :title="item.skuTitle"
                                       >{{item.skuTitle}}</a>
                                     </div>
                                     <div class="item-other-info"></div>
@@ -217,8 +228,16 @@
                                   </div>
                                 </div>
                                 <div class="td td-price">
+                                  <div
+                                    class="price-line"
+                                    v-if="hasDiscount(item.discount)"
+                                  >
+                                    <em
+                                      class="price-original">￥{{item.originalPrice|showPrice}}</em>
+                                  </div>
                                   <div class="price-line">
-                                    ￥{{item.price|showPrice}}
+                                    <em
+                                      class="price-now">￥{{item.originalPrice|showPrice}}</em>
                                   </div>
                                 </div>
                                 <div class="td td-amount">
@@ -229,7 +248,7 @@
                                 </div>
                                 <div class="td td-sum">
                                   <div class="price-sum">
-                                    ￥{{item.totalPrice|showPrice}}
+                                    ￥{{item.originalTotalPrice|showPrice}}
                                   </div>
                                 </div>
                                 <div class="td td-op">
@@ -259,10 +278,11 @@
             <div class="float-bar-holder">
               <div class="float-bar-left">
                 <div class="select-all">
-                  <i
-                    class="iconfont"
-                    :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
-                  ></i>&nbsp;全选
+                  <span @click="handleSelectAll(cart.allChecked)"><i
+                      class="iconfont"
+                      :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
+                    ></i>&nbsp;全选</span>
+
                 </div>
                 <div class="operations">
                   <a class="batch-delete">删除</a>
@@ -343,7 +363,6 @@ export default {
     },
     // 获取用户购物车数据
     async getCart () {
-      this.loading = true;
       try {
         const res = await this.$request({
           url: 'cart/my_cart',
@@ -372,21 +391,40 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    // 打开对应的sku详情页
+    navToProduct (skuId) {
+      this.$router.push({ name: 'product', query: { skuId: skuId } });
+    },
+    // 是否有会员价格优惠
+    hasDiscount (item) {
+      return parseFloat(item.originalPrice) > parseFloat(item.price);
+    },
+    // 选中商品
+    handleCheckSku (i1, i2) {
+      cart.shops[i1].items[i2].checked = !cart.shops[i1].items[i2].checked
+    },
+    handleSelectAll (isAllChecked) {
+      const checked = !isAllChecked;
+      let cart = this.cart;
+      cart.shops.forEach((v1, i1) => {
+        v1.allChecked = checked;
+        v1.items.forEach((v2, i2) => {
+          v2.checked = checked;
+        });
+      });
+      this.cart = cart;
     }
   },
   created () {
     document.title = '泡菜商城-我的购物车';
     this.getLoginInfo();
+    this.loading = true;
     this.getCart();
   },
   filters: {
     showPrice (price) {
       return parseFloat(price).toFixed(2);
-    }
-  },
-  watch: {
-    'cart.allChecked' (val) {
-      console.log(val);
     }
   }
 }
@@ -397,6 +435,11 @@ export default {
   font: 12px/1.5 tahoma, arial, "Hiragino Sans GB", "\5b8b\4f53", sans-serif;
   background: 0 36px repeat-y
     url("https://img.alicdn.com/imgextra/i3/O1CN01PaQurJ1QgnAICTCgg_!!6000000002006-2-tps-1490-2984.png");
+}
+.el-empty {
+  background-color: #fff;
+  border-radius: 24px;
+  overflow: hidden;
 }
 .header-wrapper {
   background-color: #fff;
@@ -837,6 +880,10 @@ export default {
                                 text-overflow: ellipsis;
                                 color: #3c3c3c;
                               }
+                              .item-title:hover {
+                                color: #f40;
+                                text-decoration: underline;
+                              }
                             }
                           }
                         }
@@ -864,6 +911,16 @@ export default {
                           }
                           .icon-money {
                             font-size: 8px;
+                          }
+                          .price-original {
+                            color: #9c9c9c;
+                            text-decoration: line-through;
+                            font-family: Verdana, Tahoma, arial;
+                          }
+                          .price-now {
+                            color: #3c3c3c;
+                            font-weight: 700;
+                            font-family: Verdana, Tahoma, arial;
                           }
                         }
 

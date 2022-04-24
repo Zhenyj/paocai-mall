@@ -294,19 +294,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             item.setSkuDefaultImg(skuInfo.getSkuDefaultImg());
             item.setSkuTitle(skuInfo.getSkuTitle());
             item.setSkuSubtitle(skuInfo.getSkuSubtitle());
+            item.setOriginalPrice(skuInfo.getPrice());
+            // 会员价
             item.setPrice(skuInfo.getPrice());
         }, executor);
-
-        // 获取sku优惠信息
-//        CompletableFuture<Void> skuPromotionFuture = CompletableFuture.runAsync(() -> {
-//            R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
-//            if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-//                throw new RuntimeException("商品优惠信息获取失败");
-//            }
-//            SkuPromotionTo data = r.getData();
-//            item.setFullReductions(data.getReductions());
-//            item.setLadders(data.getLadders());
-//        });
 
         // 获取sku销售属性
         CompletableFuture<Void> attrsFuture = CompletableFuture.runAsync(() -> {

@@ -520,7 +520,21 @@ export default {
       const res = await this.$request({
         url: 'cart/add_to_cart?brandId=' + brandId + '&skuId=' + skuId + '&num=' + num
       });
-      console.log(res);
+      if (res.code === 200) {
+        this.$notify({
+          title: '成功加入购物车',
+          dangerouslyUseHTMLString: true,
+          message: '您可以去<a href="/cart" style="color:3355aa !important;font-weight:700;">购物车结算</a>，或继续浏览商品',
+          duration: 3000,
+          offset: 50,
+          type: 'success'
+        });
+      } else {
+        this.$notify.error({
+          title: '错误',
+          message: '加入购物车失败，' + res.msg
+        });
+      }
     },
     // 商品轮播图往前
     specForward () {
@@ -758,7 +772,7 @@ export default {
   padding-top: 25px;
   height: 125px;
   position: relative;
-  z-index: 9999;
+  z-index: 999;
 
   .top-wrap {
     width: 1200px;

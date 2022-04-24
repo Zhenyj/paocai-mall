@@ -54,3 +54,7 @@ i{
   clear: both;
   visibility: hidden;
 }
+
+em{
+  font-style: normal;
+}

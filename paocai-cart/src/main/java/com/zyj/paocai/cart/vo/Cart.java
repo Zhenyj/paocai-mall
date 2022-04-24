@@ -23,4 +23,7 @@ public class Cart {
 
     /** 商品总价 */
     private BigDecimal totalAmount;
+
+    /**已优惠金额*/
+    private BigDecimal discount;
 }

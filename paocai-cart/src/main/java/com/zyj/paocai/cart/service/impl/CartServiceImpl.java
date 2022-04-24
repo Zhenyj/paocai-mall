@@ -15,6 +15,7 @@ import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.entity.vo.MemberRespVo;
 import com.zyj.paocai.common.utils.R;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -62,31 +63,27 @@ public class CartServiceImpl implements CartService {
             return null;
         }
         Cart cart = new Cart();
-        Integer totalCount = 0;
-        Integer skuCount = 0;
+        final Integer[] totalCount = {0};
+        final Integer[] skuCount = {0};
         BigDecimal totalAmount = new BigDecimal(0);
         for (ShopItem shopItem : shopItems) {
             LinkedList<CartSkuItem> items = shopItem.getItems();
             for (CartSkuItem item : items) {
                 Long skuId = item.getSkuId();
-                totalCount = totalCount + item.getCount();
-                skuCount += 1;
-                R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
-                if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                    throw new RuntimeException(r.getMsg());
-                }
-                SkuPromotionTo skuPromotionTo = r.getData();
-                if (skuPromotionTo != null) {
-                    item.setFullReductions(skuPromotionTo.getReductions());
-                    item.setLadders(skuPromotionTo.getLadders());
-                }
+                Integer count = item.getCount();
+                totalCount[0] += count;
+                skuCount[0] += 1;
+                // 获取最新的商品信息
+                CartSkuItem newItem = getCartSkuItemWithPromotionBySkuId(skuId);
+                BeanUtils.copyProperties(newItem,item);
+                item.setCount(count);
             }
             // 计算商品的价格、优惠等
             shopItem.calculate();
         }
         cart.setShops(shopItems);
-        cart.setSkuCount(skuCount);
-        cart.setTotalCount(totalCount);
+        cart.setSkuCount(skuCount[0]);
+        cart.setTotalCount(totalCount[0]);
         cart.setTotalAmount(totalAmount);
         return cart;
     }
@@ -115,7 +112,7 @@ public class CartServiceImpl implements CartService {
                     throw new RuntimeException("远程获取品牌信息失败");
                 }
                 BrandVo brandVo = r.getData();
-                if(!brandVo.getBrandId().equals(brandId)){
+                if (!brandVo.getBrandId().equals(brandId)) {
                     throw new RuntimeException("添加购物车失败，品牌错误");
                 }
                 shopItem.setBrandId(brandId);
@@ -126,8 +123,9 @@ public class CartServiceImpl implements CartService {
             CompletableFuture<Void> itemsFuture = CompletableFuture.runAsync(() -> {
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
-                cartSkuItem.setDiscount(new BigDecimal(0));
-                cartSkuItem.setTotalPrice(cartSkuItem.getPrice().multiply(BigDecimal.valueOf(num)));
+//                cartSkuItem.setDiscount(new BigDecimal(0));
+//                cartSkuItem.setOriginalTotalPrice(cartSkuItem.getOriginalPrice().multiply(BigDecimal.valueOf(num)));
+//                cartSkuItem.setTotalPrice(cartSkuItem.getOriginalTotalPrice());
                 LinkedList<CartSkuItem> items = new LinkedList<>();
                 items.add(cartSkuItem);
                 shopItem.setItems(items);
@@ -144,8 +142,9 @@ public class CartServiceImpl implements CartService {
                 // 如果商品项为空
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
-                cartSkuItem.setDiscount(new BigDecimal(0));
-                cartSkuItem.setTotalPrice(cartSkuItem.getPrice().multiply(BigDecimal.valueOf(num)));
+//                cartSkuItem.setDiscount(new BigDecimal(0));
+//                cartSkuItem.setOriginalTotalPrice(cartSkuItem.getOriginalPrice().multiply(BigDecimal.valueOf(num)));
+//                cartSkuItem.setTotalPrice(cartSkuItem.getOriginalTotalPrice());
                 items = new LinkedList<>();
                 items.add(cartSkuItem);
                 shopItemRedis.setItems(items);
@@ -156,7 +155,6 @@ public class CartServiceImpl implements CartService {
             for (CartSkuItem item : items) {
                 if (skuId.equals(item.getSkuId())) {
                     item.setCount(item.getCount() + num);
-                    item.setTotalPrice(item.getPrice().multiply(new BigDecimal(item.getCount())));
                     flag = true;
                     break;
                 }
@@ -164,14 +162,38 @@ public class CartServiceImpl implements CartService {
             if (!flag) {
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
-                cartSkuItem.setDiscount(new BigDecimal(0));
-                cartSkuItem.setTotalPrice(cartSkuItem.getPrice().multiply(BigDecimal.valueOf(num)));
+//                cartSkuItem.setDiscount(new BigDecimal(0));
+//                cartSkuItem.setOriginalTotalPrice(cartSkuItem.getOriginalPrice().multiply(BigDecimal.valueOf(num)));
+//                cartSkuItem.setTotalPrice(cartSkuItem.getOriginalTotalPrice());
                 items.addFirst(cartSkuItem);
             }
             shopItemRedis.setItems(items);
             // 3、将新购物车数据替换原有的购物车数据
             ops.put(brandId.toString(), JSON.toJSONString(shopItemRedis));
         }
+    }
+
+    /**
+     * 获取购物车商品项包含优惠信息
+     *
+     * @param skuId
+     * @return
+     */
+    private CartSkuItem getCartSkuItemWithPromotionBySkuId(Long skuId) {
+        CartSkuItem skuItem = getCartSkuItemBySkuId(skuId);
+        if (skuItem == null) {
+            throw new RuntimeException("商品不存在或已下架,商品编号:" + skuId);
+        }
+        R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
+        if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
+            throw new RuntimeException(r.getMsg());
+        }
+        SkuPromotionTo skuPromotionTo = r.getData();
+        if (skuPromotionTo != null) {
+            skuItem.setFullReductions(skuPromotionTo.getReductions());
+            skuItem.setLadders(skuPromotionTo.getLadders());
+        }
+        return skuItem;
     }
 
     /**
