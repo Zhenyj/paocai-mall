@@ -149,7 +149,7 @@
               <div class="site-nav-user">
                 <a
                   href="/cart"
-                  target="_top"
+                  target="_blank"
                 >
                   <i class="iconfont icon-cart"></i>购物车
                 </a>

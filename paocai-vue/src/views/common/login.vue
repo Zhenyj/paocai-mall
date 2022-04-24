@@ -246,8 +246,8 @@ export default {
       }
       if (res.code !== 200) {
         this.$message({
-          type: 'info',
-          message: res.msg
+          type: 'error',
+          message: res.msg ? res.msg : '登录失败，账号或密码错误'
         });
         return;
       }

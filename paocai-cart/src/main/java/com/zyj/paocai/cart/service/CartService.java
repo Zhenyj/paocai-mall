@@ -1,7 +1,9 @@
 package com.zyj.paocai.cart.service;
 
 import com.zyj.paocai.cart.vo.Cart;
+import com.zyj.paocai.cart.vo.CartItemIdVo;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -23,4 +25,20 @@ public interface CartService {
      */
     Cart getCart();
 
+    /**
+     * 删除单个商品
+     * @param cartItemIdVo
+     */
+    void deleteItem(CartItemIdVo cartItemIdVo);
+
+    /**
+     * 清空购物车
+     */
+    void clearCart();
+
+    /**
+     * 批量删除
+     * @param vos
+     */
+    void deleteBatch(List<CartItemIdVo> vos);
 }

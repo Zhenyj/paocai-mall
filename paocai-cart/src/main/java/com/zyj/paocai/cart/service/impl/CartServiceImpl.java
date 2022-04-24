@@ -7,6 +7,7 @@ import com.zyj.paocai.cart.feign.ProductFeignService;
 import com.zyj.paocai.cart.interceptor.CartInterceptor;
 import com.zyj.paocai.cart.service.CartService;
 import com.zyj.paocai.cart.vo.Cart;
+import com.zyj.paocai.cart.vo.CartItemIdVo;
 import com.zyj.paocai.cart.vo.ShopItem;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.to.SkuPromotionTo;
@@ -23,11 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -89,6 +90,89 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
+     * 删除单个商品
+     * @param cartItemIdVo
+     */
+    @Override
+    public void deleteItem(CartItemIdVo cartItemIdVo) {
+        BoundHashOperations<String, String, String> ops = getCartOps();
+        Long brandId = cartItemIdVo.getBrandId();
+        if(!ops.hasKey(brandId.toString())){
+            throw new RuntimeException("购物车不存在此店铺及商品信息");
+        }
+        String shopJson = ops.get(brandId.toString());
+        ShopItem shopItem = JSON.parseObject(shopJson, ShopItem.class);
+        LinkedList<CartSkuItem> items = shopItem.getItems();
+        Iterator<CartSkuItem> iterator = items.iterator();
+        while (iterator.hasNext()) {
+            if(iterator.next().getSkuId().equals(cartItemIdVo.getSkuId())){
+                iterator.remove();
+                break;
+            }
+        }
+        if(CollectionUtils.isEmpty(items)){
+            // 店铺项中没有任何商品，删除此店铺
+            ops.delete(brandId.toString());
+            return;
+        }
+        ops.put(brandId.toString(), JSON.toJSONString(shopItem));
+    }
+
+    /**
+     * 清空购物车
+     */
+    @Override
+    public void clearCart() {
+        MemberRespVo member = CartInterceptor.threadLocal.get();
+        if (member.getId() == null) {
+            throw new RuntimeException("对不起，您还没有登录");
+        }
+        String cartKey = CartConstant.CART_REDIS_PREFIX + member.getId();
+        Boolean b = redisTemplate.delete(cartKey);
+        if(b){
+            log.info("会员:"+member.getId()+"已清空");
+        }
+    }
+
+    /**
+     * 批量删除
+     * @param vos
+     */
+    @Override
+    public void deleteBatch(List<CartItemIdVo> vos) {
+        if(CollectionUtils.isEmpty(vos)){
+            throw new RuntimeException("对不起，您没有选择任何商品，无法删除");
+        }
+        Map<Long, CartItemIdVo> skuIdMap = vos.stream().collect(Collectors.toMap(CartItemIdVo::getSkuId, Function.identity()));
+        BoundHashOperations<String, String, String> ops = getCartOps();
+        Set<String> keys = ops.keys();
+        Iterator<String> keysIterator = keys.iterator();
+        while(keysIterator.hasNext()){
+            // 遍历每个店铺项
+            String brandId = keysIterator.next();
+            String value = ops.get(brandId);
+            ShopItem shopItem = JSON.parseObject(value, ShopItem.class);
+            LinkedList<CartSkuItem> items = shopItem.getItems();
+            Iterator<CartSkuItem> iterator = items.iterator();
+            while (iterator.hasNext()) {
+                // 判断是否需要删除
+                if (skuIdMap.containsKey(iterator.next().getSkuId())) {
+                    // 使用迭代器提供的方法删除（安全）
+                    iterator.remove();
+                }
+            }
+            if (CollectionUtils.isEmpty(items)) {
+                // 店铺没有商品，删除
+                ops.delete(brandId);
+            }else{
+                // 店铺还有商品，覆盖
+                ops.put(brandId, JSON.toJSONString(shopItem));
+            }
+        }
+        // TODO 如果删除、覆盖操作出现问题，已执行的redis操作怎么处理
+    }
+
+    /**
      * 添加购物车
      *
      * @param brandId 品牌id
@@ -123,9 +207,6 @@ public class CartServiceImpl implements CartService {
             CompletableFuture<Void> itemsFuture = CompletableFuture.runAsync(() -> {
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
-//                cartSkuItem.setDiscount(new BigDecimal(0));
-//                cartSkuItem.setOriginalTotalPrice(cartSkuItem.getOriginalPrice().multiply(BigDecimal.valueOf(num)));
-//                cartSkuItem.setTotalPrice(cartSkuItem.getOriginalTotalPrice());
                 LinkedList<CartSkuItem> items = new LinkedList<>();
                 items.add(cartSkuItem);
                 shopItem.setItems(items);
@@ -142,9 +223,6 @@ public class CartServiceImpl implements CartService {
                 // 如果商品项为空
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
-//                cartSkuItem.setDiscount(new BigDecimal(0));
-//                cartSkuItem.setOriginalTotalPrice(cartSkuItem.getOriginalPrice().multiply(BigDecimal.valueOf(num)));
-//                cartSkuItem.setTotalPrice(cartSkuItem.getOriginalTotalPrice());
                 items = new LinkedList<>();
                 items.add(cartSkuItem);
                 shopItemRedis.setItems(items);
@@ -162,9 +240,6 @@ public class CartServiceImpl implements CartService {
             if (!flag) {
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
-//                cartSkuItem.setDiscount(new BigDecimal(0));
-//                cartSkuItem.setOriginalTotalPrice(cartSkuItem.getOriginalPrice().multiply(BigDecimal.valueOf(num)));
-//                cartSkuItem.setTotalPrice(cartSkuItem.getOriginalTotalPrice());
                 items.addFirst(cartSkuItem);
             }
             shopItemRedis.setItems(items);

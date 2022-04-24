@@ -88,7 +88,7 @@
                   <div class="th th-chk">
                     <div
                       class="select-all"
-                      @click="handleSelectAll(cart.allChecked)"
+                      @click="handleSelectAll(!cart.allChecked)"
                     >
                       <i
                         class="iconfont"
@@ -122,6 +122,7 @@
                         <i
                           class="iconfont"
                           :class="[shop.allChecked?'icon-checked':'icon-unchecked']"
+                          @click="handleSelectShop(!shop.allChecked,i1)"
                         ></i>
                         &nbsp;&nbsp;店铺：<a>{{shop.brandName}}</a>
                         <i class="iconfont icon-kefu"></i>
@@ -187,14 +188,14 @@
                                   <i
                                     class="iconfont"
                                     :class="[item.checked?'icon-checked':'icon-unchecked']"
-                                    @click="handleCheckSku(i1,i2)"
+                                    @click="handleSelectSku(!item.checked,i1,i2)"
                                   ></i>
                                 </div>
                                 <div class="td td-item">
                                   <div class="item-pic">
                                     <a>
                                       <el-image
-                                        :src="'https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg'"
+                                        :src="item.skuDefaultImg"
                                         @click="navToProduct(item.skuId)"
                                         :title="item.skuTitle"
                                       >
@@ -263,6 +264,7 @@
                                     icon="el-icon-delete"
                                     circle
                                     title="删除"
+                                    @click="deleteItem(shop.brandId,item.skuId)"
                                   ></el-button>
                                 </div>
                               </div>
@@ -278,15 +280,22 @@
             <div class="float-bar-holder">
               <div class="float-bar-left">
                 <div class="select-all">
-                  <span @click="handleSelectAll(cart.allChecked)"><i
+                  <span @click="handleSelectAll(!cart.allChecked)"><i
                       class="iconfont"
                       :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
                     ></i>&nbsp;全选</span>
 
                 </div>
                 <div class="operations">
-                  <a class="batch-delete">删除</a>
+                  <a
+                    class="batch-delete"
+                    @click="batchDelete"
+                  >删除</a>
                   <a class="batch-fav">移入收藏夹</a>
+                  <a
+                    class="cleat-cart"
+                    @click="clearCart"
+                  >清空购物车</a>
                 </div>
               </div>
               <div class="float-bar-right">
@@ -319,6 +328,7 @@
 <script>
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
+import { validate } from 'json-schema';
 export default {
   name: 'myCart',
   components: { CommonHeader, CommonFooter },
@@ -362,8 +372,9 @@ export default {
       this.$forceUpdate();
     },
     // 获取用户购物车数据
-    async getCart () {
+    async getCartInfo () {
       try {
+        this.loading = true;
         const res = await this.$request({
           url: 'cart/my_cart',
           method: 'GET'
@@ -377,6 +388,7 @@ export default {
         }
         let cart = res.data;
         if (cart == null) {
+          this.cart = null;
           return;
         }
         // 初始化不选中
@@ -400,12 +412,8 @@ export default {
     hasDiscount (item) {
       return parseFloat(item.originalPrice) > parseFloat(item.price);
     },
-    // 选中商品
-    handleCheckSku (i1, i2) {
-      cart.shops[i1].items[i2].checked = !cart.shops[i1].items[i2].checked
-    },
-    handleSelectAll (isAllChecked) {
-      const checked = !isAllChecked;
+    // 全选
+    handleSelectAll (checked) {
       let cart = this.cart;
       cart.shops.forEach((v1, i1) => {
         v1.allChecked = checked;
@@ -413,14 +421,143 @@ export default {
           v2.checked = checked;
         });
       });
+      cart.allChecked = checked;
       this.cart = cart;
+    },
+    // 全选店铺
+    handleSelectShop (checked, index) {
+      let cart = this.cart;
+      cart.shops[index].allChecked = checked;
+      cart.shops[index].items.forEach((v, i) => {
+        v.checked = checked;
+      });
+      if (!checked) {
+        cart.allChecked = false;
+        this.cart = cart;
+      } else {
+        this.validateAllSelect();
+      }
+    },
+    // 选中商品
+    handleSelectSku (checked, i1, i2) {
+      let cart = this.cart;
+      cart.shops[i1].items[i2].checked = checked;
+      if (checked) {
+        this.cart = cart;
+        // 选中则继续判断该店铺下的商品是否都选中
+        this.validateShopAllSelect(i1);
+      } else {
+        // 直接设置非全选
+        cart.shops[i1].allChecked = false;
+        cart.allChecked = false;
+        this.cart = cart;
+      }
+    },
+    // 判断该店铺商品是否全选
+    validateShopAllSelect (index) {
+      let cart = this.cart;
+      let flag = true;
+      for (const item of cart.shops[index].items) {
+        if (!item.checked) {
+          flag = false;
+          break;
+        }
+      }
+      cart.shops[index].allChecked = flag;
+      this.cart = cart;
+      // 该店铺已全选，判断是否全部商品已选中
+      if (flag) {
+        this.validateAllSelect();
+      }
+    },
+    // 判断是否全部店铺都已全选
+    validateAllSelect () {
+      let cart = this.cart;
+      let flag = true;
+      for (const shop of cart.shops) {
+        if (!shop.allChecked) {
+          flag = false;
+          break;
+        }
+      }
+      cart.allChecked = flag;
+    },
+    async deleteItem (brandId, skuId) {
+      if (!brandId || brandId == '' || !skuId || skuId == '') {
+        return;
+      }
+      const res = await this.$request({
+        url: 'cart/delete_item',
+        method: 'POST',
+        data: {
+          brandId,
+          skuId
+        }
+      });
+      this.$handleResponseMessage(res, '成功删除', '未知错误，删除失败');
+      this.getCartInfo();
+    },
+    async clearCart () {
+      this.$confirm('此操作将清空购物车中所有商品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.doClearCart();
+      }).catch(() => {
+      });
+    },
+    async doClearCart () {
+      const res = await this.$request({
+        url: 'cart/clear_cart',
+        method: 'GET'
+      });
+      this.$handleResponseMessage(res, '购物车已清空', '未知错误，购物车清空失败');
+      this.getCartInfo();
+    },
+    batchDelete () {
+      this.$confirm('此操作将删除您已选中的购物车中的商品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.doBatchDelete();
+      }).catch(() => {
+      });
+    },
+    async doBatchDelete () {
+      let deleteList = [];
+      const cart = this.cart;
+      cart.shops.forEach((v1, i1) => {
+        v1.items.forEach((v2, i2) => {
+          if (v2.checked) {
+            deleteList.push({
+              brandId: v1.brandId,
+              skuId: v2.skuId
+            })
+          }
+        });
+      });
+      if (deleteList.length === 0) {
+        this.$alert('对不起，您没有选择商品，无法进行删除', '提示', {
+          confirmButtonText: '确定'
+        });
+        return;
+      }
+      const res = await this.$request({
+        url: 'cart/delete_batch',
+        method: 'POST',
+        data: deleteList
+      });
+      this.$handleResponseMessage(res, '批量删除成功', '未知错误，批量删除失败');
+      this.getCartInfo();
     }
   },
   created () {
     document.title = '泡菜商城-我的购物车';
     this.getLoginInfo();
     this.loading = true;
-    this.getCart();
+    this.getCartInfo();
   },
   filters: {
     showPrice (price) {
@@ -1005,6 +1142,9 @@ export default {
             width: 70px;
             line-height: 72px;
             height: 72px;
+            span {
+              cursor: pointer;
+            }
           }
           .operations {
             line-height: 72px;

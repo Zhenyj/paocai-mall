@@ -524,7 +524,7 @@ export default {
         this.$notify({
           title: '成功加入购物车',
           dangerouslyUseHTMLString: true,
-          message: '您可以去<a href="/cart" style="color:3355aa !important;font-weight:700;">购物车结算</a>，或继续浏览商品',
+          message: '您可以去<a href="/cart" target="_blank" style="color:#3355aa !important;font-weight:700;">购物车结算</a>，或继续浏览商品',
           duration: 3000,
           offset: 50,
           type: 'success'

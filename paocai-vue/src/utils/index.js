@@ -3,6 +3,7 @@ import router from '@/router'
 import store from '@/store'
 import cookies from 'vue-cookie'
 import { request } from './request'
+import { Message } from 'element-ui';
 
 
 /**
@@ -32,19 +33,22 @@ export const getLoginInfo = async () => {
 };
 
 /**
- * 获取uuid
+ * 处理请求结果并提示消息
  */
-export function getUUID () {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    return (c === 'x' ? (Math.random() * 16 | 0) : ('r&0x3' | '0x8')).toString(16)
-  })
+export const handleResponseMessage = (res, errorInterrupt = true, successDefaultMsg = '', errorDefaultMsg = '') => {
+  if (res.code === 200) {
+    if (successDefaultMsg.trim() !== '') {
+      Message.success(res.msg && res.msg.trim() != 'success' ? res.msg : successDefaultMsg);
+    }
+  } else {
+    if (errorDefaultMsg.trim() !== '') {
+      Message.error(res.msg && res.msg.trim() != '' ? res.msg : errorDefaultMsg);
+    }
+    return errorInterrupt;
+  }
+  return false;
 }
 
-/**
- * 清除登录信息
- */
-export function clearLoginInfo () {
-  Vue.cookie.delete('token')
-  store.commit('resetStore')
-  router.options.isAddDynamicMenuRoutes = false
+export const message = (successMsg, errorDefaultMsg,) => {
+
 }

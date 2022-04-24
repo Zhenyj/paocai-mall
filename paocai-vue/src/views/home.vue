@@ -583,13 +583,7 @@ export default {
         url: 'product/index/data',
         method: 'POST'
       });
-      if (res.code !== 200) {
-        this.$message({
-          type: 'info',
-          message: res.msg
-        });
-        return;
-      }
+      this.$handleResponseMessage(res, '', '未知错误，无法获取首页资源');
       const data = res.data;
       this.category = data.category;
       this.hotWords = data.hotWords;
@@ -654,8 +648,8 @@ export default {
         });
         if (res.code !== 200) {
           this.$message({
-            type: 'info',
-            message: res.msg
+            type: 'error',
+            message: res.msg ? res.msg : '未知错误，无法获取首页资源'
           });
           return;
         }

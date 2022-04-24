@@ -2,12 +2,12 @@ package com.zyj.paocai.cart.controller;
 
 import com.zyj.paocai.cart.service.CartService;
 import com.zyj.paocai.cart.vo.Cart;
+import com.zyj.paocai.cart.vo.CartItemIdVo;
 import com.zyj.paocai.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -19,6 +19,37 @@ public class CartController {
 
     @Autowired
     CartService cartService;
+
+    /**
+     * 清空购物车
+     * @return
+     */
+    @GetMapping("/clear_cart")
+    public R clearCart(){
+        cartService.clearCart();
+        return R.ok();
+    }
+
+    /**
+     * 批量删除
+     * @return
+     */
+    @PostMapping("/delete_batch")
+    public R deleteBatch(@RequestBody List<CartItemIdVo> vos){
+        cartService.deleteBatch(vos);
+        return R.ok();
+    }
+
+    /**
+     * 删除单个商品
+     * @param
+     * @return
+     */
+    @PostMapping("/delete_item")
+    public R deleteItem(@RequestBody CartItemIdVo cartItemIdVo){
+        cartService.deleteItem(cartItemIdVo);
+        return R.ok();
+    }
 
     /**
      * 获取购物车数据
