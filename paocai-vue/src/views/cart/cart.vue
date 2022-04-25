@@ -496,8 +496,26 @@ export default {
           skuId
         }
       });
-      this.$handleResponseMessage(res, '成功删除', '未知错误，删除失败');
-      this.getCartInfo();
+      this.$handleResponseMessage(res, '成功删除', '未知错误，删除失败', false);
+      if (res.code === 200) {
+        // 删除单个商品，不重新获取购物车数据，避免取消用户已选中的商品
+        this.removeItemFromCart(brandId, skuId);
+      }
+      // this.getCartInfo();
+    },
+    // 
+    removeItemFromCart (brandId, skuId) {
+      let cart = this.cart;
+      cart.shops.forEach((v1, i1) => {
+        if (v1.brandId === brandId) {
+          v1.items = v1.items.filter((v2) => {
+            return v2.skuId !== skuId;
+          });
+          console.log(v1.items);
+        }
+      });
+      this.cart = cart;
+      this.calculate();
     },
     async clearCart () {
       this.$confirm('此操作将清空购物车中所有商品, 是否继续?', '提示', {

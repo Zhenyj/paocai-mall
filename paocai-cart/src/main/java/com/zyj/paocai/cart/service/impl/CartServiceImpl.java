@@ -208,7 +208,7 @@ public class CartServiceImpl implements CartService {
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
                 LinkedList<CartSkuItem> items = new LinkedList<>();
-                items.add(cartSkuItem);
+                items.addFirst(cartSkuItem);
                 shopItem.setItems(items);
             }, executor);
 
@@ -224,7 +224,7 @@ public class CartServiceImpl implements CartService {
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
                 items = new LinkedList<>();
-                items.add(cartSkuItem);
+                items.addFirst(cartSkuItem);
                 shopItemRedis.setItems(items);
                 ops.put(brandId.toString(), JSON.toJSONString(shopItemRedis));
                 return;
@@ -240,6 +240,7 @@ public class CartServiceImpl implements CartService {
             if (!flag) {
                 CartSkuItem cartSkuItem = getCartSkuItemBySkuId(skuId);
                 cartSkuItem.setCount(num);
+                // 添加到第一个
                 items.addFirst(cartSkuItem);
             }
             shopItemRedis.setItems(items);
