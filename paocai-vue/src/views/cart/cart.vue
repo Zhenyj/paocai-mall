@@ -74,11 +74,11 @@
                 class="switch-cart">购物车（全部{{cart.skuCount?cart.skuCount:0}}）</span>
               <div class="cart-sum">
                 <span class="pay-text">已选商品（不含运费）</span>
-                <strong class="price">{{cart.totalAmount |showPrice}}</strong>
+                <strong class="price">{{originalTotalAmountComputed}}</strong>
                 <a
                   href=""
                   class="submit-btn"
-                  :class="{'submit-btn-disabled':cart.totalAmount <= 0}"
+                  :class="{'submit-btn-disabled':originalTotalAmountComputed <= 0}"
                 >结&nbsp;算</a>
               </div>
             </div>
@@ -284,7 +284,6 @@
                       class="iconfont"
                       :class="[cart.allChecked?'icon-checked':'icon-unchecked']"
                     ></i>&nbsp;全选</span>
-
                 </div>
                 <div class="operations">
                   <a
@@ -306,13 +305,13 @@
                 </div>
                 <div class="price-sum">
                   <span class="txt">合计（不含运费）：</span>
-                  <strong class="price">{{cart.totalAmount|showPrice}}</strong>
+                  <strong class="price">{{originalTotalAmountComputed}}</strong>
                 </div>
                 <div class="btn-area">
                   <a
                     href=""
                     class="submit-btn"
-                    :class="{'submit-btn-disabled':cart.totalAmount <= 0}"
+                    :class="{'submit-btn-disabled':originalTotalAmountComputed <= 0}"
                   >结&nbsp;算</a>
                 </div>
               </div>
@@ -423,6 +422,7 @@ export default {
       });
       cart.allChecked = checked;
       this.cart = cart;
+      this.calculate();
     },
     // 全选店铺
     handleSelectShop (checked, index) {
@@ -437,6 +437,7 @@ export default {
       } else {
         this.validateAllSelect();
       }
+      this.calculate();
     },
     // 选中商品
     handleSelectSku (checked, i1, i2) {
@@ -452,6 +453,7 @@ export default {
         cart.allChecked = false;
         this.cart = cart;
       }
+      this.calculate();
     },
     // 判断该店铺商品是否全选
     validateShopAllSelect (index) {
@@ -551,6 +553,25 @@ export default {
       });
       this.$handleResponseMessage(res, '批量删除成功', '未知错误，批量删除失败');
       this.getCartInfo();
+    },
+    calculate () {
+      const cart = this.cart;
+      let originalTotalAmount = 0;
+      let totalAmount = 0;
+      let discount = 0;
+      cart.shops.forEach((v1, i1) => {
+        v1.items.forEach((v2, i2) => {
+          if (v2.checked) {
+            originalTotalAmount += v2.originalTotalPrice;
+            totalAmount += v2.totalPrice;
+            discount += v2.discount;
+          }
+        });
+      });
+      cart.originalTotalAmount = parseFloat(originalTotalAmount.toFixed(2));
+      cart.totalAmount = parseFloat(totalAmount.toFixed(2));
+      cart.discount = parseFloat(discount.toFixed(2));
+      this.cart = cart;
     }
   },
   created () {
@@ -562,6 +583,12 @@ export default {
   filters: {
     showPrice (price) {
       return parseFloat(price).toFixed(2);
+    }
+  },
+  computed: {
+    originalTotalAmountComputed () {
+      let price = (this.cart.originalTotalAmount && this.cart.originalTotalAmount > 0) ? parseFloat(this.cart.originalTotalAmount) : 0;
+      return price.toFixed(2);
     }
   }
 }
@@ -578,6 +605,7 @@ export default {
   border-radius: 24px;
   overflow: hidden;
 }
+
 .header-wrapper {
   background-color: #fff;
   margin-bottom: 24px;
@@ -1078,6 +1106,25 @@ export default {
                               padding: 0;
                               height: 30px;
                               line-height: 30px;
+                            }
+                            /deep/ .el-input-number__decrease:hover {
+                              color: #f40;
+                            }
+                            /deep/ .el-input-number__increase:hover {
+                              color: #f40;
+                            }
+                            /deep/
+                              .el-input-number__increase:hover:not(.is-disabled)
+                              ~ .el-input
+                              .el-input__inner:not(.is-disabled) {
+                              border-color: #f40;
+                            }
+
+                            /deep/
+                              .el-input-number__decrease:hover:not(.is-disabled)
+                              ~ .el-input
+                              .el-input__inner:not(.is-disabled) {
+                              border-color: #f40;
                             }
                           }
                         }

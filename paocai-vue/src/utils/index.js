@@ -35,7 +35,7 @@ export const getLoginInfo = async () => {
 /**
  * 处理请求结果并提示消息
  */
-export const handleResponseMessage = (res, errorInterrupt = true, successDefaultMsg = '', errorDefaultMsg = '') => {
+export const handleResponseMessage = (res, successDefaultMsg = '', errorDefaultMsg = '', errorInterrupt = true) => {
   if (res.code === 200) {
     if (successDefaultMsg.trim() !== '') {
       Message.success(res.msg && res.msg.trim() != 'success' ? res.msg : successDefaultMsg);

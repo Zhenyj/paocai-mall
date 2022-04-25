@@ -21,6 +21,9 @@ public class Cart {
     /**sku总数*/
     private Integer skuCount;
 
+    /**原商品总价*/
+    private BigDecimal originalTotalAmount;
+
     /** 商品总价 */
     private BigDecimal totalAmount;
 
