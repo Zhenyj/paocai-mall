@@ -300,7 +300,7 @@
               <div class="float-bar-right">
                 <div class="amount-sum">
                   <span class="txt">已选商品</span>
-                  <em>0</em>
+                  <em>{{cart.checkSkuNum?cart.checkSkuNum:0}}</em>
                   <span class="txt">件</span>
                 </div>
                 <div class="price-sum">
@@ -514,6 +514,7 @@ export default {
           console.log(v1.items);
         }
       });
+      cart.skuCount -= 1;
       this.cart = cart;
       this.calculate();
     },
@@ -577,18 +578,21 @@ export default {
       let originalTotalAmount = 0;
       let totalAmount = 0;
       let discount = 0;
+      let checkSkuNum = 0;
       cart.shops.forEach((v1, i1) => {
         v1.items.forEach((v2, i2) => {
           if (v2.checked) {
             originalTotalAmount += v2.originalTotalPrice;
             totalAmount += v2.totalPrice;
             discount += v2.discount;
+            checkSkuNum += 1;
           }
         });
       });
       cart.originalTotalAmount = parseFloat(originalTotalAmount.toFixed(2));
       cart.totalAmount = parseFloat(totalAmount.toFixed(2));
       cart.discount = parseFloat(discount.toFixed(2));
+      cart.checkSkuNum = checkSkuNum;
       this.cart = cart;
     }
   },
