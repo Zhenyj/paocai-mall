@@ -214,6 +214,7 @@
                                       <a
                                         class="item-title"
                                         :href="'/product?skuId='+item.skuId"
+                                        target="_blank"
                                         :title="item.skuTitle"
                                       >{{item.skuTitle}}</a>
                                     </div>
@@ -327,7 +328,6 @@
 <script>
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
-import { validate } from 'json-schema';
 export default {
   name: 'myCart',
   components: { CommonHeader, CommonFooter },
@@ -405,7 +405,9 @@ export default {
     },
     // 打开对应的sku详情页
     navToProduct (skuId) {
-      this.$router.push({ name: 'product', query: { skuId: skuId } });
+      let url = this.$router.resolve({ name: 'product', query: { skuId: skuId } });
+      // 新标签页打开
+      window.open(url.href, '_blank');
     },
     // 是否有会员价格优惠
     hasDiscount (item) {

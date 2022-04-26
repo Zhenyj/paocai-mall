@@ -23,12 +23,12 @@ const globalRoutes = [{
   path: '/login',
   component: _import('common/login'),
   name: 'login',
-  meta: { title: '登录' }
+  meta: { title: '登录-泡菜商城' }
 }, {
   path: '/regist',
   component: _import('common/regist'),
   name: 'regist',
-  meta: { title: '注册' }
+  meta: { title: '注册-泡菜商城' }
 }, {
   path: '/search',
   component: _import('search/search'),
@@ -44,6 +44,16 @@ const globalRoutes = [{
   component: _import('cart/cart'),
   name: 'cart',
   meta: { title: '泡菜商城-我的购物车' }
+}, {
+  path: '/order',
+  component: _import('order/order'),
+  name: 'order',
+  meta: { title: '订单-泡菜商城' }
+}, {
+  path: '/order_confirm',
+  component: _import('order/order_confirm'),
+  name: 'order_confirm',
+  meta: { title: '确认订单-泡菜商城' }
 }]
 
 // 主入口路由(需嵌套上左右整体布局)

@@ -58,3 +58,6 @@ i{
 em{
   font-style: normal;
 }
+.hide {
+  display: none;
+}
