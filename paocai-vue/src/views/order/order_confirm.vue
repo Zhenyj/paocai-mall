@@ -33,50 +33,27 @@
             <h2 class="header-title">选择收货地址</h2>
           </div>
           <div class="address-list">
-            <div class="address-item-wrapper addr-selected addr-default">
-              <div class="inner-infos">
-                <div class="addr-hd">
-                  <span>福建</span>
-                  <span>厦门</span>
-                  <span>（甄英俊收）</span>
-                </div>
-                <div class="addr-bd">
-                  <span>集美</span>
-                  <span>后溪</span>
-                  <span>港头三里17号</span>
-                  <span>12345678910</span>
-                </div>
-                <a
-                  title="修改地址"
-                  class="modify-operation"
-                >修改</a>
-              </div>
-              <div
-                class="set-default"
-                title="设置当前地址为默认"
-              >设为默认</div>
-              <div class="default-tip">默认地址</div>
-            </div>
             <div
               class="address-item-wrapper"
-              v-for="i in 3"
+              :class="{'addr-selected':i===receiveAddressIndex,'addr-default':v.defaultStatus===1}"
+              v-for="(v,i) in addressList"
+              :key="i"
             >
               <div class="inner-infos">
                 <div class="addr-hd">
-                  <span>福建</span>
-                  <span>厦门</span>
-                  <span>（甄英俊收）</span>
+                  <span>{{v.province}}</span>
+                  <span>{{v.city}}</span>
+                  <span>{{'（'+v.name+'收）'}}</span>
                 </div>
                 <div class="addr-bd">
-                  <span>集美</span>
-                  <span>后溪</span>
-                  <span>港头三里17号</span>
-                  <span>12345678910</span>
+                  <span>{{v.region}}}</span>
+                  <span>{{v.detailAddress}}</span>
+                  <span>{{v.phone}}</span>
                 </div>
                 <a
                   title="修改地址"
                   class="modify-operation"
-                  v-if="true"
+                  v-if="i===receiveAddressIndex"
                 >修改</a>
               </div>
               <div
@@ -87,7 +64,10 @@
             </div>
           </div>
           <div class="operations">
-            <a href="">显示全部地址</a>
+            <a
+              href=""
+              v-show="addressList.length>=4"
+            >显示全部地址</a>
             <a href="">管理收货地址</a>
           </div>
         </div>
@@ -95,7 +75,7 @@
       <!-- 订单头部标题 -->
       <div class="order-desc">
         <div class="item-headers">
-          <div class="desc-wrapper ">
+          <div class="desc-wrapper">
             <h2 class="desc-title">确认订单信息</h2>
           </div>
           <div class="item-headers-wrap item-headers-column-6">
@@ -112,29 +92,31 @@
       <div class="shop-list">
         <div
           class="shop-item"
-          v-for="i in 2"
+          v-for="(shop,i1) in orderInfo.shops"
+          :key="i1"
         >
           <div class="shop-info">
             <span class="shop-name">店铺:&nbsp;</span>
             <a
               target="_blank"
               class="order-link"
-            >旗舰店</a>
+            >{{shop.brandName}}</a>
           </div>
           <div
             class="item-info"
-            v-for="j in 2"
+            v-for="(item,i2) in shop.items"
+            :key="i2"
           >
             <div class="item-row">
               <div class="shop-item-info">
                 <div class="info-detail info-cell">
                   <a
-                    href=""
+                    :href="'/cart?skuId='+item.skuId"
                     target="_blank"
                     class="info-cell"
                   ><img
                       class="info-img"
-                      src="https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg"
+                      :src="item.skuDefaultImg"
                       alt=""
                     ></a>
                   <div class="info-cell info-msg">
@@ -142,33 +124,35 @@
                       href=""
                       target="_blank"
                       class="info-title order-link"
-                    >【8+128G低至1899】realme真我GTNeo2高通骁龙87065W闪充E4旗舰屏学生智能手机拍照游戏官方正品gtneo2</a>
+                    >{{item.skuTitle}}</a>
                   </div>
                 </div>
                 <div class="info-sku info-cell">
-                  <p><span class="hd">机身颜色：</span><span class="bd">龙珠定制版</span>
-                  </p>
-                  <p><span class="hd">套餐类型：</span><span class="bd">官方标配</span>
-                  </p>
-                  <p><span class="hd">存储容量：</span><span
-                      class="bd">12GB+256GB</span></p>
-                  <p><span class="hd">版本类型：</span><span class="bd">中国大陆</span>
+                  <p
+                    v-for="(attr,i3) in item.attrs"
+                    :key="i3"
+                  >
+                    <span class="hd">{{attr.attrName+'：'}}</span>
+                    <span class="bd">{{attr.attrValue}}</span>
                   </p>
                 </div>
-                <div class="info-price info-cell">2799.00</div>
+                <div class="info-price info-cell">{{item.price | showPrice}}
+                </div>
               </div>
               <div class="order-quantity">
                 <div class="quantity-inner">
-                  <p>1</p>
+                  <p>{{item.count}}</p>
                 </div>
               </div>
               <div class="item-row__select">
                 <p class="item-row__text">无优惠</p>
               </div>
               <div class="item-row__price">
-                <div class="label item-row__price-item"><span
+                <div class="label item-row-price-item">
+                  <span
                     style="font-weight: bold; font-style: normal; text-decoration: none; color: rgb(255, 0, 54); font-size: 14px; min-width: 100px;"
-                  >2999.00</span></div>
+                  >{{(item.price*item.count) | showPrice}}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -179,8 +163,11 @@
                   <div class="ext-border ext-grid ext-grid-left">
                     <div class="ext-item">
                       <div class="invoice">
-                        <el-checkbox v-model="checked">开具发票</el-checkbox>
-                        <div class="invoice-operate">
+                        <el-checkbox v-model="shop.isInvoice">开具发票</el-checkbox>
+                        <div
+                          class="invoice-operate"
+                          v-show="shop.isInvoice"
+                        >
                           <div class="invoice-op-item invoice-type">
                             <label class="title-label">发票类型：</label>
                             <span>增值税电子普通发票</span>
@@ -188,22 +175,25 @@
                           <div class="invoice-op-item invoice-info">
                             <label class="title-label">发票信息：</label>
                             <el-select
-                              v-model="value"
+                              v-model="shop.billType"
                               placeholder="请选择"
                               size="mini"
                             >
                               <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
+                                v-for="bt in shop.billTypeList"
+                                :key="bt.value"
+                                :label="bt.label"
+                                :value="bt.value"
                               >
                               </el-option>
                             </el-select>
                           </div>
-                          <div class="invoice-op-item invoice-info">
+                          <div
+                            class="invoice-op-item invoice-info"
+                            v-show="shop.isInvoice"
+                          >
                             <label class="title-label">发票抬头类型：</label>
-                            <el-radio-group v-model="radio">
+                            <el-radio-group v-model="shop.billHeader">
                               <el-radio :label="3">个人</el-radio>
                               <el-radio :label="6">企业</el-radio>
                             </el-radio-group>
@@ -211,7 +201,7 @@
                           <div class="invoice-op-item invoice-header">
                             <label class="title-label">发票抬头：</label>
                             <span>
-                              <span>个人</span>
+                              <span>{{shop.billHeader}}</span>
                               <a class="edit-header">修改</a>
                               <span class="header-box">
                                 <el-tooltip
@@ -219,13 +209,12 @@
                                   manual
                                   content="请填写发票抬头"
                                   placement="bottom-start"
-                                  v-model="visible"
+                                  v-model="isShow"
                                   popper-class="tps"
                                 >
                                   <el-input
                                     size="mini"
-                                    v-model="input"
-                                    placeholder="根据最新增值税管理办法，如需企业抬头发票，请填写有效税号信息"
+                                    v-model="shop.billHeader"
                                   ></el-input>
                                 </el-tooltip>
                               </span>
@@ -234,11 +223,11 @@
                           <!-- 纳税人编号，发票抬头选择企业时才显示 -->
                           <div
                             class="invoice-op-item invoice-tax-no"
-                            v-if="true"
+                            v-if="shop.isInvoice"
                           >
                             <label class="title-label">纳税人识别号：</label>
                             <span class="hide">
-                              <span>123123</span>
+                              <span>123234345456</span>
                               <a class="edit-header">修改</a>
                             </span>
                             <span class="header-box">
@@ -270,7 +259,7 @@
                           <el-input
                             type="textarea"
                             placeholder="选填，请先和商家协商一致，付款后商家可见"
-                            v-model="textarea"
+                            v-model="shop.note"
                             maxlength="200"
                             show-word-limit
                           >
@@ -290,15 +279,15 @@
                           <label class="select-label">店铺优惠<span>：</span></label>
                           <div class="select-inline">
                             <el-select
-                              v-model="value"
+                              v-model="shop.shopDiscount"
                               placeholder="请选择"
                               size="mini"
                             >
                               <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
+                                v-for="(option,i2) in shop.shopDiscountOptions"
+                                :key="i2"
+                                :label="option.discountTitle"
+                                :value="option.discount"
                               >
                               </el-option>
                             </el-select>
@@ -308,7 +297,7 @@
                             style="float: right;"
                           >
                             <div class="label label-shop-price">
-                              <span>-1000.00</span>
+                              <span>{{shop.shopDiscount > 0?shop.shopDiscount:0|showPrice}}</span>
                             </div>
                           </div>
                         </div>
@@ -330,7 +319,7 @@
                         </div><span
                           class="select-price"
                           style="color: rgb(255, 0, 54);"
-                        >0.00</span>
+                        >{{shop.freightAmount|showPrice}}</span>
                       </div>
                     </div>
                     <!-- 运费险 -->
@@ -349,7 +338,7 @@
                                 disabled
                                 type="checkbox"
                                 class="next-checkbox-input"
-                                checked
+                                :checked="shop.freightInsurance"
                               >
                             </span>
                             <span class="next-checkbox-label">
@@ -361,7 +350,7 @@
                         <div
                           class="user-price"
                           style="color: rgb(255, 0, 54);"
-                        >0.00</div>
+                        >{{shop.freightInsurancePrice|showPrice}}</div>
                       </div>
                     </div>
                   </div>
@@ -371,55 +360,61 @@
                 <div class="shop-sum">
                   <div class="label">
                     <span class="label-header">店铺合计(含运费)</span>
-                    <span class="shop-sum-price">￥2999.00</span>
+                    <span class="shop-sum-price">￥{{shop.totalAmount}}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- 订单总信息 -->
-          <div class="realpay">
-            <div class="pay-info box">
-              <div class="box__wrapper">
-                <div class="box__shadow">
-                  <div>
-                    <span class="realpay-title">实付款：</span>
-                    <span class="realpay-price-symbol">¥</span>
-                    <span class="realpay-price">6367.81</span>
-                  </div>
-                  <div class="order-confirmAddr">
-                    <div class="confirmAddr-addr">
-                      <span class="confirmAddr-title">寄送至：</span>
-                      <span class="confirmAddr-addr-bd"> 福建 厦门 集美 后溪
-                        港头三里17号</span>
-                    </div>
-                    <div class="confirmAddr-addr-user">
-                      <span class="confirmAddr-title">收货人：</span>
-                      <span class="confirmAddr-addr-bd">卢
-                        12345678910</span>
-                    </div>
-                  </div>
-                  <div class="order-confirm-eticket"></div>
+        </div>
+        <!-- 订单总信息 -->
+        <div class="realpay">
+          <div class="pay-info box">
+            <div class="box__wrapper">
+              <div class="box__shadow">
+                <div>
+                  <span class="realpay-title">实付款：</span>
+                  <span class="realpay-price-symbol">¥</span>
+                  <span class="realpay-price">{{orderInfo.totalAmount}}</span>
                 </div>
+                <div
+                  class="order-confirmAddr"
+                  v-if="receiveAddress && receiveAddress.id"
+                >
+                  <div class="confirmAddr-addr">
+                    <span class="confirmAddr-title">寄送至：</span>
+                    <span
+                      class="confirmAddr-addr-bd">{{receiveAddress.province+' '+receiveAddress.city + ' ' +receiveAddress.region+' ' + receiveAddress.detailAddress}}</span>
+                  </div>
+                  <div class="confirmAddr-addr-user">
+                    <span class="confirmAddr-title">收货人：</span>
+                    <span
+                      class="confirmAddr-addr-bd">{{receiveAddress.name+' ' + receiveAddress.phone}}</span>
+                  </div>
+                </div>
+                <div
+                  v-else
+                  class="order-confirmAddr"
+                >请选择收货地址</div>
+                <div class="order-confirm-eticket"></div>
               </div>
             </div>
           </div>
-          <!--  -->
-          <div class="submit-order-container">
-            <div class="wrapper">
-              <a
-                class="go-back"
-                target="_self"
-                role="button"
-                title="返回购物车"
-                href="/cart"
-              ><i class="iconfont icon-fanhui"></i>返回购物车</a>
-              <a
-                role="button"
-                title="提交订单"
-                class="go-btn"
-              >提交订单</a>
-            </div>
+        </div>
+        <div class="submit-order-container">
+          <div class="wrapper">
+            <a
+              class="go-back"
+              target="_self"
+              role="button"
+              title="返回购物车"
+              href="/cart"
+            ><i class="iconfont icon-fanhui"></i>返回购物车</a>
+            <a
+              role="button"
+              title="提交订单"
+              class="go-btn"
+            >提交订单</a>
           </div>
         </div>
       </div>
@@ -439,7 +434,257 @@ export default {
       loginInfo: {
         id: ''
       },
-      visible: true
+      orderInfo: {
+        shops: [{
+          brandId: 2,
+          brandName: "红米",
+          shopDiscount: 1000,
+          freightAmount: 0,
+          freightInsurance: true,
+          freightInsurancePrice: 0,
+          isInvoice: false,
+          billTypeList: [{
+            label: '个人',
+            value: 1
+          }],
+          billType: 1,
+          billHeader: '',
+          note: '',
+          deliveryCompany: '',
+          totalAmount: 2999,
+          payAmount: 2999,
+          promotionAmount: 0,
+          integrationAmount: 0,
+          couponAmount: 0,
+          discountAmount: 0,
+          integration: 200,
+          growth: 200,
+          items: [{
+            skuId: 1691,
+            spuId: 1671,
+            skuTitle: "Redmi K50 墨羽 8GB+256GB",
+            price: 2599,
+            skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+            count: 1,
+            hasStock: true,
+            brandId: 2,
+            brandName: "红米",
+            brandImg: 'https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg',
+            attrs: [{
+              attrId: 1292,
+              attrName: "CPU",
+              attrValue: "天玑8100"
+            }, {
+              attrId: 1281,
+              attrName: "上市年份",
+              attrValue: "2022"
+            }, {
+              attrId: 1282,
+              attrName: "品牌",
+              attrValue: "红米"
+            }, {
+              attrId: 1290,
+              attrName: "屏幕刷新率",
+              attrValue: "120Hz"
+            }]
+          }, {
+            skuId: 1691,
+            spuId: 1671,
+            skuTitle: "Redmi K50 墨羽 8GB+256GB",
+            price: 2599,
+            skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+            count: 1,
+            hasStock: true,
+            brandId: 2,
+            brandName: "红米",
+            brandImg: 'https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg',
+            attrs: [
+              {
+                attrId: 1292,
+                attrName: "CPU",
+                attrValue: "天玑8100"
+              },
+              {
+                attrId: 1281,
+                attrName: "上市年份",
+                attrValue: "2022"
+              },
+              {
+                attrId: 1282,
+                attrName: "品牌",
+                attrValue: "红米"
+              },
+              {
+                attrId: 1290,
+                attrName: "屏幕刷新率",
+                attrValue: "120Hz"
+              }
+            ]
+          }],
+          shopDiscountOptions: [{
+            discountTitle: '不使用优惠',
+            discount: 0
+          }, {
+            discountTitle: '省1000:组合优惠',
+            discount: 1000
+          }],
+          selectDiscount: {
+            discountTitle: '省1000:组合优惠',
+            discount: 1000
+          }
+        }, {
+          items: [{
+            skuId: 1691,
+            spuId: 1671,
+            skuTitle: "Redmi K50 墨羽 8GB+256GB",
+            price: 2599,
+            skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+            count: 1,
+            hasStock: true,
+            brandId: 2,
+            brandName: "红米",
+            brandImg: 'https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg',
+            attrs: [
+              {
+                attrId: 1292,
+                attrName: "CPU",
+                attrValue: "天玑8100"
+              },
+              {
+                attrId: 1281,
+                attrName: "上市年份",
+                attrValue: "2022"
+              },
+              {
+                attrId: 1282,
+                attrName: "品牌",
+                attrValue: "红米"
+              },
+              {
+                attrId: 1290,
+                attrName: "屏幕刷新率",
+                attrValue: "120Hz"
+              }
+            ]
+          }, {
+            skuId: 1691,
+            spuId: 1671,
+            skuTitle: "Redmi K50 墨羽 8GB+256GB",
+            price: 2599,
+            skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
+            count: 1,
+            hasStock: true,
+            brandId: 2,
+            brandName: "红米",
+            brandImg: 'https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg',
+            attrs: [
+              {
+                attrId: 1292,
+                attrName: "CPU",
+                attrValue: "天玑8100"
+              },
+              {
+                attrId: 1281,
+                attrName: "上市年份",
+                attrValue: "2022"
+              },
+              {
+                attrId: 1282,
+                attrName: "品牌",
+                attrValue: "红米"
+              },
+              {
+                attrId: 1290,
+                attrName: "屏幕刷新率",
+                attrValue: "120Hz"
+              }
+            ]
+          }],
+          shopDiscountOptions: [{
+            discountTitle: '不使用优惠',
+            discount: 0
+          }, {
+            discountTitle: '组合优惠',
+            discount: 1000
+          }],
+          shopDiscount: 1000,
+          freightAmount: 0,
+          freightInsurance: true,
+          freightInsurancePrice: 0,
+          isInvoice: false,
+          billHeader: '',
+          note: '',
+          deliveryCompany: '',
+          totalAmount: 2999.00
+        }],
+        totalAmount: 8888.88,
+        freightAmount: 0,
+        integrationAmount: 0,
+        couponAmount: 0,
+        discountAmount: 1000
+      },
+      addressList: [{
+        memberId: 2,
+        name: '甄英俊',
+        phone: '12345678910',
+        postCode: '',
+        province: '福建省',
+        city: '厦门市',
+        region: '集美区',
+        detailAddress: '详细地址',
+        areacode: '',
+        defaultStatus: 1
+      }, {
+        memberId: 2,
+        name: '甄英俊',
+        phone: '12345678910',
+        postCode: '',
+        province: '福建省',
+        city: '厦门市',
+        region: '集美区',
+        detailAddress: '详细地址',
+        areacode: '',
+        defaultStatus: 0
+      }, {
+        memberId: 2,
+        name: '甄英俊',
+        phone: '12345678910',
+        postCode: '',
+        province: '福建省',
+        city: '厦门市',
+        region: '集美区',
+        detailAddress: '详细地址',
+        areacode: '',
+        defaultStatus: 0
+      }, {
+        memberId: 2,
+        name: '甄英俊',
+        phone: '12345678910',
+        postCode: '',
+        province: '福建省',
+        city: '厦门市',
+        region: '集美区',
+        detailAddress: '详细地址',
+        areacode: '',
+        defaultStatus: 0
+      }],
+      receiveAddressIndex: 0,
+      receiveAddress: {
+        id: 1,
+        memberId: 2,
+        name: '甄英俊',
+        phone: '12345678910',
+        postCode: '',
+        province: '福建省',
+        city: '厦门市',
+        region: '集美区',
+        detailAddress: '详细地址',
+        areacode: '',
+        defaultStatus: 1
+      },
+
+      visible: true,
+      isShow: false
     }
   },
   methods: {
@@ -454,6 +699,13 @@ export default {
   created () {
     document.title = "确认订单-泡菜商城";
     this.getLoginInfo();
+  },
+  computed: {
+  },
+  filters: {
+    showPrice (price) {
+      return parseFloat(price).toFixed(2);
+    }
   }
 }
 </script>
@@ -780,7 +1032,7 @@ body {
     width: 130px;
     text-align: right;
     padding-right: 5px;
-    .item-row__price-item {
+    .item-row-price-item {
       display: inline-block;
       padding: 10px 0 5px;
     }
@@ -1056,6 +1308,7 @@ body {
         display: inline-block;
       }
       .textarea-wrapper {
+        font-size: 12px;
         width: 330px;
         display: inline-block;
       }
@@ -1179,14 +1432,22 @@ body {
   max-width: 240px;
 }
 
-.el-tooltip__popper[x-placement^="bottom"] .popper__arrow,
-.el-tooltip__popper[x-placement^="bottom"] .popper__arrow::after {
+.tps.el-tooltip__popper[x-placement^="bottom"] .popper__arrow,
+.tps.el-tooltip__popper[x-placement^="bottom"] .popper__arrow::after {
   border-bottom-color: #f88578;
 }
-.el-tooltip__popper[x-placement^="bottom"] .popper__arrow {
+.tps.el-tooltip__popper[x-placement^="bottom"] .popper__arrow {
+  top: -7px;
   left: 10px !important;
 }
-.el-tooltip__popper[x-placement^="bottom"] .popper__arrow::after {
+.tps.el-tooltip__popper[x-placement^="bottom"] .popper__arrow::after {
   left: 0px !important;
+}
+.tps.el-tooltip__popper[x-placement^="top"] .popper__arrow {
+  border-top-color: #f88578;
+  left: 10px !important;
+}
+.tps.el-tooltip__popper[x-placement^="top"] .popper__arrow::after {
+  border-top-color: #f88578;
 }
 </style>

@@ -8,7 +8,7 @@ import '@/element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 import router from '@/router'
 import { request } from '@/utils/request'
-import { getLoginInfo, handleResponseMessage } from './utils/index'
+import { getLoginInfo, handleResponseMessage, hasText } from './utils/index'
 
 
 Vue.use(VueCookie)
@@ -17,6 +17,7 @@ Vue.prototype.$request = request;
 // 获取用户信息
 Vue.prototype.$getLoginInfo = getLoginInfo;
 Vue.prototype.$handleResponseMessage = handleResponseMessage;
+Vue.prototype.hasText = hasText;
 
 new Vue({
   el: '#app',

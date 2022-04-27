@@ -54,6 +54,16 @@ const globalRoutes = [{
   component: _import('order/order_confirm'),
   name: 'order_confirm',
   meta: { title: '确认订单-泡菜商城' }
+}, {
+  path: '/address',
+  component: _import('address/address'),
+  name: 'address',
+  meta: { title: '收货地址-泡菜商城' }
+}, {
+  path: '/address/manage',
+  component: _import('address/address_manage'),
+  name: 'address_manage',
+  meta: { title: '收货地址管理-泡菜商城' }
 }]
 
 // 主入口路由(需嵌套上左右整体布局)

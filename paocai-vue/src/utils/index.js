@@ -49,6 +49,6 @@ export const handleResponseMessage = (res, successDefaultMsg = '', errorDefaultM
   return false;
 }
 
-export const message = (successMsg, errorDefaultMsg,) => {
-
+export const hasText = (s) => {
+  return s != null && s.trim().length > 0;
 }
