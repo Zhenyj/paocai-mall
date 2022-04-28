@@ -256,9 +256,9 @@ export default {
       let loginInfo = res.data;
       sessionStorage.setItem('loginInfo', JSON.stringify(loginInfo));
       // 跳转首页
-      this.$router.push({
-        name: 'home'
-      })
+      this.$router.push({ path: '/' })
+      // 返回上一页
+      // this.$router.back(-1);
     },
     getSmsCode () {
       console.log('getSmsCode...')

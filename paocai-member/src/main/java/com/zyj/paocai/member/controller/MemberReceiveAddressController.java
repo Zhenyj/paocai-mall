@@ -52,7 +52,7 @@ public class MemberReceiveAddressController {
      *
      * @return
      */
-    @GetMapping("/list/user")
+    @GetMapping("/my_address/list")
     public R<List<MemberReceiveAddressEntity>> listForUser() {
         List<MemberReceiveAddressEntity> addressList = memberReceiveAddressService.listForUser();
         return R.ok(addressList);
@@ -71,7 +71,7 @@ public class MemberReceiveAddressController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     public R save(@RequestBody MemberReceiveAddressEntity memberReceiveAddress) {
 
         memberReceiveAddressService.saveAddress(memberReceiveAddress);
@@ -81,7 +81,7 @@ public class MemberReceiveAddressController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     public R update(@RequestBody MemberReceiveAddressEntity memberReceiveAddress) {
         memberReceiveAddressService.updateAddress(memberReceiveAddress);
         return R.ok();

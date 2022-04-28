@@ -66,7 +66,7 @@
             <div class="site-nav-menu-hd">
               <div class="site-nav-user">
                 <a
-                  href="#"
+                  href="/member/my_paocai"
                   target="_top"
                   id="site-nav-login-info-nick"
                   class="site-nav-login-info-nick"
@@ -91,7 +91,10 @@
                 </div>
                 <div class="login-info-wrap">
                   <div class="login-info-left">
-                    <div class="user-head-image">
+                    <div
+                      class="user-head-image"
+                      @click="navTo('my_paocai')"
+                    >
                       <img
                         v-if="loginInfo.id != '' && loginInfo.header && loginInfo.header != ''"
                         :src="loginInfo.header"
@@ -123,7 +126,7 @@
             <div class="site-nav-menu-hd">
               <div class="site-nav-user">
                 <a
-                  href="#"
+                  href="/member/my_paocai"
                   target="_top"
                 >
                   我的泡菜
@@ -156,8 +159,8 @@
               </div>
             </div>
           </li>
-          <li class="side-nav-menu">
-            <div class="site-nav-menu-hd site-nav-multi-menu">
+          <li class="side-nav-menu site-nav-multi-menu">
+            <div class="site-nav-menu-hd">
               <div class="site-nav-user">
                 <a
                   href="#"
@@ -334,6 +337,9 @@ export default {
     },
     toRegist () {
       this.$router.push({ name: 'regist' })
+    },
+    navTo (routerName) {
+      this.$router.push({ name: routerName });
     }
   },
   created () {
@@ -415,6 +421,8 @@ export default {
           font-size: 14px;
           color: #fd6020;
           margin-right: 5px;
+          position: relative;
+          z-index: 1;
         }
       }
 
@@ -434,7 +442,6 @@ export default {
         position: relative;
         z-index: 10001;
         display: none;
-        margin: -1px;
 
         .site-nav-menu-bd-panel {
           position: absolute;
@@ -558,7 +565,6 @@ export default {
         overflow-y: scroll;
       }
     }
-
     .site-nav-multi-menu:hover {
       background-color: #ffffff;
     }

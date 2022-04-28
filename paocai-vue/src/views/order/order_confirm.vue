@@ -26,7 +26,7 @@
           </el-steps>
         </div>
       </div>
-      <!-- 收获地址 -->
+      <!-- 收货地址 -->
       <div class="address-wrapper">
         <div class="order-address">
           <div class="address-header">

@@ -58,6 +58,16 @@ i{
 em{
   font-style: normal;
 }
+
 .hide {
   display: none;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+.flex-around {
+  display: flex;
+  justify-content: space-around;
 }

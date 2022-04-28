@@ -6,7 +6,6 @@
  */
 import Vue from 'vue'
 import Router from 'vue-router'
-import cookies from 'vue-cookie'
 
 Vue.use(Router)
 
@@ -50,19 +49,24 @@ const globalRoutes = [{
   name: 'order',
   meta: { title: '订单-泡菜商城' }
 }, {
-  path: '/order_confirm',
+  path: '/order/order_confirm',
   component: _import('order/order_confirm'),
-  name: 'order_confirm',
+  name: 'orderConfirm',
   meta: { title: '确认订单-泡菜商城' }
 }, {
-  path: '/address',
-  component: _import('address/address'),
+  path: '/member/my_paocai',
+  component: _import('member/my_paocai'),
+  name: 'myPaocai',
+  meta: { title: '我的泡菜' }
+}, {
+  path: '/member/address',
+  component: _import('member/address/address'),
   name: 'address',
   meta: { title: '收货地址-泡菜商城' }
 }, {
-  path: '/address/manage',
-  component: _import('address/address_manage'),
-  name: 'address_manage',
+  path: '/member/address/manage',
+  component: _import('member/address/address_manage'),
+  name: 'addressManage',
   meta: { title: '收货地址管理-泡菜商城' }
 }]
 

@@ -663,6 +663,7 @@ export default {
     }
   },
   async created () {
+    document.title = "泡菜商城"
     this.getLoginInfo();
     this.getIndexData();
   },

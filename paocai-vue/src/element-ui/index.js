@@ -81,6 +81,7 @@ import {
   Descriptions,
   DescriptionsItem,
   Result,
+  Avatar,
 } from 'element-ui';
 
 Vue.use(Pagination);
@@ -160,6 +161,7 @@ Vue.use(Empty);
 Vue.use(Descriptions);
 Vue.use(DescriptionsItem);
 Vue.use(Result);
+Vue.use(Avatar);
 
 Vue.use(Loading.directive);
 
