@@ -88,7 +88,7 @@ public class MemberReceiveAddressServiceImpl extends ServiceImpl<MemberReceiveAd
         if (memberReceiveAddress.getDefaultStatus().equals(Constant.ONE)) {
             // 如果更改收货地址为默认收货地址需判断与已有默认收货地址相同id，不同则修改
             MemberReceiveAddressEntity defaultAddress = getDefaultAddress();
-            if (!defaultAddress.getId().equals(memberReceiveAddress.getId())) {
+            if (defaultAddress != null && !defaultAddress.getId().equals(memberReceiveAddress.getId())) {
                 defaultAddress.setDefaultStatus(Constant.ZERO);
                 updateById(defaultAddress);
             }
