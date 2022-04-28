@@ -18,7 +18,7 @@ public class PromoteServiceImpl extends ServiceImpl<PromoteDao, PromoteEntity> i
 
     @Override
     public List<PromoteEntity> getShowPromote() {
-        return baseMapper.selectList(new QueryWrapper<PromoteEntity>().eq("show_status", Constant.SHOW));
+        return baseMapper.selectList(new QueryWrapper<PromoteEntity>().eq("show_status", Constant.ONE));
 
     }
 }

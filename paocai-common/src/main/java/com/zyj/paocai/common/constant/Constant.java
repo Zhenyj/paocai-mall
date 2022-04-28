@@ -32,10 +32,10 @@ public class Constant {
     public static final Integer ERROR_CODE = 500;
 
     /** 显示 */
-    public static final int SHOW = 1;
+    public static final int ONE = 1;
 
     /** 不显示 */
-    public static final int NO_SHOW = 0;
+    public static final int ZERO = 0;
 
     /**
      * 菜单
