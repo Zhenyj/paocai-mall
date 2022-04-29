@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.vo.MemberRespVo;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.member.dao.MemberReceiveAddressDao;
 import com.zyj.paocai.member.entity.MemberReceiveAddressEntity;
 import com.zyj.paocai.member.interceptor.LoginInfoInterceptor;
@@ -108,7 +110,7 @@ public class MemberReceiveAddressServiceImpl extends ServiceImpl<MemberReceiveAd
                 .eq("id", id)
                 .eq("member_id", member.getId()));
         if (num != 1) {
-            throw new RuntimeException("删除失败,id:" + id + "member_id:" + member.getId());
+            throw new RRException("删除失败,id:" + id + "member_id:" + member.getId(), BizCodeEnum.ADDRESS_DELETE_EXCEPTION.getCode());
         }
     }
 }

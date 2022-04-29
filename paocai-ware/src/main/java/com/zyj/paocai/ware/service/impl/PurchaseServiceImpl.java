@@ -3,8 +3,10 @@ package com.zyj.paocai.ware.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.ware.constant.WareConstant;
 import com.zyj.paocai.ware.dao.PurchaseDao;
 import com.zyj.paocai.ware.entity.PurchaseDetailEntity;
@@ -83,7 +85,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
         for (PurchaseEntity entity : entities) {
             if (entity.getStatus() != WareConstant.PurchaseStatusEnum.CREATED.getCode() &&
                     entity.getStatus() != WareConstant.PurchaseStatusEnum.ASSIGNED.getCode()) {
-                throw new RuntimeException("采购单:" + entity.getId() + "不是新建或已分配状态");
+                throw new RRException("采购单:" + entity.getId() + "不是新建或已分配状态", BizCodeEnum.WARE_SERVICE_EXCEPTION.getCode());
             }
             entity.setStatus(WareConstant.PurchaseStatusEnum.RECEIVE.getCode());
             entity.setUpdateTime(now);
@@ -127,7 +129,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
                 entity.setPurchaseId(finalPurchaseId);
                 entity.setStatus(WareConstant.PurchaseDetailStatusEnum.ASSIGNED.getCode());
             } else {
-                throw new RuntimeException("采购需求:" + entity.getId() + "无法分配");
+                throw new RRException("采购需求:" + entity.getId() + "无法分配",BizCodeEnum.WARE_SERVICE_EXCEPTION.getCode());
             }
         }
         detailService.updateBatchById(purchaseDetailEntities);

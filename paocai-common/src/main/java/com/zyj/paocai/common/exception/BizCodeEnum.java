@@ -30,8 +30,15 @@ public enum BizCodeEnum {
     // 商品服务
     PRODUCT_SERVICE_EXCEPTION(10000, "商品服务异常"),
     PRODUCT_UP_EXCEPTION(10001, "商品上架异常"),
-    PRODUCT_CATEGORY_EXCEPTION(10001, "商品分类异常"),
+    PRODUCT_CATEGORY_EXCEPTION(10002, "商品分类异常"),
     PRODUCT_WARE_EXCEPTION(10003, "商品库存异常"),
+    PRODUCT_NO_EXIST_EXCEPTION(10004,"商品不存在或已下架"),
+    PRODUCT_SPU_NO_EXIST_EXCEPTION(10005,"spu信息异常"),
+    BRAND_EXCEPTION(10006,"品牌信息异常"),
+    ATTR_EXCEPTION(10007,"属性数据异常"),
+    ATTR_GROUP_RELATION_EXCEPTION(10007,"属性&属性分组关联"),
+    ATTR_GROUP_EXCEPTION(10008,"属性分组关联异常"),
+    CATEGORY_NO_EXIST_EXCEPTION(10009,"分类不存在"),
     // 购物车服务
     CART_SERVICE_EXCEPTION(16000, "购物车服务异常"),
     CART_PRODUCT_INFO_EXCEPTION(16001, "购物车商品信息缺失、不完整"),
@@ -42,6 +49,10 @@ public enum BizCodeEnum {
     EMAIL_EXIST_EXCEPTION(15003, "邮箱已存在"),
     LOGIN_ACCT_PASSWORD_INVALID_EXCEPTION(15003, "账号密码错误"),
     TOKEN_EXCEPTION(15004,"token无效"),
+    PLEASE_LOGIN(15005,"对不起，请先登录后再进行此操作！"),
+    ADDRESS_ADD_EXCEPTION(15006,"收货地址添加异常"),
+    ADDRESS_DELETE_EXCEPTION(15007,"收货地址删除异常"),
+    ADDRESS_UPDATE_EXCEPTION(15008,"收货地址修改异常"),
     // 库存服务
     WARE_SERVICE_EXCEPTION(8000, "库存服务异常"),
     NO_STOCK_EXCEPTION(8001, "商品库存不足"),

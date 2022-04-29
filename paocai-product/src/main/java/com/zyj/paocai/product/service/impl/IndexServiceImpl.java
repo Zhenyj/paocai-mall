@@ -2,7 +2,9 @@ package com.zyj.paocai.product.service.impl;
 
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.product.entity.PromoteEntity;
 import com.zyj.paocai.product.entity.SkuInfoEntity;
@@ -78,7 +80,7 @@ public class IndexServiceImpl implements IndexService {
             List<PromoteEntity> promotes = promoteService.getShowPromote();
             if (CollectionUtils.isEmpty(promotes)) {
                 log.warn("没有首页推广资源");
-//                throw new RuntimeException("没有首页推广资源");
+                throw new RRException("没有首页推广资源", BizCodeEnum.PRODUCT_SERVICE_EXCEPTION.getCode());
             }
             // 首页顶部大图推广资源
             List<PromoteEntity> promoteCarousel = new ArrayList<>(6);
@@ -108,7 +110,7 @@ public class IndexServiceImpl implements IndexService {
         CompletableFuture<Void> orderFuture = CompletableFuture.runAsync(() -> {
             R<OrderStatusNumsVo> r = orderFeignService.getOrderStatusNumsInfo(1L);
             if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                throw new RuntimeException(r.getMsg());
+                throw new RRException(r.getMsg(),r.getCode());
             }
             OrderStatusNumsVo orderStatusNumsVo = r.getData();
             orderStatusNumsVo.setCartNum(5);

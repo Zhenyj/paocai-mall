@@ -24,6 +24,8 @@ public class CartSkuItem {
     private String skuTitle;
     /** 副标题 */
     private String skuSubtitle;
+    /**是否有库存*/
+    private Boolean hasStock;
     /** 默认图片 */
     private String skuDefaultImg;
     /**原价*/

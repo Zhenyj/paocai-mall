@@ -5,8 +5,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.product.dao.AttrGroupDao;
 import com.zyj.paocai.product.entity.AttrEntity;
 import com.zyj.paocai.product.entity.AttrGroupEntity;
@@ -78,7 +80,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     public AttrGroupWithCatelogPathVo getAttrGroupWithCatelogPathVoById(Long attrGroupId) {
         AttrGroupEntity attrGroupEntity = this.getById(attrGroupId);
         if (attrGroupEntity == null) {
-            throw new RuntimeException("不存在" + attrGroupId + "对应的属性分组");
+            throw new RRException("不存在" + attrGroupId + "对应的属性分组", BizCodeEnum.ATTR_GROUP_EXCEPTION.getCode());
         }
         AttrGroupWithCatelogPathVo vo = new AttrGroupWithCatelogPathVo();
         vo.setAttrGroupId(attrGroupEntity.getAttrGroupId());

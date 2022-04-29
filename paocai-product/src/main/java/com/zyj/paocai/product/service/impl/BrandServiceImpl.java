@@ -3,8 +3,10 @@ package com.zyj.paocai.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.product.dao.BrandDao;
 import com.zyj.paocai.product.entity.BrandEntity;
 import com.zyj.paocai.product.service.BrandService;
@@ -50,7 +52,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
     public BrandEntity getBrandBySpuId(Long spuId) {
         BrandEntity brand = brandDao.getBrandBySpuId(spuId);
         if (brand == null) {
-            throw new RuntimeException("没有spu相关品牌信息,spuId:" + spuId);
+            throw new RRException("没有spu相关品牌信息,spuId:" + spuId, BizCodeEnum.BRAND_EXCEPTION.getCode());
         }
         return brand;
     }

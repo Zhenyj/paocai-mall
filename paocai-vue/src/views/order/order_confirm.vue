@@ -185,8 +185,8 @@
                               <el-option
                                 v-for="bt in shop.billTypeList"
                                 :key="bt.value"
-                                :label="bt.label"
-                                :value="bt.value"
+                                :label="bt.typeName"
+                                :value="bt.typeValue"
                               >
                               </el-option>
                             </el-select>
@@ -197,8 +197,8 @@
                           >
                             <label class="title-label">发票抬头类型：</label>
                             <el-radio-group v-model="shop.billHeader">
-                              <el-radio :label="3">个人</el-radio>
-                              <el-radio :label="6">企业</el-radio>
+                              <el-radio :label="0">个人</el-radio>
+                              <el-radio :label="1">企业</el-radio>
                             </el-radio-group>
                           </div>
                           <div class="invoice-op-item invoice-header">
@@ -214,6 +214,7 @@
                                   placement="bottom-start"
                                   v-model="isShow"
                                   popper-class="tps"
+                                  v-show="isShow"
                                 >
                                   <el-input
                                     size="mini"
@@ -282,7 +283,7 @@
                           <label class="select-label">店铺优惠<span>：</span></label>
                           <div class="select-inline">
                             <el-select
-                              v-model="shop.shopDiscount"
+                              v-model="shop.discountOption"
                               placeholder="请选择"
                               size="mini"
                             >
@@ -447,8 +448,8 @@ export default {
           freightInsurancePrice: 0,
           isInvoice: false,
           billTypeList: [{
-            label: '个人',
-            value: 1
+            typeName: '个人',
+            typeValue: 1
           }],
           billType: 1,
           billHeader: '',
@@ -531,7 +532,7 @@ export default {
             discountTitle: '省1000:组合优惠',
             discount: 1000
           }],
-          selectDiscount: {
+          discountOption: {
             discountTitle: '省1000:组合优惠',
             discount: 1000
           }
@@ -685,17 +686,27 @@ export default {
         areacode: '',
         defaultStatus: 1
       },
-
       visible: true,
       isShow: false
     }
   },
   methods: {
+    init () {
+
+    },
     // 获取用户登录信息
     async getLoginInfo () {
       const loginInfo = await this.$getLoginInfo();
       if (loginInfo != null) {
         this.loginInfo = loginInfo;
+      } else {
+        // TODO
+        this.$alert('请先登录再进行此操作', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$router.push({ name: 'login' });
+          }
+        });
       }
     },
     handleNavTo (routerName) {
@@ -703,8 +714,10 @@ export default {
     }
   },
   created () {
+    console.log(JSON.stringify(this.orderInfo));
     document.title = "确认订单-泡菜商城";
     this.getLoginInfo();
+    this.init();
   },
   computed: {
   },

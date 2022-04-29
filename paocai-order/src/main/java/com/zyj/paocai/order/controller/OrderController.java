@@ -1,14 +1,17 @@
 package com.zyj.paocai.order.controller;
 
+import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
-import com.zyj.paocai.order.entity.OrderEntity;
-import com.zyj.paocai.order.service.OrderService;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.order.entity.OrderEntity;
+import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
+import com.zyj.paocai.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +27,17 @@ import java.util.Map;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
+    /**
+     * 结算并返回订单确认信息
+     * @param skuItems
+     * @return
+     */
+    @PostMapping("/toTrade")
+    public R<OrderConfirmVo> toTrade(List<CartSkuItem> skuItems){
+        OrderConfirmVo vo = orderService.toTrade(skuItems);
+        return R.ok(vo);
+    }
 
     /**
      * 获取用户订单状态信息

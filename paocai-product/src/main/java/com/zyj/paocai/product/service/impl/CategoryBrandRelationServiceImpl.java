@@ -3,8 +3,10 @@ package com.zyj.paocai.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.product.dao.CategoryBrandRelationDao;
 import com.zyj.paocai.product.dao.CategoryDao;
 import com.zyj.paocai.product.entity.BrandEntity;
@@ -87,7 +89,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         Long catelogId = categoryBrandRelation.getCatelogId();
         CategoryEntity category = categoryDao.selectById(catelogId);
         if (category == null) {
-            throw new RuntimeException("不存在分类id:" + catelogId + "对应的分类数据");
+            throw new RRException("不存在分类id:" + catelogId + "对应的分类数据", BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         categoryBrandRelation.setCatelogName(category.getName());
 
@@ -95,7 +97,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         Long brandId = categoryBrandRelation.getBrandId();
         BrandEntity brand = brandService.getById(brandId);
         if (brand == null) {
-            throw new RuntimeException("不存在品牌id:" + brandId + "对应的分类数据");
+            throw new RRException("不存在品牌id:" + brandId + "对应的分类数据", BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         categoryBrandRelation.setBrandName(brand.getName());
         save(categoryBrandRelation);

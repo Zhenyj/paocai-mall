@@ -9,6 +9,7 @@ import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.ware.dao.WareSkuDao;
 import com.zyj.paocai.ware.entity.PurchaseDetailEntity;
 import com.zyj.paocai.ware.entity.WareSkuEntity;
@@ -67,8 +68,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     public List<SkuHasStockVo> getSkuHasStockBatch(List<Long> skuIds) {
         List<SkuHasStockVo> skuHasStockVos = wareSkuDao.getSkuStockInfoBySkuIds(skuIds);
         if (skuIds.size() != skuHasStockVos.size()) {
-            log.error(BizCodeEnum.PRODUCT_WARE_EXCEPTION.getMsg());
-            throw new RuntimeException(BizCodeEnum.PRODUCT_WARE_EXCEPTION.getMsg());
+            throw new RRException(BizCodeEnum.PRODUCT_WARE_EXCEPTION.getMsg(), BizCodeEnum.PRODUCT_WARE_EXCEPTION.getCode());
         }
         return skuHasStockVos;
     }
@@ -86,11 +86,11 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         List<Long> skuIds = addStocks.stream().map(item -> item.getSkuId()).collect(Collectors.toList());
         R<Map<Long, String>> r = productFeignService.getSkuNameInfos(skuIds);
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-            throw new RuntimeException(r.getMsg());
+            throw new RRException(r.getMsg(), r.getCode());
         }
         Map<Long, String> skuNameMap = r.getData();
         if (skuNameMap == null) {
-            throw new RuntimeException("远程获取商品信息失败");
+            throw new RRException("远程获取商品信息失败", BizCodeEnum.WARE_SERVICE_EXCEPTION.getCode());
         }
 
         // 保存库存信息

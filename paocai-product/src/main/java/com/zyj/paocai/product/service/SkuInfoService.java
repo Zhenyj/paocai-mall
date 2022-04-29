@@ -78,5 +78,12 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
      * @return
      */
     CartSkuItem getCartSkuItem(Long skuId) throws ExecutionException, InterruptedException;
+
+    /**
+     * 批量获取购物车商品项
+     * @param skuIds
+     * @return
+     */
+    List<CartSkuItem> getSkuItems(List<Long> skuIds);
 }
 

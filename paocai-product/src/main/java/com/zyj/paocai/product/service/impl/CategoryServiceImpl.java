@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.entity.vo.CatalogBaseVo;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.product.dao.CategoryDao;
 import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.product.entity.vo.Catalog2Vo;
@@ -90,7 +92,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         while (true) {
             CategoryEntity entity = getById(catId);
             if (entity == null) {
-                throw new RuntimeException("不存在分类id：" + catId + "的分类");
+                throw new RRException("不存在分类id：" + catId + "的分类", BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
             }
             Long parentCid = entity.getParentCid();
             if (parentCid != null && parentCid == 0) {
@@ -187,7 +189,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         while (true) {
             CategoryEntity entity = getById(catId);
             if (entity == null) {
-                throw new RuntimeException("不存在分类id：" + catId + "的分类");
+                throw new RRException("不存在分类id：" + catId + "的分类", BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
             }
             list.add(new CatalogBaseVo(entity.getCatId(), entity.getName()));
             Long parentCid = entity.getParentCid();
@@ -210,7 +212,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public CategoryEntity getCategoryBySpuId(Long spuId) {
         CategoryEntity category = categoryDao.getCategoryBySpuId(spuId);
         if (category == null) {
-            throw new RuntimeException("没有spu相关分类信息,spuId:" + spuId);
+            throw new RRException("没有spu相关分类信息,spuId:" + spuId,  BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         return category;
     }
@@ -225,7 +227,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public List<CategoryEntity> getSameLevelCategory(Long catalogId) {
         CategoryEntity category = getById(catalogId);
         if (category == null) {
-            throw new RuntimeException("不存在该分类,分类id:" + catalogId);
+            throw new RRException("不存在该分类,分类id:" + catalogId, BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         List<CategoryEntity> list = getSameLevelCategoryByParentId(category.getParentCid());
         return list;

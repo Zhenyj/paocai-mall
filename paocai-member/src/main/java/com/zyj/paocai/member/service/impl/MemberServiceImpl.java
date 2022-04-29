@@ -8,6 +8,7 @@ import com.zyj.paocai.common.entity.to.UserRegisterTo;
 import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.member.dao.MemberDao;
 import com.zyj.paocai.member.entity.MemberEntity;
 import com.zyj.paocai.member.entity.MemberLevelEntity;
@@ -56,21 +57,21 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
         // 判断用户名是否唯一
         if (!checkPhoneUnique(userRegisterTo.getPhone())) {
-            throw new RuntimeException(BizCodeEnum.USER_EXIST_EXCEPTION.getMsg());
+            throw new RRException(BizCodeEnum.USER_EXIST_EXCEPTION.getMsg());
         }
         // 判断手机号码是否唯一
         if (!checkUsernameUnique(userRegisterTo.getUsername())) {
-            throw new RuntimeException(BizCodeEnum.PHONE_EXIST_EXCEPTION.getMsg());
+            throw new RRException(BizCodeEnum.PHONE_EXIST_EXCEPTION.getMsg());
         }
         if(!checkEmailUnique(userRegisterTo.getEmail())){
-            throw new RuntimeException(BizCodeEnum.EMAIL_EXIST_EXCEPTION.getMsg());
+            throw new RRException(BizCodeEnum.EMAIL_EXIST_EXCEPTION.getMsg());
         }
         MemberEntity member = new MemberEntity();
         // 设置会员等级
         MemberLevelEntity levelEntity = memberLevelService.getDefaultLevel();
         if (levelEntity == null) {
             log.error("系统没有默认的会员等级");
-            throw new RuntimeException("系统没有默认的会员等级");
+            throw new RRException("系统没有默认的会员等级",BizCodeEnum.MEMBER_SERVICE_EXCEPTION.getCode());
         }
 
         // 密码加密

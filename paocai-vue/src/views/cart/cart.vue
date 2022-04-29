@@ -79,9 +79,9 @@
                 <span class="pay-text">已选商品（不含运费）</span>
                 <strong class="price">{{originalTotalAmountComputed}}</strong>
                 <a
-                  href=""
                   class="submit-btn"
                   :class="{'submit-btn-disabled':originalTotalAmountComputed <= 0}"
+                  @click="submitOrder"
                 >结&nbsp;算</a>
               </div>
             </div>
@@ -313,9 +313,9 @@
                 </div>
                 <div class="btn-area">
                   <a
-                    href=""
                     class="submit-btn"
                     :class="{'submit-btn-disabled':originalTotalAmountComputed <= 0}"
+                    @click="submitOrder"
                   >结&nbsp;算</a>
                 </div>
               </div>
@@ -364,6 +364,14 @@ export default {
       const loginInfo = await this.$getLoginInfo();
       if (loginInfo != null) {
         this.loginInfo = loginInfo;
+      } else {
+        // TODO
+        this.$alert('请先登录再进行此操作', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$router.push({ name: 'login' });
+          }
+        });
       }
     },
     // 选择搜索类型
@@ -602,6 +610,33 @@ export default {
     },
     handleNavTo (routerName) {
       this.$router.push({ name: routerName });
+    },
+    // 结算
+    submitOrder () {
+      // 深拷贝
+      const cart = JSON.parse(JSON.stringify(this.cart));
+      let skus = [];
+      // 过滤出已选中的商品
+      cart.shops.forEach((v1, i1) => {
+        v1.items.forEach((v2, i2) => {
+          if (v2.checked) {
+            const item = {
+              skuId: v2.skuId,
+              count: v2.count
+            }
+            skus.push(item);
+          }
+        });
+      });
+      if (skus.length === 0) {
+        this.$message.error('请勾选需要结算的商品');
+        return;
+      }
+      this.toTrade(dataForm);
+    },
+    // 实际提交购物车信息
+    async toTrade (data) {
+
     }
   },
   created () {

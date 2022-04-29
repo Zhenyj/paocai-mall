@@ -14,7 +14,9 @@ import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.vo.BrandVo;
 import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.entity.vo.MemberRespVo;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.common.utils.RRException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +100,7 @@ public class CartServiceImpl implements CartService {
         BoundHashOperations<String, String, String> ops = getCartOps();
         Long brandId = cartItemIdVo.getBrandId();
         if(!ops.hasKey(brandId.toString())){
-            throw new RuntimeException("购物车不存在此店铺及商品信息");
+            throw new RRException("购物车不存在此店铺及商品信息",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
         String shopJson = ops.get(brandId.toString());
         ShopItem shopItem = JSON.parseObject(shopJson, ShopItem.class);
@@ -125,7 +127,7 @@ public class CartServiceImpl implements CartService {
     public void clearCart() {
         MemberRespVo member = CartInterceptor.threadLocal.get();
         if (member.getId() == null) {
-            throw new RuntimeException("对不起，您还没有登录");
+            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(),BizCodeEnum.PLEASE_LOGIN.getCode());
         }
         String cartKey = CartConstant.CART_REDIS_PREFIX + member.getId();
         Boolean b = redisTemplate.delete(cartKey);
@@ -141,7 +143,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void deleteBatch(List<CartItemIdVo> vos) {
         if(CollectionUtils.isEmpty(vos)){
-            throw new RuntimeException("对不起，您没有选择任何商品，无法删除");
+            throw new RRException("对不起，您没有选择任何商品，无法删除",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
         Map<Long, CartItemIdVo> skuIdMap = vos.stream().collect(Collectors.toMap(CartItemIdVo::getSkuId, Function.identity()));
         BoundHashOperations<String, String, String> ops = getCartOps();
@@ -193,11 +195,11 @@ public class CartServiceImpl implements CartService {
             CompletableFuture<Void> brandFuture = CompletableFuture.runAsync(() -> {
                 R<BrandVo> r = productFeignService.getBrandInfo(brandId);
                 if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                    throw new RuntimeException("远程获取品牌信息失败");
+                    throw new RRException("远程获取品牌信息失败",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
                 }
                 BrandVo brandVo = r.getData();
                 if (!brandVo.getBrandId().equals(brandId)) {
-                    throw new RuntimeException("添加购物车失败，品牌错误");
+                    throw new RRException("添加购物车失败，品牌错误",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
                 }
                 shopItem.setBrandId(brandId);
                 shopItem.setBrandName(brandVo.getName());
@@ -258,11 +260,11 @@ public class CartServiceImpl implements CartService {
     private CartSkuItem getCartSkuItemWithPromotionBySkuId(Long skuId) {
         CartSkuItem skuItem = getCartSkuItemBySkuId(skuId);
         if (skuItem == null) {
-            throw new RuntimeException("商品不存在或已下架,商品编号:" + skuId);
+            throw new RRException("商品不存在或已下架,商品编号:" + skuId,BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
         }
         R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-            throw new RuntimeException(r.getMsg());
+            throw new RRException(r.getMsg(),r.getCode());
         }
         SkuPromotionTo skuPromotionTo = r.getData();
         if (skuPromotionTo != null) {
@@ -298,7 +300,7 @@ public class CartServiceImpl implements CartService {
     private CartSkuItem getCartSkuItemBySkuId(Long skuId) {
         R<CartSkuItem> r = productFeignService.getCartSkuItem(skuId);
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-            throw new RuntimeException("获取购物车商品信息详情失败");
+            throw new RRException("获取购物车商品信息详情失败",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
         return r.getData();
     }
@@ -309,7 +311,7 @@ public class CartServiceImpl implements CartService {
     private BoundHashOperations<String, String, String> getCartOps() {
         MemberRespVo member = CartInterceptor.threadLocal.get();
         if (member.getId() == null) {
-            throw new RuntimeException("对不起，您还没有登录");
+            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(),BizCodeEnum.PLEASE_LOGIN.getCode());
         }
         String cartKey = CartConstant.CART_REDIS_PREFIX + member.getId();
         return redisTemplate.boundHashOps(cartKey);

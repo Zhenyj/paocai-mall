@@ -5,6 +5,7 @@ import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.to.es.SkuEsModel;
 import com.zyj.paocai.common.entity.vo.CatalogBaseVo;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.search.config.ElasticSearchConfig;
 import com.zyj.paocai.search.constant.EsConstant;
 import com.zyj.paocai.search.feign.ProductFeignService;
@@ -118,7 +119,7 @@ public class MallSearchServiceImpl implements MallSearchService {
             catalogsFuture = CompletableFuture.runAsync(() -> {
                 R<List<CatalogBaseVo>> r = productFeignService.getCatalogs(catalogId);
                 if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                    throw new RuntimeException("获取相关分类路径失败,catalogId:" + catalogId);
+                    throw new RRException("获取相关分类路径失败,catalogId:" + catalogId,r.getCode());
                 }
                 result.setCatalogs(r.getData());
             }, executor);
@@ -127,7 +128,7 @@ public class MallSearchServiceImpl implements MallSearchService {
             catalogThreeListFuture = CompletableFuture.runAsync(() -> {
                 R<List<CatalogBaseVo>> r = productFeignService.getSameLevelCategory(catalogId);
                 if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                    throw new RuntimeException("获取相关分类路径失败,catalogId:" + catalogId);
+                    throw new RRException("获取相关分类路径失败,catalogId:" + catalogId,r.getCode());
                 }
                 result.setCatalogThreeList(r.getData());
             }, executor);

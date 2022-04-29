@@ -5,13 +5,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.constant.ProductConstant;
-import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
 import com.zyj.paocai.common.entity.to.SkuReductionTo;
 import com.zyj.paocai.common.entity.to.SpuBoundsTo;
 import com.zyj.paocai.common.entity.to.es.SkuEsModel;
+import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
+import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.common.utils.R;
+import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.product.dao.SpuInfoDao;
 import com.zyj.paocai.product.entity.*;
 import com.zyj.paocai.product.entity.vo.*;
@@ -28,7 +30,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -164,7 +168,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         // 6、保存sku信息
         List<Skus> skus = vo.getSkus();
         if (skus == null || skus.size() == 0) {
-            throw new RuntimeException("缺少sku商品信息");
+            throw new RRException(BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getMsg(),BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
         }
         CompletableFuture<Void> saveSkuInfoFuture = CompletableFuture.runAsync(() -> {
             saveSkuInfo(spuInfoEntity, skus);
@@ -174,7 +178,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             CompletableFuture.allOf(saveImagesFuture, saveSkuInfoFuture, saveSpuBoundsFuture,
                     saveSpuBaseAttrsFuture).get();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RRException(e.getMessage(),BizCodeEnum.PRODUCT_SERVICE_EXCEPTION.getCode());
         }
     }
 
@@ -189,7 +193,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         // 1、查出当前spu对应的所有sku信息，品牌名字等
         List<SkuInfoEntity> skus = skuInfoService.getSkuBySpuId(spuId);
         if (skus == null || skus.size() == 0) {
-            throw new RuntimeException("不存在spu_id:" + spuId + "对应的sku商品信息");
+            throw new RRException("不存在spu_id:" + spuId + "对应的sku商品信息",BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
         }
         List<Long> skuIds = skus.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
         // 获取品牌信息
@@ -208,7 +212,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             skuStockMap = r.getData().stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock));
         } catch (Exception e) {
             log.error("库存服务查询异常:原因{}", e);
-            throw new RuntimeException(e);
+            throw new RRException(e.getMessage(),BizCodeEnum.PRODUCT_SERVICE_EXCEPTION.getCode());
         }
 
         // 2、封装每个sku信息
@@ -350,8 +354,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         spuBoundsTo.setSpuId(spuId);
         R r = couponFeignService.saveSpuBounds(spuBoundsTo);
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-            log.error("远程保存spu的积分信息失败");
-            throw new RuntimeException(r.getMsg());
+            throw new RRException(r.getMsg(),r.getCode());
         }
     }
 

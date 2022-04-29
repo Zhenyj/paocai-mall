@@ -20,28 +20,46 @@ import java.util.concurrent.ExecutionException;
  * sku信息
  *
  * @author lulx
- * @email 
+ * @email
  * @date 2022-03-15 21:19:43
  */
 @RestController
 @RequestMapping("product/skuinfo")
 public class SkuInfoController {
+
     @Autowired
     private SkuInfoService skuInfoService;
 
+    /**
+     * 批量获取购物车商品项
+     * @param skuIds
+     * @return
+     */
+    @PostMapping("/skuItems")
+    public R<List<CartSkuItem>> getSkuItems(@RequestParam("skuIds") List<Long> skuIds) {
+        List<CartSkuItem> skuItems = null;
+        try {
+            skuItems = skuInfoService.getSkuItems(skuIds);
+        } catch (Exception e) {
+            return R.error(Constant.ERROR_CODE, e.getMessage());
+        }
+        return R.ok(skuItems);
+    }
+
     @GetMapping("/skuItem/{skuId}")
-    public R<CartSkuItem> getCartSkuItem(@PathVariable("skuId") Long skuId){
+    public R<CartSkuItem> getCartSkuItem(@PathVariable("skuId") Long skuId) {
         CartSkuItem cartSkuItem = null;
         try {
             cartSkuItem = skuInfoService.getCartSkuItem(skuId);
         } catch (Exception e) {
-            return R.error(Constant.ERROR_CODE,e.getMessage());
+            return R.error(Constant.ERROR_CODE, e.getMessage());
         }
         return R.ok(cartSkuItem);
     }
 
     /**
      * 获取sku详细信息，详情页数据
+     *
      * @param skuId
      * @return
      * @throws ExecutionException
@@ -49,19 +67,19 @@ public class SkuInfoController {
      */
     @RequestMapping("/item")
     public R<SkuItemVo> getItem(@RequestParam("skuId") Long skuId) throws ExecutionException, InterruptedException {
-        SkuItemVo vo =  skuInfoService.getItem(skuId);
+        SkuItemVo vo = skuInfoService.getItem(skuId);
         return R.ok(vo);
     }
 
     @PostMapping("/skunameinfos")
-    R<Map<Long,String>> getSkuNameInfos(@RequestBody List<Long> skuIds){
-        Map<Long,String> map = skuInfoService.getSkuNameInfos(skuIds);
+    R<Map<Long, String>> getSkuNameInfos(@RequestBody List<Long> skuIds) {
+        Map<Long, String> map = skuInfoService.getSkuNameInfos(skuIds);
         return R.ok(map);
     }
 
-    @GetMapping ("/hotsale")
-    public R<List<SkuInfoEntity>> getHotSale(@RequestParam(value = "page",defaultValue = "1") Integer page,
-                                             @RequestParam("pageSize") Integer pageSize){
+    @GetMapping("/hotsale")
+    public R<List<SkuInfoEntity>> getHotSale(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                             @RequestParam("pageSize") Integer pageSize) {
         List<SkuInfoEntity> entities = skuInfoService.getHotSales(pageSize, page);
         return R.ok(entities);
     }
@@ -70,7 +88,7 @@ public class SkuInfoController {
      * 列表
      */
     @RequestMapping("/list")
-    public R<PageUtils> list(@RequestParam Map<String, Object> params){
+    public R<PageUtils> list(@RequestParam Map<String, Object> params) {
         PageUtils page = skuInfoService.queryPageByCondition(params);
 
         return R.ok(page);
@@ -81,8 +99,8 @@ public class SkuInfoController {
      * 信息
      */
     @RequestMapping("/info/{skuId}")
-    public R info(@PathVariable("skuId") Long skuId){
-		SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
+    public R info(@PathVariable("skuId") Long skuId) {
+        SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
 
         return R.ok(skuInfo);
     }
@@ -91,8 +109,8 @@ public class SkuInfoController {
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody SkuInfoEntity skuInfo){
-		skuInfoService.save(skuInfo);
+    public R save(@RequestBody SkuInfoEntity skuInfo) {
+        skuInfoService.save(skuInfo);
 
         return R.ok();
     }
@@ -101,8 +119,8 @@ public class SkuInfoController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody SkuInfoEntity skuInfo){
-		skuInfoService.updateById(skuInfo);
+    public R update(@RequestBody SkuInfoEntity skuInfo) {
+        skuInfoService.updateById(skuInfo);
 
         return R.ok();
     }
@@ -111,8 +129,8 @@ public class SkuInfoController {
      * 删除
      */
     @RequestMapping("/delete")
-    public R delete(@RequestBody Long[] skuIds){
-		skuInfoService.removeByIds(Arrays.asList(skuIds));
+    public R delete(@RequestBody Long[] skuIds) {
+        skuInfoService.removeByIds(Arrays.asList(skuIds));
 
         return R.ok();
     }

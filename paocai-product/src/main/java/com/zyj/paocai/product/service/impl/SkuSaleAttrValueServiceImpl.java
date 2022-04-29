@@ -10,6 +10,7 @@ import com.zyj.paocai.product.entity.SkuSaleAttrValueEntity;
 import com.zyj.paocai.product.entity.vo.SkuItemVo;
 import com.zyj.paocai.product.service.SkuSaleAttrValueService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,9 @@ import java.util.Map;
 @Slf4j
 @Service("skuSaleAttrValueService")
 public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao, SkuSaleAttrValueEntity> implements SkuSaleAttrValueService {
+
+    @Autowired
+    SkuSaleAttrValueDao skuSaleAttrValueDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -52,5 +56,4 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
                 .eq("sku_id",skuId));
         return saleAttrs;
     }
-
 }

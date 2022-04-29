@@ -23,9 +23,7 @@ public class LoginInfoInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession();
         MemberRespVo member = (MemberRespVo)session.getAttribute(AuthConstant.LOGIN_USER);
         if(member == null){
-            member = new MemberRespVo();
-            member.setId(1L);
-//            return false;
+            return false;
         }
         loginInfo.set(member);
         return HandlerInterceptor.super.preHandle(request, response, handler);

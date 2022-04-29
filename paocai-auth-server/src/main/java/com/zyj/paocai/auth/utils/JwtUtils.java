@@ -7,6 +7,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.zyj.paocai.common.entity.vo.MemberRespVo;
+import com.zyj.paocai.common.exception.BizCodeEnum;
+import com.zyj.paocai.common.utils.RRException;
 
 import java.util.Date;
 
@@ -64,10 +66,10 @@ public class JwtUtils {
             // 获取token信息中的用户信息
             member = JSON.parseObject(JWT.decode(token).getAudience().get(0), MemberRespVo.class);
         } catch (JWTDecodeException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RRException(e.getMessage());
         }
         if (member == null) {
-            throw new RuntimeException("用户不存在,请重新登录");
+            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(),BizCodeEnum.PLEASE_LOGIN.getCode());
         }
         // 验证
         JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(member.getId().toString())).build();
@@ -75,7 +77,7 @@ public class JwtUtils {
             jwtVerifier.verify(token);
         } catch (JWTVerificationException e) {
             // 验证失败抛出异常
-            throw new RuntimeException(e.getMessage());
+            throw new RRException(e.getMessage());
         }
         return member;
     }
