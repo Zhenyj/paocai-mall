@@ -1,6 +1,9 @@
 <template>
   <div id="address-manage-page">
-    <common-header :loginInfo="loginInfo"></common-header>
+    <common-header
+      :loginInfo="loginInfo"
+      @navToByRouterName="handleNavTo($event)"
+    ></common-header>
     <common-footer></common-footer>
   </div>
 </template>
@@ -16,6 +19,11 @@ export default {
       loginInfo: {
         id: ''
       },
+    }
+  },
+  methods: {
+    handleNavTo (routerName) {
+      this.$router.push({ name: routerName });
     }
   },
   created () {

@@ -833,6 +833,9 @@ export default {
         this.searchParam = searchParam;
         this.search();
       }
+    },
+    handleNavTo (routerName) {
+      this.$router.push({ name: routerName });
     }
   },
   created () {

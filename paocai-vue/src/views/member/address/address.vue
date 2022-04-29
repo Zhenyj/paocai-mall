@@ -1,6 +1,9 @@
 <template>
   <div id="address-list-page">
-    <common-header :loginInfo="loginInfo"></common-header>
+    <common-header
+      :loginInfo="loginInfo"
+      @navToByRouterName="handleNavTo($event)"
+    ></common-header>
     <!-- 头部 -->
     <member-header></member-header>
     <div
@@ -211,6 +214,9 @@ export default {
         this.$refs.addOrUpdate.init(id);
       });
     },
+    handleNavTo (routerName) {
+      this.$router.push({ name: routerName });
+    }
   },
   created () {
     document.title = '收货地址-泡菜商城';

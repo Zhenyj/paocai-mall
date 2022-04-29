@@ -3,7 +3,10 @@
     id="cart-page"
     class="cart-page"
   >
-    <common-header :loginInfo="loginInfo"></common-header>
+    <common-header
+      :loginInfo="loginInfo"
+      @navToByRouterName="handleNavTo($event)"
+    ></common-header>
     <!-- 顶部搜索栏 -->
     <div class="header-wrapper">
       <div class="cart-header">
@@ -596,6 +599,9 @@ export default {
       cart.discount = parseFloat(discount.toFixed(2));
       cart.checkSkuNum = checkSkuNum;
       this.cart = cart;
+    },
+    handleNavTo (routerName) {
+      this.$router.push({ name: routerName });
     }
   },
   created () {

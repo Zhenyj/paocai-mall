@@ -1,6 +1,9 @@
 <template>
   <div id="my-paocai-page">
-    <common-header :loginInfo="loginInfo"></common-header>
+    <common-header
+      :loginInfo="loginInfo"
+      @navToByRouterName="handleNavTo($event)"
+    ></common-header>
     <!-- 头部 -->
     <member-header @navToByRouterName="handleNavTo($event)"></member-header>
     <div class="content">
@@ -268,7 +271,6 @@ export default {
       }
     },
     handleNavTo (routerName) {
-      console.log(routerName);
       this.$router.push({ name: routerName });
     }
   },

@@ -1,6 +1,9 @@
 <template>
   <div id="order-page">
-    <common-header :loginInfo="loginInfo"></common-header>
+    <common-header
+      :loginInfo="loginInfo"
+      @navToByRouterName="handleNavTo($event)"
+    ></common-header>
     <div class="order-container"></div>
     <common-footer></common-footer>
   </div>
@@ -27,6 +30,9 @@ export default {
         this.loginInfo = loginInfo;
       }
     },
+    handleNavTo (routerName) {
+      this.$router.push({ name: routerName });
+    }
   },
   created () {
     this.getLoginInfo();

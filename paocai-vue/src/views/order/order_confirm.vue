@@ -1,6 +1,9 @@
 <template>
   <div id="order-confirm-page">
-    <common-header :loginInfo="loginInfo"></common-header>
+    <common-header
+      :loginInfo="loginInfo"
+      @navToByRouterName="handleNavTo($event)"
+    ></common-header>
     <div class="content">
       <!-- 顶部logo -->
       <div class="header-wrapper">
@@ -695,6 +698,9 @@ export default {
         this.loginInfo = loginInfo;
       }
     },
+    handleNavTo (routerName) {
+      this.$router.push({ name: routerName });
+    }
   },
   created () {
     document.title = "确认订单-泡菜商城";

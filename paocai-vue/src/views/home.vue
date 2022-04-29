@@ -1,7 +1,10 @@
 <template>
   <div id="home-page">
     <!-- 头部组件 -->
-    <common-header :login-info="loginInfo"></common-header>
+    <common-header
+      :login-info="loginInfo"
+      @navToByRouterName="handleNavTo($event)"
+    ></common-header>
     <!-- 主要内容 -->
     <div class="home-content">
       <!-- 顶部搜索栏 -->
@@ -660,6 +663,10 @@ export default {
           this.loading = false;
         }, 2000);
       }
+    },
+    handleNavTo (routerName) {
+      console.log(routerName);
+      this.$router.push({ name: routerName });
     }
   },
   async created () {

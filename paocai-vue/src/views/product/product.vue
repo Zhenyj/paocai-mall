@@ -741,6 +741,9 @@ export default {
       };
       document.body.style.overflow = ""; // 出现滚动条
       document.removeEventListener("touchmove", mo, false);
+    }, 
+    handleNavTo (routerName) {
+      this.$router.push({ name: routerName });
     }
   },
   created () {

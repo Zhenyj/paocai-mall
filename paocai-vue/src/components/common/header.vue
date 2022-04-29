@@ -93,7 +93,7 @@
                   <div class="login-info-left">
                     <div
                       class="user-head-image"
-                      @click="navTo('my_paocai')"
+                      @click="navTo('myPaocai')"
                     >
                       <img
                         v-if="loginInfo.id != '' && loginInfo.header && loginInfo.header != ''"
@@ -339,7 +339,7 @@ export default {
       this.$router.push({ name: 'regist' })
     },
     navTo (routerName) {
-      this.$router.push({ name: routerName });
+      this.$emit('navToByRouterName', routerName);
     }
   },
   created () {
@@ -508,6 +508,7 @@ export default {
               margin: 0 20px;
 
               .user-head-image {
+                cursor: pointer;
                 img {
                   width: 70px;
                   height: 70px;
