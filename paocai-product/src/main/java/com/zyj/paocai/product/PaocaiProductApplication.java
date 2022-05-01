@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableRedisHttpSession
 @EnableCaching
-@EnableFeignClients(basePackages = {"com.zyj.paocai.product.feign" })
+@EnableFeignClients
 @EnableTransactionManagement
 @EnableDiscoveryClient
 @SpringBootApplication

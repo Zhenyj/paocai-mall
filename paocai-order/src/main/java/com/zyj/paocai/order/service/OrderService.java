@@ -23,10 +23,9 @@ public interface OrderService extends IService<OrderEntity> {
 
     /**
      * 获取用户订单状态信息
-     * @param memberId
      * @return
      */
-    OrderStatusNumsVo getOrderStatusNumsInfo(Long memberId);
+    OrderStatusNumsVo getOrderStatusNumsInfo();
 
     /**
      * 结算并返回订单确认信息

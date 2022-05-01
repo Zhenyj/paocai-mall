@@ -77,10 +77,10 @@
                 class="switch-cart">购物车（全部{{cart.skuCount?cart.skuCount:0}}）</span>
               <div class="cart-sum">
                 <span class="pay-text">已选商品（不含运费）</span>
-                <strong class="price">{{originalTotalAmountComputed}}</strong>
+                <strong class="price">{{totalAmountComputed}}</strong>
                 <a
                   class="submit-btn"
-                  :class="{'submit-btn-disabled':originalTotalAmountComputed <= 0}"
+                  :class="{'submit-btn-disabled':totalAmountComputed <= 0}"
                   @click="submitOrder"
                 >结&nbsp;算</a>
               </div>
@@ -235,7 +235,7 @@
                                 <div class="td td-price">
                                   <div
                                     class="price-line"
-                                    v-if="hasDiscount(item.discount)"
+                                    v-if="hasDiscount(item)"
                                   >
                                     <em
                                       class="price-original">￥{{item.originalPrice|showPrice}}</em>
@@ -253,7 +253,7 @@
                                 </div>
                                 <div class="td td-sum">
                                   <div class="price-sum">
-                                    ￥{{item.originalTotalPrice|showPrice}}
+                                    ￥{{item.totalAmount|showPrice}}
                                   </div>
                                 </div>
                                 <div class="td td-op">
@@ -309,12 +309,12 @@
                 </div>
                 <div class="price-sum">
                   <span class="txt">合计（不含运费）：</span>
-                  <strong class="price">{{originalTotalAmountComputed}}</strong>
+                  <strong class="price">{{totalAmountComputed}}</strong>
                 </div>
                 <div class="btn-area">
                   <a
                     class="submit-btn"
-                    :class="{'submit-btn-disabled':originalTotalAmountComputed <= 0}"
+                    :class="{'submit-btn-disabled':totalAmountComputed <= 0}"
                     @click="submitOrder"
                   >结&nbsp;算</a>
                 </div>
@@ -588,22 +588,22 @@ export default {
     },
     calculate () {
       const cart = this.cart;
-      let originalTotalAmount = 0;
       let totalAmount = 0;
+      let payAmount = 0;
       let discount = 0;
       let checkSkuNum = 0;
       cart.shops.forEach((v1, i1) => {
         v1.items.forEach((v2, i2) => {
           if (v2.checked) {
-            originalTotalAmount += v2.originalTotalPrice;
-            totalAmount += v2.totalPrice;
-            discount += v2.discount;
+            totalAmount += v2.totalAmount;
+            payAmount += v2.payAmount;
+            discount += v2.promotionAmount;
             checkSkuNum += 1;
           }
         });
       });
-      cart.originalTotalAmount = parseFloat(originalTotalAmount.toFixed(2));
       cart.totalAmount = parseFloat(totalAmount.toFixed(2));
+      cart.payAmount = parseFloat(payAmount.toFixed(2));
       cart.discount = parseFloat(discount.toFixed(2));
       cart.checkSkuNum = checkSkuNum;
       this.cart = cart;
@@ -651,8 +651,8 @@ export default {
     }
   },
   computed: {
-    originalTotalAmountComputed () {
-      let price = (this.cart.originalTotalAmount && this.cart.originalTotalAmount > 0) ? parseFloat(this.cart.originalTotalAmount) : 0;
+    totalAmountComputed () {
+      let price = (this.cart.totalAmount && this.cart.totalAmount > 0) ? parseFloat(this.cart.totalAmount) : 0;
       return price.toFixed(2);
     }
   }

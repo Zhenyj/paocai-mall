@@ -39,5 +39,12 @@ public interface SkuFullReductionService extends IService<SkuFullReductionEntity
      * @return
      */
     SkuPromotionTo getSkuPromotion(Long skuId);
+
+    /**
+     * 批量获取sku优惠信息
+     * @param skuIds
+     * @return
+     */
+    List<SkuPromotionTo> getSkuPromotionBatch(List<Long> skuIds);
 }
 

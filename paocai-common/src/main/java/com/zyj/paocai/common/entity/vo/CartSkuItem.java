@@ -35,25 +35,29 @@ public class CartSkuItem {
     /** 数量 */
     private Integer count = 1;
     /**原需总价*/
-    private BigDecimal originalTotalPrice;
+    private BigDecimal totalAmount;
     /** 总价 */
-    private BigDecimal totalPrice;
-    /** 优惠价格 */
-    private BigDecimal discount;
+    private BigDecimal payAmount;
+    /** 促销优惠金额（促销价、满减、阶梯价） */
+    private BigDecimal promotionAmount;
     /** 销售属性 */
     private List<AttrBaseVo> attrs;
     /** 满减信息 */
     private List<SkuFullReductionTo> fullReductions;
     /** 商品阶梯价格（满几件几折） */
     private List<SkuLadderTo> ladders;
+    /** 下单可得积分 */
+    private BigDecimal integration;
+    /** 下单可得会员成长值 */
+    private BigDecimal growth;
 
     /**
      * 计算商品的价格
      */
     public void calculate() {
-        originalTotalPrice = price.multiply(new BigDecimal(count));
-        totalPrice = originalTotalPrice;
-        discount = new BigDecimal(0);
+        totalAmount = price.multiply(new BigDecimal(count));
+        payAmount = totalAmount;
+        promotionAmount = new BigDecimal(0);
         if (CollectionUtils.isEmpty(fullReductions) && CollectionUtils.isEmpty(ladders)) {
             return;
         }
@@ -82,18 +86,18 @@ public class CartSkuItem {
             reduction = getSatisfyReduction(price.multiply(new BigDecimal(count)));
             // 只满足阶梯价格优惠
             if(reduction == null){
-                totalPrice = price.multiply(new BigDecimal(count));
-                discount = originalTotalPrice.subtract(totalPrice);
+                payAmount = price.multiply(new BigDecimal(count));
+                promotionAmount = totalAmount.subtract(payAmount);
                 return;
             }
-            totalPrice = price.multiply(new BigDecimal(count)).subtract(reduction.getReducePrice());
-            discount = originalTotalPrice.subtract(totalPrice);
+            payAmount = price.multiply(new BigDecimal(count)).subtract(reduction.getReducePrice());
+            promotionAmount = totalAmount.subtract(payAmount);
             return;
         }
         // 只有满足满减优惠
         if(reduction != null){
-            discount = reduction.getReducePrice();
-            totalPrice = originalTotalPrice.subtract(discount);
+            promotionAmount = reduction.getReducePrice();
+            payAmount = totalAmount.subtract(promotionAmount);
         }
     }
 
@@ -104,8 +108,8 @@ public class CartSkuItem {
     private void calculateOnlyLadder() {
         SkuLadderTo actionLadder = getSatisfyLadder();
         if (actionLadder != null) {
-            totalPrice = actionLadder.getPrice().multiply(new BigDecimal(count));
-            discount = originalTotalPrice.subtract(totalPrice);
+            payAmount = actionLadder.getPrice().multiply(new BigDecimal(count));
+            promotionAmount = totalAmount.subtract(payAmount);
         }
     }
 
@@ -132,8 +136,8 @@ public class CartSkuItem {
     private void calculateOnlyFullReduction() {
         SkuFullReductionTo activeReduction = getSatisfyReduction();
         if (activeReduction != null) {
-            discount = activeReduction.getReducePrice();
-            totalPrice = originalTotalPrice.subtract(discount);
+            promotionAmount = activeReduction.getReducePrice();
+            payAmount = totalAmount.subtract(promotionAmount);
         }
     }
 
@@ -145,7 +149,7 @@ public class CartSkuItem {
     private SkuFullReductionTo getSatisfyReduction() {
         SkuFullReductionTo activeReduction = null;
         for (SkuFullReductionTo fullReduction : fullReductions) {
-            if (fullReduction.getFullPrice().compareTo(originalTotalPrice) != 1) {
+            if (fullReduction.getFullPrice().compareTo(totalAmount) != 1) {
                 activeReduction = fullReduction;
                 continue;
             }

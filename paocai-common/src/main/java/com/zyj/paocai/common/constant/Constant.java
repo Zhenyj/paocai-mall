@@ -37,6 +37,11 @@ public class Constant {
     /** 不显示 */
     public static final int ZERO = 0;
 
+    /**域名*/
+    public static final String PAOCAI_DOMAIN= "paocai.mall.com";
+
+    /**cookie名*/
+    public static final String PAOCAI_COOKIE_NAME = "PAOCAISESSION";
     /**
      * 菜单
      */

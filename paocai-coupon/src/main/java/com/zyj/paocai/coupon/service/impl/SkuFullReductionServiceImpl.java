@@ -3,18 +3,17 @@ package com.zyj.paocai.coupon.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zyj.paocai.common.entity.to.SkuFullReductionTo;
-import com.zyj.paocai.common.entity.to.SkuLadderTo;
-import com.zyj.paocai.common.entity.to.SkuPromotionTo;
-import com.zyj.paocai.common.entity.to.SkuReductionTo;
+import com.zyj.paocai.common.entity.to.*;
 import com.zyj.paocai.common.entity.vo.MemberPrice;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.coupon.dao.SkuFullReductionDao;
 import com.zyj.paocai.coupon.entity.MemberPriceEntity;
+import com.zyj.paocai.coupon.entity.SkuBoundsEntity;
 import com.zyj.paocai.coupon.entity.SkuFullReductionEntity;
 import com.zyj.paocai.coupon.entity.SkuLadderEntity;
 import com.zyj.paocai.coupon.service.MemberPriceService;
+import com.zyj.paocai.coupon.service.SkuBoundsService;
 import com.zyj.paocai.coupon.service.SkuFullReductionService;
 import com.zyj.paocai.coupon.service.SkuLadderService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +38,9 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
 
     @Autowired
     MemberPriceService memberPriceService;
+
+    @Autowired
+    SkuBoundsService skuBoundsService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -111,9 +113,30 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
             }).collect(Collectors.toList());
             skuPromotionTo.setLadders(ladders);
         }
+        // 获取商品sku积分信息
+        SkuBoundsEntity bounds = skuBoundsService.getBoundsBySkuId(skuId);
+        if(bounds != null){
+            SkuBoundsTo skuBoundsTo = new SkuBoundsTo();
+            BeanUtils.copyProperties(bounds,skuBoundsTo);
+            skuPromotionTo.setBounds(skuBoundsTo);
+        }
         return skuPromotionTo;
     }
 
+    /**
+     * 批量获取sku优惠信息
+     * @param skuIds
+     * @return
+     */
+    @Override
+    public List<SkuPromotionTo> getSkuPromotionBatch(List<Long> skuIds) {
+        List<SkuPromotionTo> skuPromotionTos = skuIds.stream().map(skuId -> {
+            SkuPromotionTo skuPromotion = getSkuPromotion(skuId);
+            skuPromotion.setSkuId(skuId);
+            return skuPromotion;
+        }).collect(Collectors.toList());
+        return skuPromotionTos;
+    }
 
 
     /**

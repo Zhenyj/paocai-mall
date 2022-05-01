@@ -6,7 +6,7 @@
         <div class="header-left">
           <a href=""><img
               src="../assets/logo.png"
-              alt="泡菜买菜"
+              alt="泡菜商城"
             /></a>
           <b>{{ title }}</b>
         </div>

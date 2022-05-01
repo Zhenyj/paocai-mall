@@ -108,7 +108,8 @@
                   <div class="login-info-right">
                     <div class="user-info">
                       <ul>
-                        <li class="info-item">泡泡值：{{loginInfo.growth}}</li>
+                        <li class="info-item">
+                          泡泡值：{{loginInfo.growth ? loginInfo.growth:0}}</li>
                         <li class="info-item">普通会员</li>
                       </ul>
                     </div>
@@ -501,7 +502,6 @@ export default {
           }
 
           .login-info-wrap {
-            margin-top: 15px;
             display: flex;
 
             .login-info-left {
@@ -510,8 +510,8 @@ export default {
               .user-head-image {
                 cursor: pointer;
                 img {
-                  width: 70px;
-                  height: 70px;
+                  width: 56px;
+                  height: 56px;
                   border-radius: 50%;
                 }
               }
@@ -528,6 +528,7 @@ export default {
               .info-item {
                 height: 20px;
                 line-height: 20px;
+                font-size: 12px;
               }
             }
           }

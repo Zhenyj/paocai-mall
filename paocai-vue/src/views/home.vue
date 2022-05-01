@@ -268,15 +268,15 @@
               >
                 <div class="order-status-info">
                   <a
-                    href="#"><strong>{{orderStatusInfo.cartNum}}</strong>购物车</a><a
+                    href="#"><strong>{{orderStatusInfo.cartNum?orderStatusInfo.cartNum:0}}</strong>购物车</a><a
                     href="#"
-                  ><strong>{{orderStatusInfo.waitReceiveNum}}</strong>待收货</a><a
+                  ><strong>{{orderStatusInfo.waitReceiveNum?orderStatusInfo.waitReceiveNum:0}}</strong>待收货</a><a
                     href="#"
-                  ><strong>{{orderStatusInfo.waitDeliverNum}}</strong>待发货</a><a
+                  ><strong>{{orderStatusInfo.waitDeliverNum?orderStatusInfo.waitDeliverNum:0}}</strong>待发货</a><a
                     href="#"
-                  ><strong>{{orderStatusInfo.waitPayNum}}</strong>待付款</a><a
+                  ><strong>{{orderStatusInfo.waitPayNum?orderStatusInfo.waitPayNum:0}}</strong>待付款</a><a
                     href="#"
-                  ><strong>{{orderStatusInfo.waitCommentNum}}</strong>待评论</a>
+                  ><strong>{{orderStatusInfo.waitCommentNum?orderStatusInfo.waitCommentNum:0}}</strong>待评论</a>
                 </div>
               </div>
             </div>
@@ -527,7 +527,6 @@
 <script>
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
-import { getLoginInfo } from '../utils';
 export default {
   name: 'home',
   components: { CommonHeader, CommonFooter },
@@ -537,11 +536,11 @@ export default {
         id: ''
       },
       orderStatusInfo: {
-        cartNum: 3,
-        waitReceiveNum: 2,
-        waitDeliverNum: 1,
+        cartNum: 0,
+        waitReceiveNum: 0,
+        waitDeliverNum: 0,
         waitPayNum: 0,
-        waitCommentNum: 5
+        waitCommentNum: 0
       },
       searchTypeIndex: 0,
       searchTypeList: [{
@@ -578,6 +577,14 @@ export default {
       const loginInfo = await this.$getLoginInfo();
       if (loginInfo != null) {
         this.loginInfo = loginInfo;
+        // 获取用户订单数量信息
+        const res = await this.$request({
+          url: 'order/order/order_status_num',
+          method: 'GET'
+        });
+        if (res.code === 200) {
+          this.orderStatusInfo = res.data;
+        }
       }
     },
     // 获取首页需要的数据
@@ -590,7 +597,6 @@ export default {
       const data = res.data;
       this.category = data.category;
       this.hotWords = data.hotWords;
-      this.orderStatusInfo = data.orderStatusInfo;
       this.promoteCarousel = data.promoteCarousel;
       this.smallPromoteCarousel = data.smallPromoteCarousel;
       this.hotSale = data.hotSale;
@@ -615,7 +621,6 @@ export default {
     },
     // 保存滚动值，这是兼容的写法
     handleScroll () {
-      console.log(1);
       this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
       var wScrollY = window.scrollY; //当前滚动条位置
       var wInnerH = window.innerHeight; //设备窗口的高度（不会变）

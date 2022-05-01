@@ -1,4 +1,4 @@
-package com.zyj.paocai.order.entity.vo;
+package com.zyj.paocai.common.entity.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

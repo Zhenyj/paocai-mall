@@ -1,9 +1,6 @@
 package com.zyj.paocai.product.service.impl;
 
-import com.zyj.paocai.common.constant.Constant;
-import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
 import com.zyj.paocai.common.exception.BizCodeEnum;
-import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.product.entity.PromoteEntity;
@@ -106,18 +103,6 @@ public class IndexServiceImpl implements IndexService {
             vo.setSmallPromoteCarousel(smallPromoteCarousel);
         }, executor);
 
-        // 获取用户订单状态信息，需要判断用户是否登录
-        CompletableFuture<Void> orderFuture = CompletableFuture.runAsync(() -> {
-            R<OrderStatusNumsVo> r = orderFeignService.getOrderStatusNumsInfo(1L);
-            if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                throw new RRException(r.getMsg(),r.getCode());
-            }
-            OrderStatusNumsVo orderStatusNumsVo = r.getData();
-            orderStatusNumsVo.setCartNum(5);
-            vo.setOrderStatusInfo(orderStatusNumsVo);
-            // TODO 获取用户购物车商品数量(总数)
-        }, executor);
-
         // 获取猜你喜欢、热销商品数据
         CompletableFuture<Void> hotSaleFuture = CompletableFuture.runAsync(() -> {
             HotSale hotSale = new HotSale();
@@ -127,7 +112,7 @@ public class IndexServiceImpl implements IndexService {
             vo.setHotSale(hotSale);
         }, executor);
 
-        CompletableFuture.allOf(categoryFuture, orderFuture, hotWordsFuture, promoteFuture, hotSaleFuture).get();
+        CompletableFuture.allOf(categoryFuture, hotWordsFuture, promoteFuture, hotSaleFuture).get();
 
         return vo;
     }

@@ -23,5 +23,12 @@ public interface SkuBoundsService extends IService<SkuBoundsEntity> {
      * @return
      */
     SkuBoundsEntity getBySkuId(Long skuId);
+
+    /**
+     * 获取商品sku积分信息
+     * @param skuId
+     * @return
+     */
+    SkuBoundsEntity getBoundsBySkuId(Long skuId);
 }
 

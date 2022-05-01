@@ -1,5 +1,6 @@
 package com.zyj.paocai.auth.config;
 
+import com.zyj.paocai.common.constant.Constant;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,9 +26,9 @@ public class SessionConfig implements BeanClassLoaderAware {
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-        serializer.setDomainName("paocai.mall.com");
+        serializer.setDomainName(Constant.PAOCAI_DOMAIN);
         serializer.setCookiePath("/");
-        serializer.setCookieName("PAOCAISESSION");
+        serializer.setCookieName(Constant.PAOCAI_COOKIE_NAME);
         return serializer;
     }
 

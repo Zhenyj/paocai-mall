@@ -89,7 +89,7 @@ public class LoginController {
         String token = JwtUtils.getToken(member);
         Cookie tokenCookie = new Cookie("token", token);
         tokenCookie.setMaxAge(60 * 60 * 24 * 7);
-        tokenCookie.setDomain("paocai.mall.com");
+        tokenCookie.setDomain(Constant.PAOCAI_DOMAIN);
         tokenCookie.setPath("/");
         response.addCookie(tokenCookie);
         return R.ok(member);

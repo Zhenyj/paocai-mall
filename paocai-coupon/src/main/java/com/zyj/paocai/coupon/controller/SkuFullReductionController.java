@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -26,6 +27,17 @@ import java.util.Map;
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
+
+    /**
+     * 批量获取sku优惠信息
+     * @param skuIds
+     * @return
+     */
+    @GetMapping("/sku_promotion/batch")
+    public R<List<SkuPromotionTo>> getSkuPromotionBatch(@RequestParam("skuIds") List<Long> skuIds){
+        List<SkuPromotionTo> skuPromotionTos = skuFullReductionService.getSkuPromotionBatch(skuIds);
+        return R.ok(skuPromotionTos);
+    }
 
     /**
      * 获取sku优惠信息

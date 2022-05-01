@@ -12,7 +12,7 @@
     <artifactId>paocai-ware</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>paocai-ware</name>
-    <description>泡菜买菜-库存服务</description>
+    <description>泡菜商城-库存服务</description>
 
     <properties>
         <java.version>1.8</java.version>

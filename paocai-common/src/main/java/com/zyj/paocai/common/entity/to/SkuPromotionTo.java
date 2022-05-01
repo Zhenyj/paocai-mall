@@ -11,9 +11,12 @@ import java.util.List;
  **/
 @Data
 public class SkuPromotionTo {
-
+    /**skuId*/
+    private Long skuId;
     /**sku满减信息*/
     private List<SkuFullReductionTo> reductions;
     /**sku阶梯价格(满几件打几折)*/
     private List<SkuLadderTo> ladders;
+    /**sku积分信息*/
+    private SkuBoundsTo bounds;
 }

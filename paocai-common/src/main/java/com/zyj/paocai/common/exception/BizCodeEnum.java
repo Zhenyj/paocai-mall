@@ -27,6 +27,7 @@ public enum BizCodeEnum {
     PARAM_FLOW(1005, "参数限流"),
     SYSTEM_BLOCK(1006, "系统负载异常"),
     AUTHORITY(1007, "授权异常"),
+    BODY_NOT_MATCH(1008,"请求的数据格式不符!"),
     // 商品服务
     PRODUCT_SERVICE_EXCEPTION(10000, "商品服务异常"),
     PRODUCT_UP_EXCEPTION(10001, "商品上架异常"),

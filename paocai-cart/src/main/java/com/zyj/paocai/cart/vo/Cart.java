@@ -1,5 +1,6 @@
 package com.zyj.paocai.cart.vo;
 
+import com.zyj.paocai.common.entity.vo.ShopItem;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,10 +23,10 @@ public class Cart {
     private Integer skuCount;
 
     /**原商品总价*/
-    private BigDecimal originalTotalAmount;
+    private BigDecimal totalAmount;
 
     /** 商品总价 */
-    private BigDecimal totalAmount;
+    private BigDecimal payAmount;
 
     /**已优惠金额*/
     private BigDecimal discount;

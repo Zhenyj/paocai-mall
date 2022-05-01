@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.constant.Constant;
+import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.vo.*;
 import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
@@ -341,6 +342,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             throw new RRException(BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getMsg(),BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
         }
         skuInfoEntities.stream().map(skuInfo -> {
+            Long skuId = skuInfo.getSkuId();
             CartSkuItem item = new CartSkuItem();
             item.setSkuId(skuInfo.getSkuId());
             item.setSkuName(skuInfo.getSkuName());
@@ -351,7 +353,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             // 会员价
             item.setPrice(skuInfo.getPrice());
             // sku销售属性集合
-            List<SkuSaleAttrValueEntity> saleAttrs = skuSaleAttrValueService.getSaleAttrsBySkuId(skuInfo.getSkuId());
+            List<SkuSaleAttrValueEntity> saleAttrs = skuSaleAttrValueService.getSaleAttrsBySkuId(skuId);
             if (!CollectionUtils.isEmpty(saleAttrs)) {
                 List<AttrBaseVo> attrs = saleAttrs.stream().map(saleAttr -> {
                     AttrBaseVo attr = new AttrBaseVo();
@@ -362,8 +364,23 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
                 }).collect(Collectors.toList());
                 item.setAttrs(attrs);
             }
+            // 获取优惠信息
+            R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
+            if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
+                throw new RRException(r.getMsg(),r.getCode());
+            }
+            SkuPromotionTo skuPromotionTo = r.getData();
+            if (skuPromotionTo != null) {
+                item.setFullReductions(skuPromotionTo.getReductions());
+                item.setLadders(skuPromotionTo.getLadders());
+                item.setGrowth(skuPromotionTo.getBounds().getGrowBounds());
+                item.setIntegration(skuPromotionTo.getBounds().getBuyBounds());
+            }
             return item;
         });
+        for (CartSkuItem skuItem : skuItems) {
+
+        }
         return skuItems;
     }
 }

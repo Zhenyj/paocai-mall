@@ -30,23 +30,22 @@ public class OrderController {
 
     /**
      * 结算并返回订单确认信息
-     * @param skuItems
+     * @param vos
      * @return
      */
     @PostMapping("/toTrade")
-    public R<OrderConfirmVo> toTrade(List<CartSkuItem> skuItems){
-        OrderConfirmVo vo = orderService.toTrade(skuItems);
-        return R.ok(vo);
+    public R<OrderConfirmVo> toTrade(List<CartSkuItem> vos){
+        OrderConfirmVo orderConfirmVo = orderService.toTrade(vos);
+        return R.ok(orderConfirmVo);
     }
 
     /**
      * 获取用户订单状态信息
-     * @param memberId
      * @return
      */
-    @PostMapping("/order_status_num")
-    public R<OrderStatusNumsVo> getOrderStatusNumsInfo(@RequestParam("memberId") Long memberId) {
-        OrderStatusNumsVo vo = orderService.getOrderStatusNumsInfo(memberId);
+    @GetMapping("/order_status_num")
+    public R<OrderStatusNumsVo> getOrderStatusNumsInfo() {
+        OrderStatusNumsVo vo = orderService.getOrderStatusNumsInfo();
         return R.ok(vo);
     }
 

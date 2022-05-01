@@ -8,12 +8,12 @@ import com.zyj.paocai.cart.interceptor.CartInterceptor;
 import com.zyj.paocai.cart.service.CartService;
 import com.zyj.paocai.cart.vo.Cart;
 import com.zyj.paocai.cart.vo.CartItemIdVo;
-import com.zyj.paocai.cart.vo.ShopItem;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.vo.BrandVo;
 import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.entity.vo.MemberRespVo;
+import com.zyj.paocai.common.entity.vo.ShopItem;
 import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.common.utils.RRException;
@@ -270,6 +270,13 @@ public class CartServiceImpl implements CartService {
         if (skuPromotionTo != null) {
             skuItem.setFullReductions(skuPromotionTo.getReductions());
             skuItem.setLadders(skuPromotionTo.getLadders());
+            if(skuPromotionTo.getBounds() != null){
+                skuItem.setGrowth(skuPromotionTo.getBounds().getGrowBounds());
+                skuItem.setIntegration(skuPromotionTo.getBounds().getBuyBounds());
+            }else{
+                skuItem.setGrowth(new BigDecimal(0));
+                skuItem.setIntegration(new BigDecimal(0));
+            }
         }
         return skuItem;
     }

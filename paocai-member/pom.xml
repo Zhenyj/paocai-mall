@@ -12,7 +12,7 @@
     <artifactId>paocai-member</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>paocai-member</name>
-    <description>泡菜买菜-会员服务</description>
+    <description>泡菜商城-会员服务</description>
 
     <properties>
         <java.version>1.8</java.version>
