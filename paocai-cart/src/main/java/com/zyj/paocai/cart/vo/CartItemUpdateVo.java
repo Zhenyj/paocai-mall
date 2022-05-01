@@ -7,7 +7,8 @@ import lombok.Data;
  * @date 2022-04-24 21:42
  **/
 @Data
-public class CartItemIdVo {
+public class CartItemUpdateVo {
     private Long brandId;
     private Long skuId;
+    private Integer count;
 }

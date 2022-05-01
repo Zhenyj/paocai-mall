@@ -24,17 +24,21 @@ public class CartSkuItem {
     private String skuTitle;
     /** 副标题 */
     private String skuSubtitle;
-    /**是否有库存*/
+    /** 品牌id */
+    private Long brandId;
+    /** 品牌名 */
+    private String brandName;
+    /** 是否有库存 */
     private Boolean hasStock;
     /** 默认图片 */
     private String skuDefaultImg;
-    /**原价*/
+    /** 原价 */
     private BigDecimal originalPrice;
     /** 会员价（现价） */
     private BigDecimal price;
     /** 数量 */
     private Integer count = 1;
-    /**原需总价*/
+    /** 原需总价 */
     private BigDecimal totalAmount;
     /** 总价 */
     private BigDecimal payAmount;
@@ -58,6 +62,12 @@ public class CartSkuItem {
         totalAmount = price.multiply(new BigDecimal(count));
         payAmount = totalAmount;
         promotionAmount = new BigDecimal(0);
+        if (integration == null) {
+            integration = new BigDecimal(0);
+        }
+        if (growth == null) {
+            growth = new BigDecimal(0);
+        }
         if (CollectionUtils.isEmpty(fullReductions) && CollectionUtils.isEmpty(ladders)) {
             return;
         }
@@ -80,12 +90,12 @@ public class CartSkuItem {
     private void calculateMaxDiscount() {
         SkuLadderTo ladder = getSatisfyLadder();
         SkuFullReductionTo reduction = null;
-        if(ladder != null){
+        if (ladder != null) {
             BigDecimal price = ladder.getPrice();
             // 先计算阶梯价格后，再重新计算是否符合满减优惠
             reduction = getSatisfyReduction(price.multiply(new BigDecimal(count)));
             // 只满足阶梯价格优惠
-            if(reduction == null){
+            if (reduction == null) {
                 payAmount = price.multiply(new BigDecimal(count));
                 promotionAmount = totalAmount.subtract(payAmount);
                 return;
@@ -95,7 +105,7 @@ public class CartSkuItem {
             return;
         }
         // 只有满足满减优惠
-        if(reduction != null){
+        if (reduction != null) {
             promotionAmount = reduction.getReducePrice();
             payAmount = totalAmount.subtract(promotionAmount);
         }
@@ -160,10 +170,11 @@ public class CartSkuItem {
 
     /**
      * 获取满足条件的最大满减优惠
+     *
      * @param price
      * @return
      */
-    private SkuFullReductionTo getSatisfyReduction(BigDecimal price){
+    private SkuFullReductionTo getSatisfyReduction(BigDecimal price) {
         SkuFullReductionTo activeReduction = null;
         for (SkuFullReductionTo fullReduction : fullReductions) {
             if (fullReduction.getFullPrice().compareTo(price) != 1) {

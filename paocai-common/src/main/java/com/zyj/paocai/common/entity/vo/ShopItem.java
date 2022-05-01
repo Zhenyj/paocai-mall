@@ -88,4 +88,15 @@ public class ShopItem {
         this.integration = integration;
         this.growth = growth;
     }
+
+    public CartSkuItem getItemBySkuId(Long skuId){
+        if(items!=null && items.size() > 0){
+            for (CartSkuItem item : items) {
+                if(skuId.equals(item.getSkuId())){
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
 }

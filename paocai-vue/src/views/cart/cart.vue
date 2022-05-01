@@ -149,9 +149,9 @@
                             <div class="bd-promos">
                               <div
                                 class="bd-has-promo"
-                                v-if="item.discount>0"
+                                v-if="item.promotionAmount>0"
                               >已享优惠：<span
-                                  class="bd-has-promo-content">省￥{{item.discount | showPrice}}</span>&nbsp;&nbsp;
+                                  class="bd-has-promo-content">省￥{{item.promotionAmount | showPrice}}</span>&nbsp;&nbsp;
                               </div>
                               <div
                                 class="act-promo"
@@ -249,6 +249,7 @@
                                   <el-input-number
                                     v-model="item.count"
                                     :min="1"
+                                    @change="changeCount(shop.brandId,item.skuId,item.count)"
                                   ></el-input-number>
                                 </div>
                                 <div class="td td-sum">
@@ -355,7 +356,8 @@ export default {
         totalCount: 0,
         allChecked: false
       },
-      loading: true
+      loading: true,
+      timer: ''
     }
   },
   methods: {
@@ -587,6 +589,7 @@ export default {
       this.getCartInfo();
     },
     calculate () {
+      console.log('calculate...');
       const cart = this.cart;
       let totalAmount = 0;
       let payAmount = 0;
@@ -607,9 +610,54 @@ export default {
       cart.discount = parseFloat(discount.toFixed(2));
       cart.checkSkuNum = checkSkuNum;
       this.cart = cart;
+      this.$forceUpdate();
     },
     handleNavTo (routerName) {
       this.$router.push({ name: routerName });
+    },
+    // 修改商品数量
+    changeCount (brandId, skuId, count) {
+      if (this.timer != '') {
+        clearTimeout(this.timer);
+      }
+      this.timer = setTimeout(async () => {
+        const res = await this.$request({
+          url: 'cart/async_update_cart',
+          method: 'POST',
+          data: {
+            brandId,
+            skuId,
+            count
+          }
+        });
+        const item = res.data;
+        let cart = this.cart;
+        let i = -1;
+        let j = -1;
+        let checked = false;
+        cart.shops.forEach((v1, i1) => {
+          if (v1.brandId === brandId) {
+            v1.items.forEach((v2, i2) => {
+              if (v2.skuId === item.skuId) {
+                // 暂存选中属性
+                i = i1;
+                j = i2;
+                checked = v2.checked;
+                return false;
+              }
+            });
+            return false;
+          }
+        });
+        if (i !== -1 && j !== -1) {
+          item.checked = checked;
+          this.cart.shops[i].items[j] = item;
+          this.$forceUpdate();
+          if (checked) {
+            this.calculate();
+          }
+        }
+      }, 200);
     },
     // 结算
     submitOrder () {

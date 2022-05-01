@@ -7,7 +7,7 @@ import com.zyj.paocai.cart.feign.ProductFeignService;
 import com.zyj.paocai.cart.interceptor.CartInterceptor;
 import com.zyj.paocai.cart.service.CartService;
 import com.zyj.paocai.cart.vo.Cart;
-import com.zyj.paocai.cart.vo.CartItemIdVo;
+import com.zyj.paocai.cart.vo.CartItemUpdateVo;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.vo.BrandVo;
@@ -93,12 +93,12 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 删除单个商品
-     * @param cartItemIdVo
+     * @param cartItemUpdateVo
      */
     @Override
-    public void deleteItem(CartItemIdVo cartItemIdVo) {
+    public void deleteItem(CartItemUpdateVo cartItemUpdateVo) {
         BoundHashOperations<String, String, String> ops = getCartOps();
-        Long brandId = cartItemIdVo.getBrandId();
+        Long brandId = cartItemUpdateVo.getBrandId();
         if(!ops.hasKey(brandId.toString())){
             throw new RRException("购物车不存在此店铺及商品信息",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
@@ -107,7 +107,7 @@ public class CartServiceImpl implements CartService {
         LinkedList<CartSkuItem> items = shopItem.getItems();
         Iterator<CartSkuItem> iterator = items.iterator();
         while (iterator.hasNext()) {
-            if(iterator.next().getSkuId().equals(cartItemIdVo.getSkuId())){
+            if(iterator.next().getSkuId().equals(cartItemUpdateVo.getSkuId())){
                 iterator.remove();
                 break;
             }
@@ -141,11 +141,11 @@ public class CartServiceImpl implements CartService {
      * @param vos
      */
     @Override
-    public void deleteBatch(List<CartItemIdVo> vos) {
+    public void deleteBatch(List<CartItemUpdateVo> vos) {
         if(CollectionUtils.isEmpty(vos)){
             throw new RRException("对不起，您没有选择任何商品，无法删除",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
-        Map<Long, CartItemIdVo> skuIdMap = vos.stream().collect(Collectors.toMap(CartItemIdVo::getSkuId, Function.identity()));
+        Map<Long, CartItemUpdateVo> skuIdMap = vos.stream().collect(Collectors.toMap(CartItemUpdateVo::getSkuId, Function.identity()));
         BoundHashOperations<String, String, String> ops = getCartOps();
         Set<String> keys = ops.keys();
         Iterator<String> keysIterator = keys.iterator();
@@ -172,6 +172,40 @@ public class CartServiceImpl implements CartService {
             }
         }
         // TODO 如果删除、覆盖操作出现问题，已执行的redis操作怎么处理
+    }
+
+    /**
+     * 异步更新购物车（变更商品数量等）
+     * @param itemUpdateVo
+     * @return
+     */
+    @Override
+    public CartSkuItem asyncUpdateCart(CartItemUpdateVo itemUpdateVo) {
+        BoundHashOperations<String, String, String> ops = getCartOps();
+        String json = ops.get(itemUpdateVo.getBrandId().toString());
+        ShopItem shopItem = JSON.parseObject(json, ShopItem.class);
+        // 保存更新后的skuItem
+        CartSkuItem result = null;
+        LinkedList<CartSkuItem> items = shopItem.getItems();
+        for (CartSkuItem item : items) {
+            if(item.getSkuId().equals(itemUpdateVo.getSkuId())){
+                CartSkuItem cartSkuItemWithPromotion = getCartSkuItemWithPromotionBySkuId(itemUpdateVo.getSkuId());
+                BeanUtils.copyProperties(cartSkuItemWithPromotion, item);
+                item.setCount(itemUpdateVo.getCount());
+                result = item;
+                break;
+            }
+        }
+        if(result == null){
+            throw new RRException(BizCodeEnum.CART_PRODUCT_INFO_EXCEPTION.getMsg(),
+                    BizCodeEnum.CART_PRODUCT_INFO_EXCEPTION.getCode());
+        }
+        shopItem.calculate();
+        // 更新缓存
+        ops.put(itemUpdateVo.getBrandId().toString(), JSON.toJSONString(shopItem));
+        // 单独计算后返回
+        result.calculate();
+        return result;
     }
 
     /**

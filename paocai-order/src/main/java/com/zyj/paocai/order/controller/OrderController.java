@@ -34,7 +34,7 @@ public class OrderController {
      * @return
      */
     @PostMapping("/toTrade")
-    public R<OrderConfirmVo> toTrade(List<CartSkuItem> vos){
+    public R<OrderConfirmVo> toTrade(@RequestBody List<CartSkuItem> vos){
         OrderConfirmVo orderConfirmVo = orderService.toTrade(vos);
         return R.ok(orderConfirmVo);
     }
