@@ -669,6 +669,7 @@ export default {
         v1.items.forEach((v2, i2) => {
           if (v2.checked) {
             const item = {
+              brandId: v1.brandId,
               skuId: v2.skuId,
               count: v2.count
             }
@@ -680,11 +681,25 @@ export default {
         this.$message.error('请勾选需要结算的商品');
         return;
       }
-      this.toTrade(dataForm);
+      this.toTrade(skus);
     },
     // 实际提交购物车信息
     async toTrade (data) {
-
+      const res = await this.$request({
+        url: 'order/order/toTrade',
+        method: "POST",
+        data: data
+      });
+      this.$handleResponseMessage(res, '', '系统异常，结算失败');
+      if (res.code === 200) {
+        this.$router.push({
+          name: 'orderConfirm',
+          params: {
+            orderInfo: res.data.orderInfo,
+            addressList: res.data.addressList
+          }
+        });
+      }
     }
   },
   created () {

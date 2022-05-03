@@ -24,7 +24,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -171,7 +170,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         CompletableFuture<Void> skuStockFuture = CompletableFuture.runAsync(() -> {
             R<SkuHasStockVo> r = wareFeignService.getSkuHasStock(skuId);
             if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                throw new RRException("远程获取sku库存信息失败," + r.getMsg(),r.getCode());
+                throw new RRException("远程获取sku库存信息失败," + r.getMsg(), r.getCode());
             }
             SkuHasStockVo skuHasStockVo = r.getData();
             vo.setHasStock(skuHasStockVo.getHasStock());
@@ -234,7 +233,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         CompletableFuture<Void> skuBoundsFuture = CompletableFuture.runAsync(() -> {
             R<SkuBoundsVo> r = couponFeignService.getBoundsBySkuId(skuId);
             if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                throw new RRException("获取sku积分信息失败,skuId:" + skuId,r.getCode());
+                throw new RRException("获取sku积分信息失败,skuId:" + skuId, r.getCode());
             }
             vo.setBounds(r.getData());
         }, executor);
@@ -257,7 +256,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             throw new RRException("获取商品详细信息失败,skuId:" + skuId, BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
         }
         if (detail.getCatalogId() == null || detail.getCatalogId() < 0) {
-            throw new RRException("商品分类信息异常或不存在",BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
+            throw new RRException("商品分类信息异常或不存在", BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         List<CatalogBaseVo> catalogPath = categoryService.getCatalogBaseVoPath(detail.getCatalogId());
         detail.setCatalogPath(catalogPath);
@@ -287,40 +286,26 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
      */
     @Override
     public CartSkuItem getCartSkuItem(Long skuId) throws ExecutionException, InterruptedException {
-        CartSkuItem item = new CartSkuItem();
         // 获取sku基本信息
-        CompletableFuture<Void> skuInfoFuture = CompletableFuture.runAsync(() -> {
-            SkuInfoEntity skuInfo = baseMapper.selectById(skuId);
-            if (skuInfo == null) {
-                throw new RRException("商品信息不存在,skuId:" + skuId,BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
-            }
-            item.setSkuId(skuId);
-            item.setSkuName(skuInfo.getSkuName());
-            item.setSkuDefaultImg(skuInfo.getSkuDefaultImg());
-            item.setSkuTitle(skuInfo.getSkuTitle());
-            item.setSkuSubtitle(skuInfo.getSkuSubtitle());
-            item.setOriginalPrice(skuInfo.getPrice());
-            // 会员价
-            item.setPrice(skuInfo.getPrice());
-        }, executor);
+        CartSkuItem item = skuInfoDao.getCartSkuInfoBySkuId(skuId);
+        if (item == null) {
+            throw new RRException("商品信息不存在,skuId:" + skuId, BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
+        }
+        // 会员价
+        item.setPrice(item.getOriginalPrice());
 
         // 获取sku销售属性
-        CompletableFuture<Void> attrsFuture = CompletableFuture.runAsync(() -> {
-            List<SkuSaleAttrValueEntity> saleAttrs = skuSaleAttrValueService.getSaleAttrsBySkuId(skuId);
-            if (!CollectionUtils.isEmpty(saleAttrs)) {
-                List<AttrBaseVo> attrs = saleAttrs.stream().map(saleAttr -> {
-                    AttrBaseVo attr = new AttrBaseVo();
-                    attr.setAttrId(saleAttr.getAttrId());
-                    attr.setAttrName(saleAttr.getAttrName());
-                    attr.setAttrValue(saleAttr.getAttrValue());
-                    return attr;
-                }).collect(Collectors.toList());
-                item.setAttrs(attrs);
-            }
-        }, executor);
-
-        CompletableFuture.allOf(skuInfoFuture, attrsFuture).get();
-
+        List<SkuSaleAttrValueEntity> saleAttrs = skuSaleAttrValueService.getSaleAttrsBySkuId(skuId);
+        if (!CollectionUtils.isEmpty(saleAttrs)) {
+            List<AttrBaseVo> attrs = saleAttrs.stream().map(saleAttr -> {
+                AttrBaseVo attr = new AttrBaseVo();
+                attr.setAttrId(saleAttr.getAttrId());
+                attr.setAttrName(saleAttr.getAttrName());
+                attr.setAttrValue(saleAttr.getAttrValue());
+                return attr;
+            }).collect(Collectors.toList());
+            item.setAttrs(attrs);
+        }
         return item;
     }
 
@@ -333,25 +318,16 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     @Override
     public List<CartSkuItem> getSkuItems(List<Long> skuIds) {
         if (skuIds.size() == 0) {
-            throw new RRException("请选择需要结算的商品",BizCodeEnum.PRODUCT_SERVICE_EXCEPTION.getCode());
+            throw new RRException("请选择需要结算的商品", BizCodeEnum.PRODUCT_SERVICE_EXCEPTION.getCode());
         }
-        List<CartSkuItem> skuItems = new ArrayList<>(skuIds.size());
-        // 获取sku基本信息
-        List<SkuInfoEntity> skuInfoEntities = baseMapper.selectBatchIds(skuIds);
-        if (skuInfoEntities == null || skuInfoEntities.size() == 0 || skuInfoEntities.size() != skuIds.size()) {
-            throw new RRException(BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getMsg(),BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
+        // 获取购物车所需sku基本信息
+        List<CartSkuItem> skuItems = skuInfoDao.getCartSkuInfoBatchIds(skuIds);
+        if (skuItems == null || skuItems.size() == 0 || skuItems.size() != skuIds.size()) {
+            throw new RRException(BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getMsg(), BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
         }
-        skuInfoEntities.stream().map(skuInfo -> {
-            Long skuId = skuInfo.getSkuId();
-            CartSkuItem item = new CartSkuItem();
-            item.setSkuId(skuInfo.getSkuId());
-            item.setSkuName(skuInfo.getSkuName());
-            item.setSkuDefaultImg(skuInfo.getSkuDefaultImg());
-            item.setSkuTitle(skuInfo.getSkuTitle());
-            item.setSkuSubtitle(skuInfo.getSkuSubtitle());
-            item.setOriginalPrice(skuInfo.getPrice());
-            // 会员价
-            item.setPrice(skuInfo.getPrice());
+        for (CartSkuItem skuItem : skuItems) {
+            Long skuId = skuItem.getSkuId();
+            skuItem.setPrice(skuItem.getOriginalPrice());
             // sku销售属性集合
             List<SkuSaleAttrValueEntity> saleAttrs = skuSaleAttrValueService.getSaleAttrsBySkuId(skuId);
             if (!CollectionUtils.isEmpty(saleAttrs)) {
@@ -362,24 +338,25 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
                     attr.setAttrValue(saleAttr.getAttrValue());
                     return attr;
                 }).collect(Collectors.toList());
-                item.setAttrs(attrs);
+                skuItem.setAttrs(attrs);
             }
             // 获取优惠信息
             R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
             if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                throw new RRException(r.getMsg(),r.getCode());
+                throw new RRException(r.getMsg(), r.getCode());
             }
             SkuPromotionTo skuPromotionTo = r.getData();
             if (skuPromotionTo != null) {
-                item.setFullReductions(skuPromotionTo.getReductions());
-                item.setLadders(skuPromotionTo.getLadders());
-                item.setGrowth(skuPromotionTo.getBounds().getGrowBounds());
-                item.setIntegration(skuPromotionTo.getBounds().getBuyBounds());
+                skuItem.setFullReductions(skuPromotionTo.getReductions());
+                skuItem.setLadders(skuPromotionTo.getLadders());
+                if(skuPromotionTo.getBounds() != null){
+                    skuItem.setGrowth(skuPromotionTo.getBounds().getGrowBounds());
+                    skuItem.setIntegration(skuPromotionTo.getBounds().getBuyBounds());
+                }else{
+                    skuItem.setGrowth(new BigDecimal(0));
+                    skuItem.setIntegration(new BigDecimal(0));
+                }
             }
-            return item;
-        });
-        for (CartSkuItem skuItem : skuItems) {
-
         }
         return skuItems;
     }

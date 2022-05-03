@@ -1,7 +1,7 @@
 package com.zyj.paocai.cart.service;
 
 import com.zyj.paocai.cart.vo.Cart;
-import com.zyj.paocai.cart.vo.CartItemUpdateVo;
+import com.zyj.paocai.cart.vo.CartItemBaseVo;
 import com.zyj.paocai.common.entity.vo.CartSkuItem;
 
 import java.util.List;
@@ -28,9 +28,9 @@ public interface CartService {
 
     /**
      * 删除单个商品
-     * @param cartItemUpdateVo
+     * @param cartItemBaseVo
      */
-    void deleteItem(CartItemUpdateVo cartItemUpdateVo);
+    void deleteItem(CartItemBaseVo cartItemBaseVo);
 
     /**
      * 清空购物车
@@ -41,12 +41,12 @@ public interface CartService {
      * 批量删除
      * @param vos
      */
-    void deleteBatch(List<CartItemUpdateVo> vos);
+    void deleteBatch(List<CartItemBaseVo> vos);
 
     /**
      * 异步更新购物车（变更商品数量等）
      * @param itemUpdateVo
      * @return
      */
-    CartSkuItem asyncUpdateCart(CartItemUpdateVo itemUpdateVo);
+    CartSkuItem asyncUpdateCart(CartItemBaseVo itemUpdateVo);
 }

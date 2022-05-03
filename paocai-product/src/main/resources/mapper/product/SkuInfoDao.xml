@@ -18,6 +18,16 @@
         <result property="saleCount" column="sale_count"/>
         <result property="commentCount" column="comment_count"/>
     </resultMap>
+    <resultMap id="cartSkuBaseInfo" type="com.zyj.paocai.common.entity.vo.CartSkuItem">
+        <result property="skuId" column="sku_id"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="skuDefaultImg" column="sku_default_img"/>
+        <result property="skuTitle" column="sku_title"/>
+        <result property="skuSubtitle" column="sku_subtitle"/>
+        <result property="originalPrice" column="price"/>
+    </resultMap>
     <sql id="baseColumn">
         sku
         .
@@ -81,6 +91,41 @@
         FROM
         pms_sku_info AS sku
         WHERE sku.`catalog_id`= #{catalogId}
+    </select>
+    <select id="getCartSkuInfoBatchIds" resultMap="cartSkuBaseInfo">
+        SELECT
+        sku.`sku_id`,
+        sku.`sku_name`,
+        sku.`sku_desc`,
+        sku.`catalog_id`,
+        sku.`brand_id`,
+        sku.`sku_default_img`,
+        sku.`sku_title`,
+        sku.`sku_subtitle`,
+        sku.`price`,
+        brand.`name` brand_name
+        FROM
+        pms_sku_info AS sku LEFT JOIN pms_brand brand ON sku.`brand_id`=brand.`brand_id`
+        WHERE sku.`sku_id` IN
+        <foreach collection="skuIds" item="skuId" open="(" close=")" separator=",">
+            #{skuId}
+        </foreach>
+    </select>
+    <select id="getCartSkuInfoBySkuId" resultMap="cartSkuBaseInfo">
+        SELECT
+            sku.`sku_id`,
+            sku.`sku_name`,
+            sku.`sku_desc`,
+            sku.`catalog_id`,
+            sku.`brand_id`,
+            sku.`sku_default_img`,
+            sku.`sku_title`,
+            sku.`sku_subtitle`,
+            sku.`price`,
+            brand.`name` brand_name
+        FROM
+            pms_sku_info AS sku LEFT JOIN pms_brand brand ON sku.`brand_id`=brand.`brand_id`
+        WHERE sku.`sku_id` = #{skuId}
     </select>
 
 

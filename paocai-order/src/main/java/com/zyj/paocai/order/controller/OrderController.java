@@ -1,10 +1,10 @@
 package com.zyj.paocai.order.controller;
 
-import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.order.entity.OrderEntity;
+import com.zyj.paocai.order.entity.vo.CartItemBaseVo;
 import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
 import com.zyj.paocai.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -34,7 +35,7 @@ public class OrderController {
      * @return
      */
     @PostMapping("/toTrade")
-    public R<OrderConfirmVo> toTrade(@RequestBody List<CartSkuItem> vos){
+    public R<OrderConfirmVo> toTrade(@RequestBody List<CartItemBaseVo> vos) throws ExecutionException, InterruptedException {
         OrderConfirmVo orderConfirmVo = orderService.toTrade(vos);
         return R.ok(orderConfirmVo);
     }

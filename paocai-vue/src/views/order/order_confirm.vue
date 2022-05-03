@@ -4,7 +4,15 @@
       :loginInfo="loginInfo"
       @navToByRouterName="handleNavTo($event)"
     ></common-header>
-    <div class="content">
+    <div
+      class="content"
+      v-loading="loading"
+      v-loading.body="loading"
+      v-loading.lock="loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      background="rgba(255,255,255,1)"
+    >
       <!-- 顶部logo -->
       <div class="header-wrapper">
         <div class="order-header">
@@ -276,13 +284,14 @@
                     <!-- 店铺优惠,有优惠才显示 -->
                     <div
                       class="ext-item"
-                      v-if="true"
+                      v-if="shop.shopDiscountOptions && shop.shopDiscountOptions.length > 0"
                     >
                       <div class="select-container">
                         <div class="select-wrap">
                           <label class="select-label">店铺优惠<span>：</span></label>
                           <div class="select-inline">
                             <el-select
+                              value-key="discountTitle"
                               v-model="shop.discountOption"
                               placeholder="请选择"
                               size="mini"
@@ -291,7 +300,7 @@
                                 v-for="(option,i2) in shop.shopDiscountOptions"
                                 :key="i2"
                                 :label="option.discountTitle"
-                                :value="option.discount"
+                                :value="option"
                               >
                               </el-option>
                             </el-select>
@@ -301,7 +310,7 @@
                             style="float: right;"
                           >
                             <div class="label label-shop-price">
-                              <span>{{shop.shopDiscount > 0?shop.shopDiscount:0|showPrice}}</span>
+                              <span>{{shop.discountOption && shop.discountOption.discount && shop.discountOption.discount > 0?shop.discountOption.discount:0|showPrice}}</span>
                             </div>
                           </div>
                         </div>
@@ -364,7 +373,7 @@
                 <div class="shop-sum">
                   <div class="label">
                     <span class="label-header">店铺合计(含运费)</span>
-                    <span class="shop-sum-price">￥{{shop.totalAmount}}</span>
+                    <span class="shop-sum-price">￥{{shop.payAmount}}</span>
                   </div>
                 </div>
               </div>
@@ -379,7 +388,8 @@
                 <div>
                   <span class="realpay-title">实付款：</span>
                   <span class="realpay-price-symbol">¥</span>
-                  <span class="realpay-price">{{orderInfo.totalAmount}}</span>
+                  <span
+                    class="realpay-price">{{orderInfo.payAmount | showPrice}}</span>
                 </div>
                 <div
                   class="order-confirmAddr"
@@ -438,240 +448,8 @@ export default {
       loginInfo: {
         id: ''
       },
-      orderInfo: {
-        shops: [{
-          brandId: 2,
-          brandName: "红米",
-          shopDiscount: 1000,
-          freightAmount: 0,
-          freightInsurance: true,
-          freightInsurancePrice: 0,
-          isInvoice: false,
-          billTypeList: [{
-            typeName: '个人',
-            typeValue: 1
-          }],
-          billType: 1,
-          billHeader: '',
-          note: '',
-          deliveryCompany: '',
-          totalAmount: 2999,
-          payAmount: 2999,
-          promotionAmount: 0,
-          integrationAmount: 0,
-          couponAmount: 0,
-          discountAmount: 0,
-          integration: 200,
-          growth: 200,
-          items: [{
-            skuId: 1691,
-            spuId: 1671,
-            skuTitle: "Redmi K50 墨羽 8GB+256GB",
-            price: 2599,
-            skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
-            count: 1,
-            hasStock: true,
-            brandId: 2,
-            brandName: "红米",
-            brandImg: 'https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg',
-            attrs: [{
-              attrId: 1292,
-              attrName: "CPU",
-              attrValue: "天玑8100"
-            }, {
-              attrId: 1281,
-              attrName: "上市年份",
-              attrValue: "2022"
-            }, {
-              attrId: 1282,
-              attrName: "品牌",
-              attrValue: "红米"
-            }, {
-              attrId: 1290,
-              attrName: "屏幕刷新率",
-              attrValue: "120Hz"
-            }]
-          }, {
-            skuId: 1691,
-            spuId: 1671,
-            skuTitle: "Redmi K50 墨羽 8GB+256GB",
-            price: 2599,
-            skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
-            count: 1,
-            hasStock: true,
-            brandId: 2,
-            brandName: "红米",
-            brandImg: 'https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg',
-            attrs: [
-              {
-                attrId: 1292,
-                attrName: "CPU",
-                attrValue: "天玑8100"
-              },
-              {
-                attrId: 1281,
-                attrName: "上市年份",
-                attrValue: "2022"
-              },
-              {
-                attrId: 1282,
-                attrName: "品牌",
-                attrValue: "红米"
-              },
-              {
-                attrId: 1290,
-                attrName: "屏幕刷新率",
-                attrValue: "120Hz"
-              }
-            ]
-          }],
-          shopDiscountOptions: [{
-            discountTitle: '不使用优惠',
-            discount: 0
-          }, {
-            discountTitle: '省1000:组合优惠',
-            discount: 1000
-          }],
-          discountOption: {
-            discountTitle: '省1000:组合优惠',
-            discount: 1000
-          }
-        }, {
-          items: [{
-            skuId: 1691,
-            spuId: 1671,
-            skuTitle: "Redmi K50 墨羽 8GB+256GB",
-            price: 2599,
-            skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
-            count: 1,
-            hasStock: true,
-            brandId: 2,
-            brandName: "红米",
-            brandImg: 'https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg',
-            attrs: [
-              {
-                attrId: 1292,
-                attrName: "CPU",
-                attrValue: "天玑8100"
-              },
-              {
-                attrId: 1281,
-                attrName: "上市年份",
-                attrValue: "2022"
-              },
-              {
-                attrId: 1282,
-                attrName: "品牌",
-                attrValue: "红米"
-              },
-              {
-                attrId: 1290,
-                attrName: "屏幕刷新率",
-                attrValue: "120Hz"
-              }
-            ]
-          }, {
-            skuId: 1691,
-            spuId: 1671,
-            skuTitle: "Redmi K50 墨羽 8GB+256GB",
-            price: 2599,
-            skuDefaultImg: "https://img12.360buyimg.com/n1/s450x450_jfs/t1/199208/12/22008/274510/6250f15dE910ae355/1870874a6394fe4f.jpg",
-            count: 1,
-            hasStock: true,
-            brandId: 2,
-            brandName: "红米",
-            brandImg: 'https://img.alicdn.com/imgextra/O1CN01agWcnU1Eb2sdiwP7K_!!6000000000369-0-remus.jpg_100x100q90.jpg',
-            attrs: [
-              {
-                attrId: 1292,
-                attrName: "CPU",
-                attrValue: "天玑8100"
-              },
-              {
-                attrId: 1281,
-                attrName: "上市年份",
-                attrValue: "2022"
-              },
-              {
-                attrId: 1282,
-                attrName: "品牌",
-                attrValue: "红米"
-              },
-              {
-                attrId: 1290,
-                attrName: "屏幕刷新率",
-                attrValue: "120Hz"
-              }
-            ]
-          }],
-          shopDiscountOptions: [{
-            discountTitle: '不使用优惠',
-            discount: 0
-          }, {
-            discountTitle: '组合优惠',
-            discount: 1000
-          }],
-          shopDiscount: 1000,
-          freightAmount: 0,
-          freightInsurance: true,
-          freightInsurancePrice: 0,
-          isInvoice: false,
-          billHeader: '',
-          note: '',
-          deliveryCompany: '',
-          totalAmount: 2999.00
-        }],
-        totalAmount: 8888.88,
-        freightAmount: 0,
-        integrationAmount: 0,
-        couponAmount: 0,
-        discountAmount: 1000
-      },
-      addressList: [{
-        memberId: 2,
-        name: '甄英俊',
-        phone: '12345678910',
-        postCode: '',
-        province: '福建省',
-        city: '厦门市',
-        region: '集美区',
-        detailAddress: '详细地址',
-        areacode: '',
-        defaultStatus: 1
-      }, {
-        memberId: 2,
-        name: '甄英俊',
-        phone: '12345678910',
-        postCode: '',
-        province: '福建省',
-        city: '厦门市',
-        region: '集美区',
-        detailAddress: '详细地址',
-        areacode: '',
-        defaultStatus: 0
-      }, {
-        memberId: 2,
-        name: '甄英俊',
-        phone: '12345678910',
-        postCode: '',
-        province: '福建省',
-        city: '厦门市',
-        region: '集美区',
-        detailAddress: '详细地址',
-        areacode: '',
-        defaultStatus: 0
-      }, {
-        memberId: 2,
-        name: '甄英俊',
-        phone: '12345678910',
-        postCode: '',
-        province: '福建省',
-        city: '厦门市',
-        region: '集美区',
-        detailAddress: '详细地址',
-        areacode: '',
-        defaultStatus: 0
-      }],
+      orderInfo: {},
+      addressList: [],
       receiveAddressIndex: 0,
       receiveAddress: {
         id: 1,
@@ -687,12 +465,34 @@ export default {
         defaultStatus: 1
       },
       visible: true,
-      isShow: false
+      isShow: false,
+      loading: true
     }
   },
   methods: {
     init () {
-
+      this.loading = true
+      try {
+        const orderInfo = this.$router.currentRoute.params.orderInfo;
+        const addressList = this.$router.currentRoute.params.addressList;
+        this.orderInfo = orderInfo;
+        this.addressList = addressList;
+        addressList.forEach((v, i) => {
+          if (v.defaultStatus === 1) {
+            this.receiveAddress = v;
+            this.receiveAddressIndex = i;
+            return false;
+          }
+        });
+      } finally {
+        // this.$alert('订单信息有误，前往购物车', '提示', {
+        //   confirmButtonText: '确定',
+        //   callback: action => {
+        //     this.$router.push({ name: 'cart' });
+        //   }
+        // });
+        this.loading = false;
+      }
     },
     // 获取用户登录信息
     async getLoginInfo () {
@@ -714,7 +514,6 @@ export default {
     }
   },
   created () {
-    console.log(JSON.stringify(this.orderInfo));
     document.title = "确认订单-泡菜商城";
     this.getLoginInfo();
     this.init();
@@ -737,6 +536,12 @@ body {
 .content {
   width: 1000px;
   margin: 0 auto;
+  /deep/ .el-icon-loading {
+    font-size: 40px;
+  }
+  /deep/ .el-loading-text {
+    font-size: 24px;
+  }
 }
 .header-wrapper {
   background-color: #fff;
@@ -1257,6 +1062,12 @@ body {
         }
         .select-inline {
           display: inline-block;
+          /deep/ .el-input__inner {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
         }
 
         .label-shop-price {
@@ -1441,6 +1252,20 @@ body {
       color: #fff;
     }
   }
+}
+/deep/ .el-select-dropdown__item.selected {
+  color: #333;
+  font-weight: normal;
+  font-size: 12px;
+  font-family: verdana, -apple-system, BlinkMacSystemFont, Helvetica Neue,
+    Helvetica, Tahoma, PingFang SC, Hiragino Sans GB, Microsoft YaHei,
+    sans-serif;
+}
+/deep/ .el-select-dropdown__item {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
 <style >

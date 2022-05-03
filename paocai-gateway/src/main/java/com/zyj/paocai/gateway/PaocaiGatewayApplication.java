@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients
 @EnableDiscoveryClient
-@SpringBootApplication(scanBasePackages = {"com.zyj.paocai"}, exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"com.zyj.paocai.gateway"}, exclude = {DataSourceAutoConfiguration.class})
 public class PaocaiGatewayApplication {
 
     public static void main(String[] args) {

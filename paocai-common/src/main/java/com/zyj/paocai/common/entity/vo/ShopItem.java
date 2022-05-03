@@ -1,9 +1,11 @@
 package com.zyj.paocai.common.entity.vo;
 
 
+import com.zyj.paocai.common.utils.BigDecimalUtils;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -74,25 +76,53 @@ public class ShopItem {
         BigDecimal promotionAmount = new BigDecimal(0);
         BigDecimal integration = new BigDecimal(0);
         BigDecimal growth = new BigDecimal(0);
+        BigDecimal freightAmount = new BigDecimal(0);
+        BigDecimal integrationAmount = new BigDecimal(0);
+        BigDecimal couponAmount = new BigDecimal(0);
+        BigDecimal discountAmount = new BigDecimal(0);
+        String discountTitle = "";
         for (CartSkuItem item : items) {
             item.calculate();
             totalAmount = totalAmount.add(item.getTotalAmount());
             payAmount = payAmount.add(item.getPayAmount());
-            promotionAmount = promotionAmount.add(item.getPromotionAmount());
-            integration.add(item.getIntegration());
-            growth.add(item.getGrowth());
+            integration = integration.add(item.getIntegration());
+            growth = growth.add(item.getGrowth());
+            if (item.getPromotionAmount().compareTo(BigDecimal.ZERO) > 0) {
+                // 有优惠需添加选项
+                if (promotionAmount.compareTo(BigDecimal.ZERO) > 0) {
+                    discountTitle = "组合优惠";
+                } else {
+                    discountTitle = item.getSkuName();
+                }
+                promotionAmount = promotionAmount.add(item.getPromotionAmount());
+            }
+        }
+        if (promotionAmount.compareTo(BigDecimal.ZERO) > 0) {
+            shopDiscountOptions = new ArrayList<>(2);
+            ShopDiscountOptionVo maxDiscountOption =
+                    new ShopDiscountOptionVo(discountTitle + ":" + BigDecimalUtils.formatToNumber(promotionAmount), promotionAmount);
+            // 默认选中最大优惠
+            discountOption = maxDiscountOption;
+            // 添加可选优惠选项
+            shopDiscountOptions.add(maxDiscountOption);
+            // 不需要优惠选项
+            shopDiscountOptions.add(ShopDiscountOptionVo.noUseDiscount());
         }
         this.promotionAmount = promotionAmount;
         this.totalAmount = totalAmount;
         this.payAmount = payAmount;
         this.integration = integration;
         this.growth = growth;
+        this.freightAmount = freightAmount;
+        this.integrationAmount = integrationAmount;
+        this.couponAmount = couponAmount;
+        this.discountAmount = discountAmount;
     }
 
-    public CartSkuItem getItemBySkuId(Long skuId){
-        if(items!=null && items.size() > 0){
+    public CartSkuItem getItemBySkuId(Long skuId) {
+        if (items != null && items.size() > 0) {
             for (CartSkuItem item : items) {
-                if(skuId.equals(item.getSkuId())){
+                if (skuId.equals(item.getSkuId())) {
                     return item;
                 }
             }

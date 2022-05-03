@@ -19,6 +19,7 @@ package com.zyj.paocai.common.exception;
 
 public enum BizCodeEnum {
     // 通用
+    INTERNAL_ERROR(500,"服务器内部错误"),
     UNKNOWN_EXCEPTION(1000, "系统未知异常"),
     VALID_EXCEPTION(1001, "参数格式校验失败"),
     SMS_CODE_EXCEPTION(1002, "验证码获取频率太高，请稍后再试"),
@@ -28,6 +29,10 @@ public enum BizCodeEnum {
     SYSTEM_BLOCK(1006, "系统负载异常"),
     AUTHORITY(1007, "授权异常"),
     BODY_NOT_MATCH(1008,"请求的数据格式不符!"),
+    // 订单服务
+    ORDER_SERVICE_EXCEPTION(9000, "订单服务异常"),
+    ORDER_NOT_EXIST_SHOP_EXCEPTION(9001,"订单信息缺失相关店铺数据"),
+    ORDER_NOT_EXIST_PRODUCT_EXCEPTION(9002,"订单信息缺失相关商品数据"),
     // 商品服务
     PRODUCT_SERVICE_EXCEPTION(10000, "商品服务异常"),
     PRODUCT_UP_EXCEPTION(10001, "商品上架异常"),
@@ -35,11 +40,11 @@ public enum BizCodeEnum {
     PRODUCT_WARE_EXCEPTION(10003, "商品库存异常"),
     PRODUCT_NO_EXIST_EXCEPTION(10004,"商品不存在或已下架"),
     PRODUCT_SPU_NO_EXIST_EXCEPTION(10005,"spu信息异常"),
-    BRAND_EXCEPTION(10006,"品牌信息异常"),
-    ATTR_EXCEPTION(10007,"属性数据异常"),
-    ATTR_GROUP_RELATION_EXCEPTION(10007,"属性&属性分组关联"),
-    ATTR_GROUP_EXCEPTION(10008,"属性分组关联异常"),
-    CATEGORY_NO_EXIST_EXCEPTION(10009,"分类不存在"),
+    PRODUCT_BRAND_EXCEPTION(10006,"品牌信息异常"),
+    PRODUCT_ATTR_EXCEPTION(10007,"属性数据异常"),
+    PRODUCT_ATTR_GROUP_RELATION_EXCEPTION(10007,"属性&属性分组关联"),
+    PRODUCT_ATTR_GROUP_EXCEPTION(10008,"属性分组关联异常"),
+    PRODUCT_CATEGORY_NO_EXIST_EXCEPTION(10009,"分类不存在"),
     // 购物车服务
     CART_SERVICE_EXCEPTION(16000, "购物车服务异常"),
     CART_PRODUCT_INFO_EXCEPTION(16001, "购物车商品信息缺失、不完整"),
@@ -75,4 +80,6 @@ public enum BizCodeEnum {
     public String getMsg() {
         return msg;
     }
+
+
 }

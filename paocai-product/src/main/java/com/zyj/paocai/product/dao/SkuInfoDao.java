@@ -1,6 +1,7 @@
 package com.zyj.paocai.product.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.entity.vo.SkuDetailVo;
 import com.zyj.paocai.product.entity.SkuInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -40,4 +41,18 @@ public interface SkuInfoDao extends BaseMapper<SkuInfoEntity> {
      * @return
      */
     List<SkuInfoEntity> searchSkuByCatalogId(@Param("catalogId") Long catalogId);
+
+    /**
+     * 批量获取购物车商品项的基本信息
+     * @param skuIds
+     * @return
+     */
+    List<CartSkuItem> getCartSkuInfoBatchIds(@Param("skuIds") List<Long> skuIds);
+
+    /**
+     * 根据skuId获取购物车商品项的基本信息
+     * @param skuId
+     * @return
+     */
+    CartSkuItem getCartSkuInfoBySkuId(@Param("skuId") Long skuId);
 }

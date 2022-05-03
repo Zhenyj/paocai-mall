@@ -89,7 +89,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         Long catelogId = categoryBrandRelation.getCatelogId();
         CategoryEntity category = categoryDao.selectById(catelogId);
         if (category == null) {
-            throw new RRException("不存在分类id:" + catelogId + "对应的分类数据", BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
+            throw new RRException("不存在分类id:" + catelogId + "对应的分类数据", BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         categoryBrandRelation.setCatelogName(category.getName());
 
@@ -97,7 +97,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         Long brandId = categoryBrandRelation.getBrandId();
         BrandEntity brand = brandService.getById(brandId);
         if (brand == null) {
-            throw new RRException("不存在品牌id:" + brandId + "对应的分类数据", BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
+            throw new RRException("不存在品牌id:" + brandId + "对应的分类数据", BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         categoryBrandRelation.setBrandName(brand.getName());
         save(categoryBrandRelation);

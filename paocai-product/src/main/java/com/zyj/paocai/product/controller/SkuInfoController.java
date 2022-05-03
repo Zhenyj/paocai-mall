@@ -32,17 +32,13 @@ public class SkuInfoController {
 
     /**
      * 批量获取购物车商品项
+     *
      * @param skuIds
      * @return
      */
     @PostMapping("/skuItems")
     public R<List<CartSkuItem>> getSkuItems(@RequestParam("skuIds") List<Long> skuIds) {
-        List<CartSkuItem> skuItems = null;
-        try {
-            skuItems = skuInfoService.getSkuItems(skuIds);
-        } catch (Exception e) {
-            return R.error(Constant.ERROR_CODE, e.getMessage());
-        }
+        List<CartSkuItem> skuItems = skuInfoService.getSkuItems(skuIds);
         return R.ok(skuItems);
     }
 

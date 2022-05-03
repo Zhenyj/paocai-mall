@@ -1,13 +1,15 @@
 package com.zyj.paocai.common.entity.to;
 
-import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
 
 /**
  * 会员收货地址to
  * @author lulx
  * @date 2022-04-29 10:02
  **/
-public class AddressTo {
+@Data
+public class AddressTo{
+
     /**
      * id
      */

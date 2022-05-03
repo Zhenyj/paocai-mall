@@ -2,7 +2,7 @@ package com.zyj.paocai.cart.controller;
 
 import com.zyj.paocai.cart.service.CartService;
 import com.zyj.paocai.cart.vo.Cart;
-import com.zyj.paocai.cart.vo.CartItemUpdateVo;
+import com.zyj.paocai.cart.vo.CartItemBaseVo;
 import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class CartController {
      * @return
      */
     @PostMapping("/async_update_cart")
-    public R<CartSkuItem> asyncUpdateCart(@RequestBody CartItemUpdateVo itemUpdateVo) {
+    public R<CartSkuItem> asyncUpdateCart(@RequestBody CartItemBaseVo itemUpdateVo) {
         CartSkuItem item = cartService.asyncUpdateCart(itemUpdateVo);
         return R.ok(item);
     }
@@ -50,7 +50,7 @@ public class CartController {
      * @return
      */
     @PostMapping("/delete_batch")
-    public R deleteBatch(@RequestBody List<CartItemUpdateVo> vos) {
+    public R deleteBatch(@RequestBody List<CartItemBaseVo> vos) {
         cartService.deleteBatch(vos);
         return R.ok();
     }
@@ -62,8 +62,8 @@ public class CartController {
      * @return
      */
     @PostMapping("/delete_item")
-    public R deleteItem(@RequestBody CartItemUpdateVo cartItemUpdateVo) {
-        cartService.deleteItem(cartItemUpdateVo);
+    public R deleteItem(@RequestBody CartItemBaseVo cartItemBaseVo) {
+        cartService.deleteItem(cartItemBaseVo);
         return R.ok();
     }
 

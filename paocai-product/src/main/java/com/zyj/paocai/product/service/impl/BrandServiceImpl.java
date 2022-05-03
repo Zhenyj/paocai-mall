@@ -52,7 +52,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
     public BrandEntity getBrandBySpuId(Long spuId) {
         BrandEntity brand = brandDao.getBrandBySpuId(spuId);
         if (brand == null) {
-            throw new RRException("没有spu相关品牌信息,spuId:" + spuId, BizCodeEnum.BRAND_EXCEPTION.getCode());
+            throw new RRException("没有spu相关品牌信息,spuId:" + spuId, BizCodeEnum.PRODUCT_BRAND_EXCEPTION.getCode());
         }
         return brand;
     }

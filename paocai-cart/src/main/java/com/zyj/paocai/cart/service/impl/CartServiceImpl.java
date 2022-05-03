@@ -7,7 +7,7 @@ import com.zyj.paocai.cart.feign.ProductFeignService;
 import com.zyj.paocai.cart.interceptor.CartInterceptor;
 import com.zyj.paocai.cart.service.CartService;
 import com.zyj.paocai.cart.vo.Cart;
-import com.zyj.paocai.cart.vo.CartItemUpdateVo;
+import com.zyj.paocai.cart.vo.CartItemBaseVo;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.vo.BrandVo;
@@ -93,12 +93,12 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 删除单个商品
-     * @param cartItemUpdateVo
+     * @param cartItemBaseVo
      */
     @Override
-    public void deleteItem(CartItemUpdateVo cartItemUpdateVo) {
+    public void deleteItem(CartItemBaseVo cartItemBaseVo) {
         BoundHashOperations<String, String, String> ops = getCartOps();
-        Long brandId = cartItemUpdateVo.getBrandId();
+        Long brandId = cartItemBaseVo.getBrandId();
         if(!ops.hasKey(brandId.toString())){
             throw new RRException("购物车不存在此店铺及商品信息",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
@@ -107,7 +107,7 @@ public class CartServiceImpl implements CartService {
         LinkedList<CartSkuItem> items = shopItem.getItems();
         Iterator<CartSkuItem> iterator = items.iterator();
         while (iterator.hasNext()) {
-            if(iterator.next().getSkuId().equals(cartItemUpdateVo.getSkuId())){
+            if(iterator.next().getSkuId().equals(cartItemBaseVo.getSkuId())){
                 iterator.remove();
                 break;
             }
@@ -141,11 +141,11 @@ public class CartServiceImpl implements CartService {
      * @param vos
      */
     @Override
-    public void deleteBatch(List<CartItemUpdateVo> vos) {
+    public void deleteBatch(List<CartItemBaseVo> vos) {
         if(CollectionUtils.isEmpty(vos)){
             throw new RRException("对不起，您没有选择任何商品，无法删除",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
-        Map<Long, CartItemUpdateVo> skuIdMap = vos.stream().collect(Collectors.toMap(CartItemUpdateVo::getSkuId, Function.identity()));
+        Map<Long, CartItemBaseVo> skuIdMap = vos.stream().collect(Collectors.toMap(CartItemBaseVo::getSkuId, Function.identity()));
         BoundHashOperations<String, String, String> ops = getCartOps();
         Set<String> keys = ops.keys();
         Iterator<String> keysIterator = keys.iterator();
@@ -180,7 +180,7 @@ public class CartServiceImpl implements CartService {
      * @return
      */
     @Override
-    public CartSkuItem asyncUpdateCart(CartItemUpdateVo itemUpdateVo) {
+    public CartSkuItem asyncUpdateCart(CartItemBaseVo itemUpdateVo) {
         BoundHashOperations<String, String, String> ops = getCartOps();
         String json = ops.get(itemUpdateVo.getBrandId().toString());
         ShopItem shopItem = JSON.parseObject(json, ShopItem.class);

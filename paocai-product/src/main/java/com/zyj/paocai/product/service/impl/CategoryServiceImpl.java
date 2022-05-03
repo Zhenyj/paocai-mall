@@ -92,7 +92,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         while (true) {
             CategoryEntity entity = getById(catId);
             if (entity == null) {
-                throw new RRException("不存在分类id：" + catId + "的分类", BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
+                throw new RRException("不存在分类id：" + catId + "的分类", BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
             }
             Long parentCid = entity.getParentCid();
             if (parentCid != null && parentCid == 0) {
@@ -189,7 +189,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         while (true) {
             CategoryEntity entity = getById(catId);
             if (entity == null) {
-                throw new RRException("不存在分类id：" + catId + "的分类", BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
+                throw new RRException("不存在分类id：" + catId + "的分类", BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
             }
             list.add(new CatalogBaseVo(entity.getCatId(), entity.getName()));
             Long parentCid = entity.getParentCid();
@@ -212,7 +212,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public CategoryEntity getCategoryBySpuId(Long spuId) {
         CategoryEntity category = categoryDao.getCategoryBySpuId(spuId);
         if (category == null) {
-            throw new RRException("没有spu相关分类信息,spuId:" + spuId,  BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
+            throw new RRException("没有spu相关分类信息,spuId:" + spuId,  BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         return category;
     }
@@ -227,7 +227,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public List<CategoryEntity> getSameLevelCategory(Long catalogId) {
         CategoryEntity category = getById(catalogId);
         if (category == null) {
-            throw new RRException("不存在该分类,分类id:" + catalogId, BizCodeEnum.CATEGORY_NO_EXIST_EXCEPTION.getCode());
+            throw new RRException("不存在该分类,分类id:" + catalogId, BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         List<CategoryEntity> list = getSameLevelCategoryByParentId(category.getParentCid());
         return list;

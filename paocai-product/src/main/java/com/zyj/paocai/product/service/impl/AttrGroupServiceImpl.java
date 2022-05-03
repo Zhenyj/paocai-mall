@@ -80,7 +80,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     public AttrGroupWithCatelogPathVo getAttrGroupWithCatelogPathVoById(Long attrGroupId) {
         AttrGroupEntity attrGroupEntity = this.getById(attrGroupId);
         if (attrGroupEntity == null) {
-            throw new RRException("不存在" + attrGroupId + "对应的属性分组", BizCodeEnum.ATTR_GROUP_EXCEPTION.getCode());
+            throw new RRException("不存在" + attrGroupId + "对应的属性分组", BizCodeEnum.PRODUCT_ATTR_GROUP_EXCEPTION.getCode());
         }
         AttrGroupWithCatelogPathVo vo = new AttrGroupWithCatelogPathVo();
         vo.setAttrGroupId(attrGroupEntity.getAttrGroupId());

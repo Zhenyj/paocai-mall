@@ -1,14 +1,15 @@
 package com.zyj.paocai.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
 import com.zyj.paocai.order.entity.OrderEntity;
 import com.zyj.paocai.common.utils.PageUtils;
+import com.zyj.paocai.order.entity.vo.CartItemBaseVo;
 import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 订单
@@ -32,6 +33,6 @@ public interface OrderService extends IService<OrderEntity> {
      * @param skuItems
      * @return
      */
-    OrderConfirmVo toTrade(List<CartSkuItem> skuItems);
+    OrderConfirmVo toTrade(List<CartItemBaseVo> skuItems) throws ExecutionException, InterruptedException;
 }
 
