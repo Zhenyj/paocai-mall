@@ -213,8 +213,8 @@
                           >
                             <label class="title-label">发票抬头类型：</label>
                             <el-radio-group v-model="shop.billHeader">
-                              <el-radio :label="0">个人</el-radio>
-                              <el-radio :label="1">企业</el-radio>
+                              <el-radio :label="'个人'">个人</el-radio>
+                              <el-radio :label="'企业'">企业</el-radio>
                             </el-radio-group>
                           </div>
                           <div class="invoice-op-item invoice-header">
@@ -247,7 +247,7 @@
                           >
                             <label class="title-label">纳税人识别号：</label>
                             <span class="hide">
-                              <span>123234345456</span>
+                              <span></span>
                               <a class="edit-header">修改</a>
                             </span>
                             <span class="header-box">
@@ -261,7 +261,7 @@
                               >
                                 <el-input
                                   size="mini"
-                                  v-model="input"
+                                  v-model="invoiceNo"
                                   placeholder="根据最新增值税管理办法，如需企业抬头发票，请填写有效税号信息"
                                 ></el-input>
                               </el-tooltip>
@@ -303,6 +303,7 @@
                               v-model="shop.discountOption"
                               placeholder="请选择"
                               size="mini"
+                              @change="changeDiscountOption(i1)"
                             >
                               <el-option
                                 v-for="(option,i2) in shop.shopDiscountOptions"
@@ -318,7 +319,7 @@
                             style="float: right;"
                           >
                             <div class="label label-shop-price">
-                              <span>{{shop.discountOption && shop.discountOption.discount && shop.discountOption.discount > 0?shop.discountOption.discount:0|showPrice}}</span>
+                              <span>{{(shop.promotionAmount ? shop.promotionAmount:0)|showPrice}}</span>
                             </div>
                           </div>
                         </div>
@@ -471,6 +472,7 @@ export default {
       isShow: false,
       loading: true,
       addOrUpdateVisible: false,
+      invoiceNo: ''
     }
   },
   methods: {
@@ -569,6 +571,22 @@ export default {
         this.$refs.addOrUpdate.init(id);
       });
     },
+    // 选择店铺优惠
+    changeDiscountOption (index) {
+      const discount = this.orderInfo.shops[index].discountOption.discount;;
+      this.orderInfo.shops[index].promotionAmount = discount;
+      this.orderInfo.shops[index].payAmount = this.orderInfo.shops[index].totalAmount - discount;
+      this.orderInfo.shops[index].promotionAmount = discount;
+      this.calculatePayAmount();
+    },
+    calculatePayAmount () {
+      let orderInfo = this.orderInfo;
+      let payAmount = 0;
+      orderInfo.shops.forEach((v, i) => {
+        payAmount = payAmount + v.payAmount * 1;
+      });
+      this.orderInfo.payAmount = payAmount;
+    }
   },
   created () {
     document.title = "确认订单-泡菜商城";
