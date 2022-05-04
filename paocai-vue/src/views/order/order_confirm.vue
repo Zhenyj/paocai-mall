@@ -50,14 +50,17 @@
               v-for="(v,i) in addressList"
               :key="i"
             >
-              <div class="inner-infos">
+              <div
+                class="inner-infos"
+                @click="receiveAddressIndex=i"
+              >
                 <div class="addr-hd">
                   <span>{{v.province}}</span>
                   <span>{{v.city}}</span>
                   <span>{{'（'+v.name+'收）'}}</span>
                 </div>
                 <div class="addr-bd">
-                  <span>{{v.region}}}</span>
+                  <span>{{v.region}}</span>
                   <span>{{v.detailAddress}}</span>
                   <span>{{v.phone}}</span>
                 </div>
@@ -65,19 +68,24 @@
                   title="修改地址"
                   class="modify-operation"
                   v-if="i===receiveAddressIndex"
+                  @click="addOrUpdateHandle(v.id)"
                 >修改</a>
               </div>
               <div
                 class="set-default"
                 title="设置当前地址为默认"
+                @click="setDefault(v.id)"
               >设为默认</div>
-              <div class="default-tip">默认地址</div>
+              <div
+                class="default-tip"
+                v-if="v.defaultStatus===1"
+              >默认地址</div>
             </div>
           </div>
           <div class="operations">
             <a
               href=""
-              v-show="addressList.length>=4"
+              v-show="addressList && addressList.length > 4"
             >显示全部地址</a>
             <a href="">管理收货地址</a>
           </div>
@@ -434,15 +442,22 @@
       </div>
     </div>
     <common-footer></common-footer>
+    <!-- 收货地址弹窗修改 -->
+    <add-or-update
+      v-if="addOrUpdateVisible"
+      ref="addOrUpdate"
+      @refreshDataList="getAddress"
+    ></add-or-update>
   </div>
 </template>
 
 <script>
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
+import AddOrUpdate from '@/views/member/address/address-add-or-update.vue'
 export default {
   name: 'orderConfirm',
-  components: { CommonHeader, CommonFooter },
+  components: { CommonHeader, CommonFooter, AddOrUpdate },
   data () {
     return {
       loginInfo: {
@@ -451,22 +466,11 @@ export default {
       orderInfo: {},
       addressList: [],
       receiveAddressIndex: 0,
-      receiveAddress: {
-        id: 1,
-        memberId: 2,
-        name: '甄英俊',
-        phone: '12345678910',
-        postCode: '',
-        province: '福建省',
-        city: '厦门市',
-        region: '集美区',
-        detailAddress: '详细地址',
-        areacode: '',
-        defaultStatus: 1
-      },
+      receiveAddress: {},
       visible: true,
       isShow: false,
-      loading: true
+      loading: true,
+      addOrUpdateVisible: false,
     }
   },
   methods: {
@@ -477,13 +481,7 @@ export default {
         const addressList = this.$router.currentRoute.params.addressList;
         this.orderInfo = orderInfo;
         this.addressList = addressList;
-        addressList.forEach((v, i) => {
-          if (v.defaultStatus === 1) {
-            this.receiveAddress = v;
-            this.receiveAddressIndex = i;
-            return false;
-          }
-        });
+
       } finally {
         // this.$alert('订单信息有误，前往购物车', '提示', {
         //   confirmButtonText: '确定',
@@ -493,6 +491,16 @@ export default {
         // });
         this.loading = false;
       }
+    },
+    initAddress () {
+      const addressList = this.addressList;
+      addressList.forEach((v, i) => {
+        if (v.defaultStatus === 1) {
+          this.receiveAddress = v;
+          this.receiveAddressIndex = i;
+          return false;
+        }
+      });
     },
     // 获取用户登录信息
     async getLoginInfo () {
@@ -511,7 +519,56 @@ export default {
     },
     handleNavTo (routerName) {
       this.$router.push({ name: routerName });
-    }
+    },
+    setDefault (id) {
+      this.$confirm('是否确认将该收获地址设为默认, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.doSetDefault(id);
+      }).catch(() => {
+      });
+    },
+    async doSetDefault (id) {
+      this.loading = true;
+      const res = await this.$request({
+        url: 'member/memberreceiveaddress/update',
+        method: 'POST',
+        data: {
+          id,
+          defaultStatus: 1
+        }
+      });
+      this.$handleResponseMessage(res, '地址设为默认成功', '地址设为默认失败');
+      if (res.code === 200) {
+        this.getAddress();
+      }
+    },
+    async getAddress () {
+      this.loading = true;
+      try {
+        const res = await this.$request({
+          url: 'member/memberreceiveaddress/my_address/list',
+          method: 'GET'
+        });
+        this.$handleResponseMessage(res, '', '地址数据异常');
+        if (res.code !== 200) {
+          return;
+        }
+        this.addressList = res.data;
+        this.initAddress();
+      } finally {
+        this.loading = false;
+      }
+    },
+    // 修改
+    addOrUpdateHandle (id) {
+      this.addOrUpdateVisible = true;
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate.init(id);
+      });
+    },
   },
   created () {
     document.title = "确认订单-泡菜商城";
