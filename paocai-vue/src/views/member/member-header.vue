@@ -22,6 +22,7 @@
           <span
             class="el-dropdown-link"
             :class="{'active':i1==defaultActive}"
+            @click="navToByRouterName(v1.routerName)"
           >
             {{v1.title}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
@@ -45,10 +46,17 @@
 <script>
 export default {
   name: 'memberHeader',
+  props: {
+    defaultActive: {
+      type: Number,
+      default: 0
+    }
+  },
   data () {
     return {
       menus: [{
         title: '首页',
+        routerName: 'myPaocai',
         items: [{
           name: '订单中心',
           routerName: ''
@@ -64,9 +72,10 @@ export default {
         }]
       }, {
         title: '账户设置',
+        routerName: 'userInfo',
         items: [{
           name: '个人信息',
-          routerName: ''
+          routerName: 'userInfo'
         }, {
           name: '账户安全',
           routerName: ''
@@ -81,7 +90,6 @@ export default {
           routerName: ''
         }]
       }],
-      defaultActive: 0
     }
   },
   methods: {

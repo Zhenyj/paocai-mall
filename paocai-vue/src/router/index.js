@@ -64,10 +64,10 @@ const globalRoutes = [{
   name: 'address',
   meta: { title: '收货地址-泡菜商城' }
 }, {
-  path: '/member/address/manage',
-  component: _import('member/address/address_manage'),
-  name: 'addressManage',
-  meta: { title: '收货地址管理-泡菜商城' }
+  path: '/member/user/user_info',
+  component: _import('member/user/user_info'),
+  name: 'userInfo',
+  meta: { title: '账户信息' }
 }]
 
 // 主入口路由(需嵌套上左右整体布局)

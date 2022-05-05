@@ -239,7 +239,6 @@ export default {
 <style lang="less" scoped>
 #address-list-page {
   background-color: #f0f3ef;
-  padding-bottom: 50px;
 }
 .content {
   width: 1200px;

@@ -39,13 +39,13 @@ export default {
         title: '设置',
         items: [{
           name: '个人信息',
-          routerName: ''
+          routerName: 'userInfo'
         }, {
           name: '账户安全',
           routerName: ''
         }, {
           name: '收货地址',
-          routerName: 'myPaocai'
+          routerName: 'address'
         }, {
           name: '我的银行卡',
           routerName: ''
