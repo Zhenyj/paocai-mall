@@ -1,7 +1,7 @@
 package com.zyj.paocai.auth.controller;
 
 import com.zyj.paocai.auth.feign.MemberFeignService;
-import com.zyj.paocai.auth.utils.JwtUtils;
+import com.zyj.paocai.common.utils.JwtUtils;
 import com.zyj.paocai.auth.vo.UserRegisterVo;
 import com.zyj.paocai.common.constant.AuthConstant;
 import com.zyj.paocai.common.constant.Constant;

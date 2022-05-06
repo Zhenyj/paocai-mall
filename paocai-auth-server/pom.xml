@@ -15,7 +15,6 @@
     <description>泡菜商城-认证中心(社交登录、OAuth2.0、单点登录)</description>
     <properties>
         <java.version>1.8</java.version>
-        <jwt.version>3.4.0</jwt.version>
     </properties>
     <dependencies>
         <dependency>
@@ -79,12 +78,6 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-        </dependency>
-        <!-- Json Web Token -->
-        <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
-            <version>${jwt.version}</version>
         </dependency>
     </dependencies>
 

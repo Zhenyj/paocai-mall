@@ -31,5 +31,18 @@ public interface MemberService extends IService<MemberEntity> {
      * @return
      */
     MemberEntity login(UserLoginTo userLoginTo);
+
+    /**
+     * 校验用户名唯一
+     * @param username
+     * @return
+     */
+    Boolean checkUsernameUnique(String username);
+
+    /**
+     * 更新用户信息
+     * @param member
+     */
+    MemberEntity updateUserInfo(MemberEntity member);
 }
 

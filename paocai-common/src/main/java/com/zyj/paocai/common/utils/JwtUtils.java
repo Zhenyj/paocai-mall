@@ -1,4 +1,4 @@
-package com.zyj.paocai.auth.utils;
+package com.zyj.paocai.common.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
@@ -8,7 +8,6 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.zyj.paocai.common.entity.vo.MemberRespVo;
 import com.zyj.paocai.common.exception.BizCodeEnum;
-import com.zyj.paocai.common.utils.RRException;
 
 import java.util.Date;
 
@@ -69,7 +68,7 @@ public class JwtUtils {
             throw new RRException(e.getMessage());
         }
         if (member == null) {
-            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(),BizCodeEnum.PLEASE_LOGIN.getCode());
+            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(), BizCodeEnum.PLEASE_LOGIN.getCode());
         }
         // 验证
         JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(member.getId().toString())).build();

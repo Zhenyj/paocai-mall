@@ -35,19 +35,19 @@
             name="baseInfoTab"
           >
             <el-form
-              :model="ruleForm"
+              :model="userInfoForm"
               status-icon
               :rules="rules"
-              ref="ruleForm"
+              ref="userInfoForm"
               label-width="100px"
-              class="demo-ruleForm"
+              class="demo-userInfoForm"
             >
               <el-form-item
                 label="用户名"
                 prop="username"
               >
                 <el-input
-                  v-model="ruleForm.username"
+                  v-model="userInfoForm.username"
                   autocomplete="off"
                   size="mini"
                 ></el-input>
@@ -58,7 +58,7 @@
                 prop="nickname"
               >
                 <el-input
-                  v-model="ruleForm.nickname"
+                  v-model="userInfoForm.nickname"
                   autocomplete="off"
                   size="mini"
                 ></el-input>
@@ -73,19 +73,25 @@
               >
                 <el-avatar
                   :size="80"
-                  :src="ruleForm.header"
+                  :src="userInfoForm.header"
                 >
                   <img
                     src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
                   />
                 </el-avatar>
+                <div style="display:inline-block; margin-left:30px;">
+                  <single-upload
+                    v-model="userInfoForm.header"
+                    :isShowFileList="showFileList"
+                  ></single-upload>
+                </div>
               </el-form-item>
               <el-form-item
                 label="性别"
                 prop="gender"
               >
                 <el-radio-group
-                  v-model="ruleForm.gender"
+                  v-model="userInfoForm.gender"
                   size="small"
                 >
                   <el-radio :label="1">男</el-radio>
@@ -101,7 +107,7 @@
                   <el-date-picker
                     type="date"
                     placeholder="生日"
-                    v-model="ruleForm.birth"
+                    v-model="userInfoForm.birth"
                     format="yyyy 年 MM 月 dd 日"
                     value-format="yyyy-MM-dd"
                     size="mini"
@@ -112,7 +118,7 @@
               <el-form-item>
                 <el-button
                   type="primary"
-                  @click="submitForm('ruleForm')"
+                  @click="submitForm('userInfoForm')"
                 >提交</el-button>
               </el-form-item>
             </el-form>
@@ -133,18 +139,31 @@ import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
 import MemberHeader from '@/views/member/member-header'
 import MemberSetMenu from '@/views/member/member-set-menu.vue'
+import SingleUpload from '@/components/upload/singleUpload'
 export default {
   name: 'addressList',
-  components: { CommonHeader, CommonFooter, MemberHeader, MemberSetMenu },
+  components: { CommonHeader, CommonFooter, MemberHeader, MemberSetMenu, SingleUpload },
   data () {
-    let checkNameUnique = (rule, value, callback) => {
+    let checkNameUnique = async (rule, value, callback) => {
       if (!value) {
         return callback(new Error('请输入用户名'));
       }
+      if (value == this.loginInfo.username) {
+        return callback();
+      }
       this.isCheckNameUnique = true;
-      setTimeout(() => {
+      try {
+        const res = await this.$request({
+          url: `member/member/checkUsernameUnique?username=${value}`
+        });
+        if (res.code !== 200) {
+          return callback(new Error(res.msg));
+        }
+      } catch (e) {
+        return callback(new Error('用户名已存在'));
+      } finally {
         this.isCheckNameUnique = false;
-      }, 1000);
+      }
     };
     return {
       loginInfo: {
@@ -153,7 +172,7 @@ export default {
       activeMenu: [0, 0],
       activeName: 'baseInfoTab',
       loading: false,
-      ruleForm: {
+      userInfoForm: {
         username: 'zyj',
         nickname: 'zyj',
         header: 'https://i.jd.com/commons/img/no-img_mid_.jpg',
@@ -164,7 +183,8 @@ export default {
         username: [{ required: true, message: '请输入昵称', trigger: 'blur' }],
         nickname: [{ validator: checkNameUnique, trigger: 'blur' }],
       },
-      isCheckNameUnique: false
+      isCheckNameUnique: false,
+      showFileList: false
     }
   },
   methods: {
@@ -173,6 +193,15 @@ export default {
       const loginInfo = await this.$getLoginInfo();
       if (loginInfo != null) {
         this.loginInfo = loginInfo;
+        let userInfoForm = {
+          id: loginInfo.id,
+          username: loginInfo.username,
+          nickname: loginInfo.nickname,
+          header: loginInfo.header,
+          gender: loginInfo.gender,
+          birth: loginInfo.birth
+        };
+        this.userInfoForm = userInfoForm;
       } else {
         // TODO
         // this.$alert('请先登录再进行此操作', '提示', {
@@ -189,12 +218,49 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          if (this.hasDifferent()) {
+            this.updateUserInfo();
+          } else {
+            this.$message('对不起，您没有修改任何个人信息');
+          }
         } else {
           console.log('error submit!!');
           return false;
         }
       });
+    },
+    hasDifferent () {
+      const loginInfo = this.loginInfo;
+      const userInfoForm = this.userInfoForm;
+      if (loginInfo.username != userInfoForm.username) {
+        return true;
+      }
+      if (loginInfo.nickname != userInfoForm.nickname) {
+        return true;
+      }
+      if (loginInfo.header != userInfoForm.header) {
+        return true;
+      }
+      if (loginInfo.gender != userInfoForm.gender) {
+        return true;
+      }
+      if (loginInfo.birth != userInfoForm.birth) {
+        return true;
+      }
+      return false;
+    },
+    async updateUserInfo () {
+      const res = await this.$request({
+        url: 'member/member/update',
+        method: 'POST',
+        data: this.userInfoForm
+      });
+      this.$handleResponseMessage(res, '基本信息修改成功', '未知错误，删除失败', false);
+      if (res.code === 200) {
+        const loginInfo = res.data;
+        // 存入session缓存中
+        sessionStorage.setItem('loginInfo', JSON.stringify(loginInfo));
+      }
     }
   },
   created () {
@@ -217,6 +283,25 @@ export default {
   }
   /deep/ .el-loading-text {
     font-size: 24px;
+  }
+  .main {
+    .el-input--mini {
+      /deep/ .el-icon-loading {
+        font-size: 10px;
+      }
+    }
+
+    /deep/ .el-avatar {
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+    .el-avatar:hover .header-edit {
+      display: block;
+    }
+    .header-edit:hover {
+      display: block;
+    }
   }
 }
 .left-menu {
@@ -242,9 +327,6 @@ export default {
 }
 </style>
 <style>
-.user-info-page .el-form-item {
-  margin-bottom: 15px;
-}
 .user-info-page .el-form-item .el-input {
   max-width: 205px;
 }

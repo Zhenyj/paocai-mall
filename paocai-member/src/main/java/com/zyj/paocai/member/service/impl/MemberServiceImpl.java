@@ -9,6 +9,7 @@ import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
 import com.zyj.paocai.common.utils.RRException;
+import com.zyj.paocai.member.constant.MemberConstant;
 import com.zyj.paocai.member.dao.MemberDao;
 import com.zyj.paocai.member.entity.MemberEntity;
 import com.zyj.paocai.member.entity.MemberLevelEntity;
@@ -82,7 +83,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         member.setMobile(userRegisterTo.getPhone());
         member.setEmail(userRegisterTo.getEmail());
         member.setUsername(userRegisterTo.getUsername());
+        // 默认昵称与用户名相同
         member.setNickname(userRegisterTo.getUsername());
+        member.setGender(MemberConstant.GENDER_DEFAULT);
         member.setCreateTime(new Date());
         save(member);
     }
@@ -129,9 +132,22 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
      *
      * @param username
      */
-    private Boolean checkUsernameUnique(String username) {
+    @Override
+    public Boolean checkUsernameUnique(String username) {
         int count = baseMapper.selectCount(new QueryWrapper<MemberEntity>().eq("username", username));
         return count == 0;
+    }
+
+    /**
+     * 更新用户信息
+     * @param member
+     */
+    @Override
+    public MemberEntity updateUserInfo(MemberEntity member) {
+        updateById(member);
+        MemberEntity newInfo = getById(member.getId());
+        newInfo.setPassword("");
+        return newInfo;
     }
 
     /**

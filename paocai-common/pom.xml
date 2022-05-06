@@ -26,6 +26,7 @@
         <commons-io.version>2.6</commons-io.version>
         <bootstrap.version>3.1.0</bootstrap.version>
         <druid.version>1.2.20</druid.version>
+        <jwt.version>3.4.0</jwt.version>
     </properties>
 
     <dependencies>
@@ -136,6 +137,12 @@
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+        <!-- Json Web Token -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${jwt.version}</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

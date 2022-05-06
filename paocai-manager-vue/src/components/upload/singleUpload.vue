@@ -37,7 +37,7 @@ export default {
     },
     imageName () {
       if (this.value != null && this.value !== "") {
-        return this.value.substr(this.value.lastIndexOf("/") + 1);
+        return this.value.substring(this.value.lastIndexOf("/") + 1);
       } else {
         return null;
       }
