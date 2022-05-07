@@ -142,6 +142,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
      * 更新用户信息
      * @param member
      */
+    @Transactional
     @Override
     public MemberEntity updateUserInfo(MemberEntity member) {
         updateById(member);
