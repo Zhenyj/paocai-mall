@@ -50,8 +50,6 @@ spring:
       use-key-prefix: true # 是否使用前缀
       key-prefix: CACHE_ # 前缀
       cache-null-values: true # 是否缓存空值，可以用去解决缓存穿透问题
-  thymeleaf:
-    cache: false
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
