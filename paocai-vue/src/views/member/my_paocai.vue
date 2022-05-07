@@ -261,7 +261,6 @@ export default {
       if (loginInfo != null) {
         this.loginInfo = loginInfo;
       } else {
-        // TODO
         this.$alert('请先登录再进行此操作', '提示', {
           confirmButtonText: '确定',
           callback: action => {
@@ -276,7 +275,7 @@ export default {
   },
   created () {
     document.title = '我的泡菜';
-    // this.getLoginInfo();
+    this.getLoginInfo();
   },
   filters: {
     showPrice (price) {

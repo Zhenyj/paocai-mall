@@ -4,7 +4,7 @@
     <div class="header">
       <div class="logo">
         <div class="header-left">
-          <a href=""><img
+          <a href="/"><img
               src="../assets/logo.png"
               alt="泡菜商城"
             /></a>

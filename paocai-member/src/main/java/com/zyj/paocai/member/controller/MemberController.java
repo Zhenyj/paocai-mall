@@ -10,6 +10,7 @@ import com.zyj.paocai.common.utils.JwtUtils;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.member.entity.MemberEntity;
+import com.zyj.paocai.member.entity.vo.PwdUpdateVo;
 import com.zyj.paocai.member.service.MemberService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,19 @@ public class MemberController {
 
     @Autowired
     private MemberService memberService;
+
+    /**
+     * 修改密码
+     * @param vo
+     * @return
+     */
+    @PostMapping("/pwd/update")
+    public R pwdUpdate(@RequestBody @Valid PwdUpdateVo vo, HttpSession session){
+        memberService.pwdUpdate(vo);
+        // 删除session中的用户信息
+        session.removeAttribute(AuthConstant.LOGIN_USER);
+        return R.ok();
+    }
 
     @GetMapping("/checkUsernameUnique")
     public R<Boolean> checkUsernameUnique(@RequestParam("username") String username) {

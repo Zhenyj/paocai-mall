@@ -203,13 +203,12 @@ export default {
         };
         this.userInfoForm = userInfoForm;
       } else {
-        // TODO
-        // this.$alert('请先登录再进行此操作', '提示', {
-        //   confirmButtonText: '确定',
-        //   callback: action => {
-        //     this.$router.push({ name: 'login' });
-        //   }
-        // });
+        this.$alert('请先登录再进行此操作', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$router.push({ name: 'login' });
+          }
+        });
       }
     },
     handleNavTo (routerName) {
@@ -313,7 +312,7 @@ export default {
   margin-left: 15px;
   margin-top: 15px;
   background-color: #fff;
-  padding: 0 10px;
+  padding: 0 20px;
   min-height: 500px;
   .tip {
     color: #999;

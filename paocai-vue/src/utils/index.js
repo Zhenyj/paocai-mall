@@ -56,6 +56,14 @@ export const handleResponseMessage = (res, successDefaultMsg = '', errorDefaultM
   }
   return false;
 }
+/**
+ * 清除登录信息
+ */
+export function clearLoginInfo () {
+  let date = new Date;
+  date.setDate(date.getDate() - 1);
+  cookies.set('token', null, { expires: date, domain: 'paocai.mall.com', path: '/' });
+}
 
 export const hasText = (s) => {
   return s != null && s.trim().length > 0;

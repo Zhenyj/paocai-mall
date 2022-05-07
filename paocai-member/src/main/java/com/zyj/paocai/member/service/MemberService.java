@@ -5,6 +5,7 @@ import com.zyj.paocai.common.entity.to.UserLoginTo;
 import com.zyj.paocai.common.entity.to.UserRegisterTo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.member.entity.MemberEntity;
+import com.zyj.paocai.member.entity.vo.PwdUpdateVo;
 
 import java.util.Map;
 
@@ -44,5 +45,11 @@ public interface MemberService extends IService<MemberEntity> {
      * @param member
      */
     MemberEntity updateUserInfo(MemberEntity member);
+
+    /**
+     * 修改密码
+     * @param vo
+     */
+    void pwdUpdate(PwdUpdateVo vo);
 }
 

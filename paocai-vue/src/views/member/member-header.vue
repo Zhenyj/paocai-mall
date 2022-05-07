@@ -77,8 +77,8 @@ export default {
           name: '个人信息',
           routerName: 'userInfo'
         }, {
-          name: '账户安全',
-          routerName: ''
+          name: '修改登录密码',
+          routerName: 'pwdEdit'
         }, {
           name: '收货地址',
           routerName: 'address'

@@ -25,6 +25,5 @@ public class ProductWebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册用户信息拦截器
-        registry.addInterceptor(loginInfoInterceptor).addPathPatterns("/product/index/data");
     }
 }

@@ -28,7 +28,6 @@ public class LoginInfoInterceptor implements HandlerInterceptor {
         MemberRespVo member = (MemberRespVo)session.getAttribute(AuthConstant.LOGIN_USER);
         if(member == null){
             throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(),BizCodeEnum.PLEASE_LOGIN.getCode());
-//            return false;
         }
         loginInfo.set(member);
         return HandlerInterceptor.super.preHandle(request, response, handler);

@@ -68,6 +68,11 @@ const globalRoutes = [{
   component: _import('member/user/user_info'),
   name: 'userInfo',
   meta: { title: '账户信息' }
+}, {
+  path: '/member/user/pwd_edit',
+  component: _import('member/user/pwd_edit'),
+  name: 'pwdEdit',
+  meta: { title: '账户信息' }
 }]
 
 // 主入口路由(需嵌套上左右整体布局)

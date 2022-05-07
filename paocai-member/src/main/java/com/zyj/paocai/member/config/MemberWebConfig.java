@@ -15,7 +15,9 @@ public class MemberWebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInfoInterceptor())
-                .addPathPatterns("/member/memberreceiveaddress/**");
+                .addPathPatterns("/member/memberreceiveaddress/**",
+                        "/member/member/pwd/update",
+                        "/member/member/update");
         WebMvcConfigurer.super.addInterceptors(registry);
     }
 }

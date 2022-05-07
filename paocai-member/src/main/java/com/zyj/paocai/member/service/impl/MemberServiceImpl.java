@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.entity.to.UserLoginTo;
 import com.zyj.paocai.common.entity.to.UserRegisterTo;
+import com.zyj.paocai.common.entity.vo.MemberRespVo;
 import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.Query;
@@ -13,6 +14,8 @@ import com.zyj.paocai.member.constant.MemberConstant;
 import com.zyj.paocai.member.dao.MemberDao;
 import com.zyj.paocai.member.entity.MemberEntity;
 import com.zyj.paocai.member.entity.MemberLevelEntity;
+import com.zyj.paocai.member.entity.vo.PwdUpdateVo;
+import com.zyj.paocai.member.interceptor.LoginInfoInterceptor;
 import com.zyj.paocai.member.service.MemberLevelService;
 import com.zyj.paocai.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -149,6 +152,30 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         MemberEntity newInfo = getById(member.getId());
         newInfo.setPassword("");
         return newInfo;
+    }
+
+    /**
+     * 修改密码
+     * @param vo
+     */
+    @Transactional
+    @Override
+    public void pwdUpdate(PwdUpdateVo vo) {
+        if(!vo.getPass().equals(vo.getCheckPass())){
+            throw new RRException(BizCodeEnum.PASSWORD_DIFFERENT_EXCEPTION.getMsg(),
+                    BizCodeEnum.PASSWORD_DIFFERENT_EXCEPTION.getCode());
+        }
+        MemberRespVo member = LoginInfoInterceptor.loginInfo.get();
+        MemberEntity memberInfo = this.getById(member.getId());
+        // 判断密码是否正确
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if(!passwordEncoder.matches(vo.getOldPass(), memberInfo.getPassword())){
+            throw new RRException(BizCodeEnum.PASSWORD_ERROR_EXCEPTION.getMsg(),
+                    BizCodeEnum.PASSWORD_ERROR_EXCEPTION.getCode());
+        }
+        String newPwd = passwordEncoder.encode(vo.getPass());
+        memberInfo.setPassword(newPwd);
+        updateById(memberInfo);
     }
 
     /**

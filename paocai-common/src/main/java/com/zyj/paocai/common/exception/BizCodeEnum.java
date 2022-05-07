@@ -59,6 +59,8 @@ public enum BizCodeEnum {
     ADDRESS_ADD_EXCEPTION(15006,"收货地址添加异常"),
     ADDRESS_DELETE_EXCEPTION(15007,"收货地址删除异常"),
     ADDRESS_UPDATE_EXCEPTION(15008,"收货地址修改异常"),
+    PASSWORD_DIFFERENT_EXCEPTION(15009,"两次密码不一致"),
+    PASSWORD_ERROR_EXCEPTION(15009,"密码错误"),
     // 库存服务
     WARE_SERVICE_EXCEPTION(8000, "库存服务异常"),
     NO_STOCK_EXCEPTION(8001, "商品库存不足"),
