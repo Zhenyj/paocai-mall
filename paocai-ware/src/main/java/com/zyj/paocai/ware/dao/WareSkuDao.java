@@ -1,9 +1,11 @@
 package com.zyj.paocai.ware.dao;
 
 import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
+import com.zyj.paocai.common.entity.vo.SkuIdCountVo;
 import com.zyj.paocai.ware.entity.PurchaseDetailEntity;
 import com.zyj.paocai.ware.entity.WareSkuEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zyj.paocai.ware.entity.vo.SkuWareHasStock;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -39,4 +41,41 @@ public interface WareSkuDao extends BaseMapper<WareSkuEntity> {
      * @return
      */
     SkuHasStockVo getSkuHasStockBySkuId(@Param("skuId") Long skuId);
+
+    /**
+     *
+     * @param skuIdCountVos
+     * @return
+     */
+    List<SkuHasStockVo> getSkuStockInfoBySkuIdWithNums(@Param("skuIdCountVos") List<SkuIdCountVo> skuIdCountVos);
+
+    /**
+     * 获取sku哪些仓库有库存
+     * @param skuId
+     * @return
+     */
+    List<Long> listWareIdHasSkuStock(@Param("skuId") Long skuId);
+
+    /**
+     * 锁定库存
+     * @param skuId
+     * @param wareId
+     * @param count
+     * @return
+     */
+    int lockSkuStock(@Param("skuId") Long skuId, @Param("wareId") Long wareId, @Param("count") Integer count);
+
+    /**
+     * 库存解锁、更新库存工作单状态
+     * @param orderSn
+     * @param status
+     */
+    void unlockStockAndCancelTask(@Param("orderSn") String orderSn, @Param("status") int status);
+
+    /**
+     * 批量获取sku哪些仓库有库存
+     * @param SkuIdCountVos
+     * @return
+     */
+    List<SkuWareHasStock> listWareIdHasSkuStockBatch(@Param("SkuIdCountVos") List<SkuIdCountVo> SkuIdCountVos);
 }

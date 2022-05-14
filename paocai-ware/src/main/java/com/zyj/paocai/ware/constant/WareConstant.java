@@ -47,9 +47,9 @@ public class WareConstant {
     }
 
     public enum LockStatusEnum {
-        LOCKED(1, "已锁定"),
-        UNLOCKED(2, "已解锁"),
-        DEDUCTED(3, "已扣减");
+        LOCKED(0, "已锁定"),
+        UNLOCKED(1, "已解锁"),
+        DEDUCTED(2, "已扣减");
 
         int status;
         String msg;

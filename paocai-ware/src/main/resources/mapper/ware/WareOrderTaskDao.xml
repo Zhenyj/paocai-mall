@@ -3,7 +3,7 @@
 
 <mapper namespace="com.zyj.paocai.ware.dao.WareOrderTaskDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.zyj.paocai.ware.entity.WareOrderTaskEntity" id="wareOrderTaskMap">
         <result property="id" column="id"/>
         <result property="orderId" column="order_id"/>
@@ -20,6 +20,16 @@
         <result property="wareId" column="ware_id"/>
         <result property="taskComment" column="task_comment"/>
     </resultMap>
+    <sql id="baseColumn">
+        `id`
+        ,`order_id`,`order_sn`,`consignee`,`consignee_tel`,`delivery_address`,`order_comment`,
+        `payment_way`,`task_status`,`order_body`,`tracking_no`,`create_time`,`ware_id`,`task_comment`
+    </sql>
+    <select id="getOrderTaskByOrderSn" resultMap="wareOrderTaskMap">
+        SELECT <include refid="baseColumn" />
+        FROM `wms_ware_order_task`
+        WHERE order_sn = #{orderSn}
+    </select>
 
 
 </mapper>

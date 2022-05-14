@@ -16,6 +16,41 @@
         <result property="skuId" column="sku_id" javaType="java.lang.Long"/>
         <result property="hasStock" column="hasStock" javaType="java.lang.Boolean"/>
     </resultMap>
+    <resultMap id="SkuWareHasStock" type="com.zyj.paocai.ware.entity.vo.SkuWareHasStock">
+        <result property="skuId" column="sku_id"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="count" column="count"/>
+        <result property="orderSn" column="order_sn"/>
+        <collection property="wareIds" ofType="java.lang.Long" column="ware_id">
+            <result column="ware_id"/>
+        </collection>
+    </resultMap>
+    <update id="lockSkuStock">
+        UPDATE `wms_ware_sku`
+        SET `stock_locked` = `stock_locked` + #{count}
+        WHERE sku_id = #{skuId}
+          AND ware_id = #{wareId}
+          AND `stock` - `stock_locked` &gt;= #{count}
+    </update>
+    <update id="unlockStockAndCancelTask">
+        UPDATE wms_ware_sku ws
+            LEFT JOIN (
+            SELECT
+            wotd.sku_id,
+            wotd.sku_num,
+            wotd.id AS task_detail_id
+            FROM
+            `wms_ware_order_task_detail` wotd
+            LEFT JOIN wms_ware_order_task wot ON wotd.task_id = wot.id
+            WHERE
+            order_sn = #{orderSn}
+            ) t
+        ON ws.sku_id = t.sku_id
+            LEFT JOIN wms_ware_order_task_detail wotd ON t.task_detail_id = wotd.id
+            SET ws.stock_locked = ws.stock_locked - t.sku_num,
+                wotd.lock_status = #{status}
+        WHERE ws.sku_id = t.sku_id
+    </update>
     <select id="getSkuStockInfoBySkuIds" resultMap="skuHasStockVo">
         SELECT
         `sku_id`,
@@ -39,6 +74,47 @@
                (CASE WHEN (SUM(`stock` - `stock_locked`) > 0) THEN 'true' ELSE 'false' END) AS hasStock
         FROM `wms_ware_sku`
         WHERE `sku_id` = #{skuId}
+    </select>
+    <select id="getSkuStockInfoBySkuIdWithNums" resultType="com.zyj.paocai.common.entity.vo.SkuHasStockVo">
+        SELECT
+        `sku_id`,
+        'true' AS hasStock
+        FROM `wms_ware_sku`
+        WHERE sku_id IN
+        <foreach collection="skuIdCountVos" item="item" separator="," open="(" close=")">
+            #{item.skuId}
+        </foreach>
+        GROUP BY
+        `sku_id`
+        HAVING
+        SUM( `stock` - `stock_locked` ) > 0
+        UNION
+        SELECT
+        `sku_id`,
+        'false' AS hasStock
+        FROM `wms_ware_sku`
+        WHERE sku_id IN
+        <foreach collection="skuIdCountVos" item="item" separator="," open="(" close=")">
+            #{item.skuId}
+        </foreach>
+        GROUP BY
+        `sku_id`
+        HAVING
+        SUM( `stock` - `stock_locked` ) &lt;= 0
+    </select>
+    <select id="listWareIdHasSkuStock" resultMap="SkuWareHasStock">
+        SELECT ware_id
+        FROM wms_ware_sku
+        WHERE `stock` - `stock_locked` > 0
+          AND sku_id = #{skuId}
+    </select>
+    <select id="listWareIdHasSkuStockBatch" resultMap="SkuWareHasStock">
+        <foreach collection="SkuIdCountVos" item="item" separator="UNION">
+            SELECT `sku_id`,`sku_name`,#{item.count} AS `count` ,`ware_id`
+            FROM `wms_ware_sku`
+            WHERE `stock` - `stock_locked` &gt;= #{item.count}
+            AND sku_id = #{item.skuId}
+        </foreach>
     </select>
 
 

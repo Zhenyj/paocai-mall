@@ -695,7 +695,8 @@ export default {
           name: 'orderConfirm',
           params: {
             orderInfo: res.data.orderInfo,
-            addressList: res.data.addressList
+            addressList: res.data.addressList,
+            orderToken: res.data.orderToken
           }
         });
       }
@@ -704,7 +705,6 @@ export default {
   created () {
     document.title = '泡菜商城-我的购物车';
     this.getLoginInfo();
-    this.loading = true;
     this.getCartInfo();
   },
   filters: {

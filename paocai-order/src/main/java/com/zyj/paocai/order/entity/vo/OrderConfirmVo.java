@@ -16,4 +16,6 @@ public class OrderConfirmVo {
     private List<AddressTo> addressList ;
     /**订单信息*/
     private OrderInfoVo orderInfo;
+    /** 防重令牌 */
+    private String orderToken;
 }

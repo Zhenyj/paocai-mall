@@ -46,7 +46,7 @@
           <div class="address-list">
             <div
               class="address-item-wrapper"
-              :class="{'addr-selected':i===receiveAddressIndex,'addr-default':v.defaultStatus===1}"
+              :class="[{'addr-default':v.defaultStatus === 1},{'addr-selected':i === receiveAddressIndex}]"
               v-for="(v,i) in addressList"
               :key="i"
             >
@@ -437,6 +437,7 @@
               role="button"
               title="提交订单"
               class="go-btn"
+              @click="submitOrder"
             >提交订单</a>
           </div>
         </div>
@@ -466,7 +467,8 @@ export default {
       },
       orderInfo: {},
       addressList: [],
-      receiveAddressIndex: 0,
+      orderToken: '',
+      receiveAddressIndex: -1,
       receiveAddress: {},
       visible: true,
       isShow: false,
@@ -481,16 +483,19 @@ export default {
       try {
         const orderInfo = this.$router.currentRoute.params.orderInfo;
         const addressList = this.$router.currentRoute.params.addressList;
+        const orderToken = this.$router.currentRoute.params.orderToken;
         this.orderInfo = orderInfo;
         this.addressList = addressList;
-
+        this.orderToken = orderToken;
+        this.initAddress();
+      } catch (e) {
+        this.$alert('订单信息有误，前往购物车', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$router.push({ name: 'cart' });
+          }
+        });
       } finally {
-        // this.$alert('订单信息有误，前往购物车', '提示', {
-        //   confirmButtonText: '确定',
-        //   callback: action => {
-        //     this.$router.push({ name: 'cart' });
-        //   }
-        // });
         this.loading = false;
       }
     },
@@ -498,8 +503,8 @@ export default {
       const addressList = this.addressList;
       addressList.forEach((v, i) => {
         if (v.defaultStatus === 1) {
-          this.receiveAddress = v;
           this.receiveAddressIndex = i;
+          this.receiveAddress = v;
           return false;
         }
       });
@@ -586,6 +591,32 @@ export default {
         payAmount = payAmount + v.payAmount * 1;
       });
       this.orderInfo.payAmount = payAmount;
+    },
+    async submitOrder () {
+      const form = {
+        orderInfo: this.orderInfo,
+        address: this.receiveAddress,
+        payAmount: this.orderInfo.payAmount,
+        orderToken: this.orderToken
+      }
+      console.log("data", form);
+      const res = await this.$request({
+        url: 'order/order/submit_order',
+        method: 'POST',
+        data: form
+      });
+      console.log('res', res);
+      this.$handleResponseMessage(res, '', '未知错误,订单创建失败');
+      if (res.code === 200) {
+        const data = res.data;
+        console.log(data);
+        // this.$router.push({
+        //   name: 'pay',
+        //   params: {
+
+        //   }
+        // });
+      }
     }
   },
   created () {
@@ -598,6 +629,11 @@ export default {
   filters: {
     showPrice (price) {
       return parseFloat(price).toFixed(2);
+    }
+  },
+  watch: {
+    receiveAddressIndex (val) {
+      this.receiveAddress = this.addressList[val];
     }
   }
 }

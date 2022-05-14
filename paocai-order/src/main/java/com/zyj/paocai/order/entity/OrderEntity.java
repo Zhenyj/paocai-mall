@@ -100,11 +100,11 @@ public class OrderEntity implements Serializable {
 	/**
 	 * 可以获得的积分
 	 */
-	private Integer integration;
+	private BigDecimal integration;
 	/**
 	 * 可以获得的成长值
 	 */
-	private Integer growth;
+	private BigDecimal growth;
 	/**
 	 * 发票类型[0->不开发票；1->电子发票；2->纸质发票]
 	 */

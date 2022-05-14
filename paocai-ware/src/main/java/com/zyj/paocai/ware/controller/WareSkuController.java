@@ -1,6 +1,8 @@
 package com.zyj.paocai.ware.controller;
 
+import com.zyj.paocai.common.entity.to.WareLockTo;
 import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
+import com.zyj.paocai.common.entity.vo.SkuIdCountVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.ware.entity.WareSkuEntity;
@@ -17,7 +19,7 @@ import java.util.Map;
  * 商品库存
  *
  * @author lulx
- * @email 
+ * @email
  * @date 2022-03-15 21:24:53
  */
 @RestController
@@ -26,11 +28,34 @@ public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
 
+    /**
+     * 订单锁定库存
+     * @param wareLockTos
+     * @return
+     */
+    @PostMapping("/lock/order")
+    public R orderLockStock(@RequestBody List<WareLockTo> wareLockTos) {
+        wareSkuService.orderLockStock(wareLockTos);
+        return R.ok();
+    }
+
 
     @PostMapping("/hasstock/{skuId}")
-    public R<SkuHasStockVo> getSkuHasStock(@PathVariable("skuId") Long skuId){
+    public R<SkuHasStockVo> getSkuHasStock(@PathVariable("skuId") Long skuId) {
         SkuHasStockVo vo = wareSkuService.getSkuHasStock(skuId);
         return R.ok(vo);
+    }
+
+    /**
+     * 获取sku是否有库存，包含需要的商品数量
+     *
+     * @param skuIdCountVos
+     * @return
+     */
+    @PostMapping("/hasstock/batch_nums")
+    public R<List<SkuHasStockVo>> getSkuHasStockBatchWithNums(@RequestBody List<SkuIdCountVo> skuIdCountVos) {
+        List<SkuHasStockVo> vos = wareSkuService.getSkuHasStockBatchWithNums(skuIdCountVos);
+        return R.ok(vos);
     }
 
     /**
@@ -46,7 +71,7 @@ public class WareSkuController {
      * 列表
      */
     @RequestMapping("/list")
-    public R<PageUtils> list(@RequestParam Map<String, Object> params){
+    public R<PageUtils> list(@RequestParam Map<String, Object> params) {
         PageUtils page = wareSkuService.queryPage(params);
 
         return R.ok(page);
@@ -57,8 +82,8 @@ public class WareSkuController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-    public R info(@PathVariable("id") Long id){
-		WareSkuEntity wareSku = wareSkuService.getById(id);
+    public R info(@PathVariable("id") Long id) {
+        WareSkuEntity wareSku = wareSkuService.getById(id);
 
         return R.ok(wareSku);
     }
@@ -67,8 +92,8 @@ public class WareSkuController {
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody WareSkuEntity wareSku){
-		wareSkuService.save(wareSku);
+    public R save(@RequestBody WareSkuEntity wareSku) {
+        wareSkuService.save(wareSku);
 
         return R.ok();
     }
@@ -77,8 +102,8 @@ public class WareSkuController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody WareSkuEntity wareSku){
-		wareSkuService.updateById(wareSku);
+    public R update(@RequestBody WareSkuEntity wareSku) {
+        wareSkuService.updateById(wareSku);
 
         return R.ok();
     }
@@ -87,8 +112,8 @@ public class WareSkuController {
      * 删除
      */
     @RequestMapping("/delete")
-    public R delete(@RequestBody Long[] ids){
-		wareSkuService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Long[] ids) {
+        wareSkuService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

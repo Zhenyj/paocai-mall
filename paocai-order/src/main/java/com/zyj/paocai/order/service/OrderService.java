@@ -6,6 +6,7 @@ import com.zyj.paocai.order.entity.OrderEntity;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.order.entity.vo.CartItemBaseVo;
 import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
+import com.zyj.paocai.order.entity.vo.OrderSubmitVo;
 
 import java.util.List;
 import java.util.Map;
@@ -34,5 +35,18 @@ public interface OrderService extends IService<OrderEntity> {
      * @return
      */
     OrderConfirmVo toTrade(List<CartItemBaseVo> skuItems) throws ExecutionException, InterruptedException;
+
+    /**
+     * 提交订单、创建订单
+     * @param orderSubmitVo
+     * @return
+     */
+    List<OrderEntity> submitOrder(OrderSubmitVo orderSubmitVo);
+
+    /**
+     * 关闭订单
+     * @param order
+     */
+    void closeOrder(OrderEntity order);
 }
 

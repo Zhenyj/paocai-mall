@@ -6,6 +6,7 @@ import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.order.entity.OrderEntity;
 import com.zyj.paocai.order.entity.vo.CartItemBaseVo;
 import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
+import com.zyj.paocai.order.entity.vo.OrderSubmitVo;
 import com.zyj.paocai.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,20 @@ public class OrderController {
     private OrderService orderService;
 
     /**
+     * 提交订单、创建订单
+     *
+     * @param orderSubmitVo
+     * @return
+     */
+    @PostMapping("/submit_order")
+    public R<List<OrderEntity>> submitOrder(@RequestBody OrderSubmitVo orderSubmitVo) {
+        List<OrderEntity> orders = orderService.submitOrder(orderSubmitVo);
+        return R.ok(orders);
+    }
+
+    /**
      * 结算并返回订单确认信息
+     *
      * @param vos
      * @return
      */
@@ -42,6 +56,7 @@ public class OrderController {
 
     /**
      * 获取用户订单状态信息
+     *
      * @return
      */
     @GetMapping("/order_status_num")

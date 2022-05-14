@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Throwable.class)
     public R throwableHandler(Throwable e) {
-        log.error("未知异常！原因是:{}", e);
+        log.error("未知异常！原因是:", e);
         return R.error(BizCodeEnum.UNKNOWN_EXCEPTION.getCode(),BizCodeEnum.UNKNOWN_EXCEPTION.getMsg());
     }
 }

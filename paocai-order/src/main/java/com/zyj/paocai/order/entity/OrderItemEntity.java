@@ -2,11 +2,10 @@ package com.zyj.paocai.order.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.math.BigDecimal;
-import java.io.Serializable;
-
 import lombok.Data;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 订单项信息
@@ -96,10 +95,10 @@ public class OrderItemEntity implements Serializable {
 	/**
 	 * 赠送积分
 	 */
-	private Integer giftIntegration;
+	private BigDecimal giftIntegration;
 	/**
 	 * 赠送成长值
 	 */
-	private Integer giftGrowth;
+	private BigDecimal giftGrowth;
 
 }

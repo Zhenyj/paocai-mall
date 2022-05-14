@@ -33,6 +33,10 @@ public enum BizCodeEnum {
     ORDER_SERVICE_EXCEPTION(9000, "订单服务异常"),
     ORDER_NOT_EXIST_SHOP_EXCEPTION(9001,"订单信息缺失相关店铺数据"),
     ORDER_NOT_EXIST_PRODUCT_EXCEPTION(9002,"订单信息缺失相关商品数据"),
+    ORDER_TIME_OUT_EXCEPTION(9003,"订单信息过期，请刷新再次提交"),
+    ORDER_PRICE_ERROR_EXCEPTION(9004,"订单商品价格发生变化，请确认后再次提交"),
+    ORDER_STOCK_LOCKED_EXCEPTION(9005,"库存锁定失败，库存商品不足"),
+    ORDER_CLOSE_EXCEPTION(9006,"订单关闭失败"),
     // 商品服务
     PRODUCT_SERVICE_EXCEPTION(10000, "商品服务异常"),
     PRODUCT_UP_EXCEPTION(10001, "商品上架异常"),
@@ -64,6 +68,11 @@ public enum BizCodeEnum {
     // 库存服务
     WARE_SERVICE_EXCEPTION(8000, "库存服务异常"),
     NO_STOCK_EXCEPTION(8001, "商品库存不足"),
+    CREATE_ORDER_TASK_EXCEPTION(8002,"创建库存工作单异常"),
+    CREATE_ORDER_TASK_DETAIL_EXCEPTION(8003,"创建库存工作详单异常"),
+    GET_ORDER_TASK_EXCEPTION(8004,"获取库存工作单异常"),
+    GET_ORDER_TASK_DETAIL_EXCEPTION(8005,"获取库存工作详单单异常"),
+    UNLOCK_STOCK_EXCEPTION(8006,"库存解锁失败"),
     // 搜索服务
     SEARCH_SERVICE_EXCEPTION(13000,"搜索服务异常");
 
