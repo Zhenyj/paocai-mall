@@ -1,4 +1,4 @@
-package com.zyj.paocai.ware.config;
+package com.zyj.paocai.cart.config;
 
 import org.springframework.amqp.core.ReturnedMessage;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -6,17 +6,13 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Rabbit配置
- *
  * @author lulx
- * @date 2022-05-11 11:34
+ * @date 2022-05-15 21:05
  **/
 @Configuration
 public class RabbitConfig {
 
     RabbitConfig(RabbitTemplate rabbitTemplate) {
-        // 消息转换
-//        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         // 服务收到消息就回调
         rabbitTemplate.setConfirmCallback((CorrelationData correlationData, boolean ack, String cause) -> {
             // TODO 消息确认处理

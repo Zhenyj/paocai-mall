@@ -22,6 +22,17 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  rabbitmq:
+    host: 192.168.136.12
+    port: 5672
+    virtual-host: /
+    publisher-confirm-type: CORRELATED # 开启发送端确认
+    publisher-returns: true # 开启发送端消息抵达队列的确认
+    template:
+      mandatory: true # 只要抵达队列，以异步发送优先回调我们这个returnConfirm
+    listener:
+      simple:
+        acknowledge-mode: manual # 客户端手动确认收消息
 # 修改日志级别，com.zyj.paocaimall包下的都会打印日志
 logging:
   level:

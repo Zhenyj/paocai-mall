@@ -9,6 +9,7 @@ import com.zyj.paocai.cart.service.CartService;
 import com.zyj.paocai.cart.vo.Cart;
 import com.zyj.paocai.cart.vo.CartItemBaseVo;
 import com.zyj.paocai.common.constant.Constant;
+import com.zyj.paocai.common.entity.to.CartReleaseOrderItemTo;
 import com.zyj.paocai.common.entity.to.SkuPromotionTo;
 import com.zyj.paocai.common.entity.vo.BrandVo;
 import com.zyj.paocai.common.entity.vo.CartSkuItem;
@@ -32,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author lulx
@@ -78,7 +80,7 @@ public class CartServiceImpl implements CartService {
                 skuCount[0] += 1;
                 // 获取最新的商品信息
                 CartSkuItem newItem = getCartSkuItemWithPromotionBySkuId(skuId);
-                BeanUtils.copyProperties(newItem,item);
+                BeanUtils.copyProperties(newItem, item);
                 item.setCount(count);
             }
             // 计算商品的价格、优惠等
@@ -93,26 +95,27 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 删除单个商品
+     *
      * @param cartItemBaseVo
      */
     @Override
     public void deleteItem(CartItemBaseVo cartItemBaseVo) {
         BoundHashOperations<String, String, String> ops = getCartOps();
         Long brandId = cartItemBaseVo.getBrandId();
-        if(!ops.hasKey(brandId.toString())){
-            throw new RRException("购物车不存在此店铺及商品信息",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
+        if (!ops.hasKey(brandId.toString())) {
+            throw new RRException("购物车不存在此店铺及商品信息", BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
         String shopJson = ops.get(brandId.toString());
         ShopItem shopItem = JSON.parseObject(shopJson, ShopItem.class);
         LinkedList<CartSkuItem> items = shopItem.getItems();
         Iterator<CartSkuItem> iterator = items.iterator();
         while (iterator.hasNext()) {
-            if(iterator.next().getSkuId().equals(cartItemBaseVo.getSkuId())){
+            if (iterator.next().getSkuId().equals(cartItemBaseVo.getSkuId())) {
                 iterator.remove();
                 break;
             }
         }
-        if(CollectionUtils.isEmpty(items)){
+        if (CollectionUtils.isEmpty(items)) {
             // 店铺项中没有任何商品，删除此店铺
             ops.delete(brandId.toString());
             return;
@@ -127,29 +130,30 @@ public class CartServiceImpl implements CartService {
     public void clearCart() {
         MemberRespVo member = CartInterceptor.threadLocal.get();
         if (member.getId() == null) {
-            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(),BizCodeEnum.PLEASE_LOGIN.getCode());
+            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(), BizCodeEnum.PLEASE_LOGIN.getCode());
         }
         String cartKey = CartConstant.CART_REDIS_PREFIX + member.getId();
         Boolean b = redisTemplate.delete(cartKey);
-        if(b){
-            log.info("会员:"+member.getId()+"已清空");
+        if (b) {
+            log.info("会员:" + member.getId() + "已清空");
         }
     }
 
     /**
      * 批量删除
+     *
      * @param vos
      */
     @Override
     public void deleteBatch(List<CartItemBaseVo> vos) {
-        if(CollectionUtils.isEmpty(vos)){
-            throw new RRException("对不起，您没有选择任何商品，无法删除",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
+        if (CollectionUtils.isEmpty(vos)) {
+            throw new RRException("对不起，您没有选择任何商品，无法删除", BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
         Map<Long, CartItemBaseVo> skuIdMap = vos.stream().collect(Collectors.toMap(CartItemBaseVo::getSkuId, Function.identity()));
         BoundHashOperations<String, String, String> ops = getCartOps();
         Set<String> keys = ops.keys();
         Iterator<String> keysIterator = keys.iterator();
-        while(keysIterator.hasNext()){
+        while (keysIterator.hasNext()) {
             // 遍历每个店铺项
             String brandId = keysIterator.next();
             String value = ops.get(brandId);
@@ -166,7 +170,7 @@ public class CartServiceImpl implements CartService {
             if (CollectionUtils.isEmpty(items)) {
                 // 店铺没有商品，删除
                 ops.delete(brandId);
-            }else{
+            } else {
                 // 店铺还有商品，覆盖
                 ops.put(brandId, JSON.toJSONString(shopItem));
             }
@@ -176,6 +180,7 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 异步更新购物车（变更商品数量等）
+     *
      * @param itemUpdateVo
      * @return
      */
@@ -188,7 +193,7 @@ public class CartServiceImpl implements CartService {
         CartSkuItem result = null;
         LinkedList<CartSkuItem> items = shopItem.getItems();
         for (CartSkuItem item : items) {
-            if(item.getSkuId().equals(itemUpdateVo.getSkuId())){
+            if (item.getSkuId().equals(itemUpdateVo.getSkuId())) {
                 CartSkuItem cartSkuItemWithPromotion = getCartSkuItemWithPromotionBySkuId(itemUpdateVo.getSkuId());
                 BeanUtils.copyProperties(cartSkuItemWithPromotion, item);
                 item.setCount(itemUpdateVo.getCount());
@@ -196,7 +201,7 @@ public class CartServiceImpl implements CartService {
                 break;
             }
         }
-        if(result == null){
+        if (result == null) {
             throw new RRException(BizCodeEnum.CART_PRODUCT_INFO_EXCEPTION.getMsg(),
                     BizCodeEnum.CART_PRODUCT_INFO_EXCEPTION.getCode());
         }
@@ -206,6 +211,37 @@ public class CartServiceImpl implements CartService {
         // 单独计算后返回
         result.calculate();
         return result;
+    }
+
+    /**
+     * 删除购物车中已提交订单的商品
+     *
+     * @param to
+     */
+    @Override
+    public void cartReleaseOrderItem(CartReleaseOrderItemTo to) {
+        BoundHashOperations<String, String, String> cartOps = getCartOpsByMemberId(to.getMemberId());
+        String[] split = to.getSkuIdStr().split(",");
+        List<Long> skuIds = Stream.of(split).map(Long::parseLong).collect(Collectors.toList());
+        Set<String> keys = cartOps.keys();
+        for (String key : keys) {
+            String s = cartOps.get(key);
+            ShopItem shopItem = JSON.parseObject(s, ShopItem.class);
+            if (shopItem == null) {
+                throw new RRException(BizCodeEnum.CART_PRODUCT_INFO_EXCEPTION.getMsg(),
+                        BizCodeEnum.CART_PRODUCT_INFO_EXCEPTION.getCode());
+            }
+            LinkedList<CartSkuItem> items = shopItem.getItems();
+            items.removeIf(cartSkuItem -> skuIds.contains(cartSkuItem.getSkuId()));
+            if (items.size() == 0) {
+                // 删除店铺
+                cartOps.delete(key);
+            } else {
+                // 更新店铺中的商品项
+                shopItem.setItems(items);
+                cartOps.put(key, JSON.toJSONString(shopItem));
+            }
+        }
     }
 
     /**
@@ -229,11 +265,11 @@ public class CartServiceImpl implements CartService {
             CompletableFuture<Void> brandFuture = CompletableFuture.runAsync(() -> {
                 R<BrandVo> r = productFeignService.getBrandInfo(brandId);
                 if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-                    throw new RRException("远程获取品牌信息失败",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
+                    throw new RRException("远程获取品牌信息失败", BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
                 }
                 BrandVo brandVo = r.getData();
                 if (!brandVo.getBrandId().equals(brandId)) {
-                    throw new RRException("添加购物车失败，品牌错误",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
+                    throw new RRException("添加购物车失败，品牌错误", BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
                 }
                 shopItem.setBrandId(brandId);
                 shopItem.setBrandName(brandVo.getName());
@@ -294,20 +330,20 @@ public class CartServiceImpl implements CartService {
     private CartSkuItem getCartSkuItemWithPromotionBySkuId(Long skuId) {
         CartSkuItem skuItem = getCartSkuItemBySkuId(skuId);
         if (skuItem == null) {
-            throw new RRException("商品不存在或已下架,商品编号:" + skuId,BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
+            throw new RRException("商品不存在或已下架,商品编号:" + skuId, BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
         }
         R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-            throw new RRException(r.getMsg(),r.getCode());
+            throw new RRException(r.getMsg(), r.getCode());
         }
         SkuPromotionTo skuPromotionTo = r.getData();
         if (skuPromotionTo != null) {
             skuItem.setFullReductions(skuPromotionTo.getReductions());
             skuItem.setLadders(skuPromotionTo.getLadders());
-            if(skuPromotionTo.getBounds() != null){
+            if (skuPromotionTo.getBounds() != null) {
                 skuItem.setGrowth(skuPromotionTo.getBounds().getGrowBounds());
                 skuItem.setIntegration(skuPromotionTo.getBounds().getBuyBounds());
-            }else{
+            } else {
                 skuItem.setGrowth(new BigDecimal(0));
                 skuItem.setIntegration(new BigDecimal(0));
             }
@@ -341,7 +377,7 @@ public class CartServiceImpl implements CartService {
     private CartSkuItem getCartSkuItemBySkuId(Long skuId) {
         R<CartSkuItem> r = productFeignService.getCartSkuItem(skuId);
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
-            throw new RRException("获取购物车商品信息详情失败",BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
+            throw new RRException("获取购物车商品信息详情失败", BizCodeEnum.CART_SERVICE_EXCEPTION.getCode());
         }
         return r.getData();
     }
@@ -352,9 +388,18 @@ public class CartServiceImpl implements CartService {
     private BoundHashOperations<String, String, String> getCartOps() {
         MemberRespVo member = CartInterceptor.threadLocal.get();
         if (member.getId() == null) {
-            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(),BizCodeEnum.PLEASE_LOGIN.getCode());
+            throw new RRException(BizCodeEnum.PLEASE_LOGIN.getMsg(), BizCodeEnum.PLEASE_LOGIN.getCode());
         }
         String cartKey = CartConstant.CART_REDIS_PREFIX + member.getId();
+        return redisTemplate.boundHashOps(cartKey);
+    }
+
+    /**
+     * @param memberId
+     * @return
+     */
+    private BoundHashOperations<String, String, String> getCartOpsByMemberId(Long memberId) {
+        String cartKey = CartConstant.CART_REDIS_PREFIX + memberId;
         return redisTemplate.boundHashOps(cartKey);
     }
 }

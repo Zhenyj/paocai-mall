@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyj.paocai.common.constant.Constant;
 import com.zyj.paocai.common.entity.to.AddressTo;
+import com.zyj.paocai.common.entity.to.CartReleaseOrderItemTo;
 import com.zyj.paocai.common.entity.to.OrderTo;
 import com.zyj.paocai.common.entity.to.WareLockTo;
 import com.zyj.paocai.common.entity.vo.*;
@@ -299,8 +300,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE,
                         MQConfig.ORDER_CREATE_ORDER_ROUTING_KEY, order.getOrder());
             }
-            log.info("订单创建完成");
+            log.info("订单创建完成,删除购物车已选中的商品项");
             // TODO 删除购物车已选中的商品项
+            CartReleaseOrderItemTo cartReleaseOrderItemTo = new CartReleaseOrderItemTo();
+            StringBuilder sb = new StringBuilder();
+            for (Long skuId : skuIds) {
+                sb.append("," + skuId);
+            }
+            if (sb.length() > 0) {
+                String skuIdStr = sb.substring(1);
+                cartReleaseOrderItemTo.setSkuIdStr(skuIdStr);
+                cartReleaseOrderItemTo.setMemberId(member.getId());
+                try {
+                    rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE,
+                            MQConfig.CART_RELEASE_ORDER_ITEM_ROUTING_KEY, cartReleaseOrderItemTo);
+                } catch (Exception e) {
+                    log.error(BizCodeEnum.CART_RELEASE_ORDER_ITEM_EXCEPTION.getMsg() + ":" + e.getMessage());
+                }
+            }
             return result;
         } finally {
             submitVoThreadLocal.remove();

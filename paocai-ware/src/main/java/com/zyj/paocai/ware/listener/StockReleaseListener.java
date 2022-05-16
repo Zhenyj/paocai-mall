@@ -8,6 +8,7 @@ import com.zyj.paocai.ware.config.MQConfig;
 import com.zyj.paocai.ware.service.WareSkuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +48,14 @@ public class StockReleaseListener {
 
     @RabbitHandler
     public void handleOrderCloseRelease(OrderTo order, Message message, Channel channel) throws IOException {
+        log.info("订单关闭准备解锁库存：{}", order.getOrderSn());
+        MessageProperties messageProperties = message.getMessageProperties();
         try {
-            log.info("订单关闭准备解锁库存：{}", order.getOrderSn());
             wareSkuService.unlockStock(order);
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            channel.basicAck(messageProperties.getDeliveryTag(), false);
         } catch (Exception e) {
             log.error(BizCodeEnum.UNLOCK_STOCK_EXCEPTION.getMsg() + ":", e.getMessage());
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            channel.basicReject(messageProperties.getDeliveryTag(), true);
         }
     }
 }

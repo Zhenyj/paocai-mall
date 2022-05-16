@@ -27,6 +27,9 @@ public class MQConfig {
     public static final String ORDER_RELEASE_OTHER_ROUTING_KEY = "order.release.other";
     public static final String ORDER_EVENT_EXCHANGE = "order.event.exchange";
     public static final String STOCK_RELEASE_STOCK_QUEUE = "stock.release.stock.queue";
+    /** 释放购物车中的商品 */
+    public static final String CART_RELEASE_ORDER_ITEM_QUEUE = "cart.release.order.item.queue";
+    public static final String CART_RELEASE_ORDER_ITEM_ROUTING_KEY = "cart.release.order.item";
 
     /**
      * 死信队列，设置队列的过期时间，通过死信路由到指定队列上
@@ -85,6 +88,19 @@ public class MQConfig {
                 Binding.DestinationType.QUEUE,
                 ORDER_EVENT_EXCHANGE,
                 ORDER_RELEASE_OTHER_ROUTING_KEY + ".#",
+                null);
+        return binding;
+    }
+
+    /**
+     * 释放购物车中的订单商品
+     */
+    @Bean
+    public Binding cartReleaseOrderItem(){
+        Binding binding = new Binding(CART_RELEASE_ORDER_ITEM_QUEUE,
+                Binding.DestinationType.QUEUE,
+                ORDER_EVENT_EXCHANGE,
+                CART_RELEASE_ORDER_ITEM_ROUTING_KEY,
                 null);
         return binding;
     }

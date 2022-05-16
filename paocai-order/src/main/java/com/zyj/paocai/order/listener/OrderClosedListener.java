@@ -33,11 +33,11 @@ public class OrderClosedListener {
         MessageProperties messageProperties = message.getMessageProperties();
         try {
             orderService.closeOrder(order);
-            // 手动调用支付宝收单或者设置自动关单
+            // 手动调用收单或者设置自动关单
             channel.basicAck(messageProperties.getDeliveryTag(), false);
         } catch (Exception e) {
             log.error(BizCodeEnum.ORDER_CLOSE_EXCEPTION.getMsg()+":", e.getMessage());
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            channel.basicReject(messageProperties.getDeliveryTag(), true);
         }
     }
 }

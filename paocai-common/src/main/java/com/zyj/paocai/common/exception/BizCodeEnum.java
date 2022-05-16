@@ -52,6 +52,7 @@ public enum BizCodeEnum {
     // 购物车服务
     CART_SERVICE_EXCEPTION(16000, "购物车服务异常"),
     CART_PRODUCT_INFO_EXCEPTION(16001, "购物车商品信息缺失、不完整"),
+    CART_RELEASE_ORDER_ITEM_EXCEPTION(16002,"删除购物车已提交订单的商品失败"),
     // 会员服务、认证服务
     MEMBER_SERVICE_EXCEPTION(15000, "会员服务异常"),
     USER_EXIST_EXCEPTION(15001, "用户名已存在"),
