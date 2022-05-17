@@ -301,7 +301,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                         MQConfig.ORDER_CREATE_ORDER_ROUTING_KEY, order.getOrder());
             }
             log.info("订单创建完成,删除购物车已选中的商品项");
-            // TODO 删除购物车已选中的商品项
+            // 发送MQ通知购物车服务创建订单的相关商品项
             CartReleaseOrderItemTo cartReleaseOrderItemTo = new CartReleaseOrderItemTo();
             StringBuilder sb = new StringBuilder();
             for (Long skuId : skuIds) {

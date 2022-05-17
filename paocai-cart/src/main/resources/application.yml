@@ -37,11 +37,15 @@ spring:
 logging:
   level:
     com.zyj.paocai: debug
+# 暴露所有端点
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+feign:
+  sentinel:
+    enabled: true #开启feign的熔断机制
 paocai:
   thread:
     core-pool-size: 20

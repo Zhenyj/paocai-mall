@@ -7,6 +7,10 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.136.12:8848
+    sentinel:
+      eager: true #取消Sentinel控制台懒加载
+      transport:
+        dashboard: 192.168.136.12:8858
     alicloud:
       access-key: LTAI5tQxe28JJSvVxpm3LMEW
       secret-key: RPZa3oKyHnSbsMOuY1OUgZI7j5MXkK
@@ -19,3 +23,6 @@ management:
     web:
       exposure:
         include: '*'
+feign:
+  sentinel:
+    enabled: true #开启feign的熔断机制

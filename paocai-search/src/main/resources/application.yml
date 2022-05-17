@@ -7,6 +7,10 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.136.12:8848
+    sentinel:
+      eager: true #取消Sentinel控制台懒加载
+      transport:
+        dashboard: 192.168.136.12:8858
   redis:
     host: 192.168.136.12
     port: 6379
@@ -17,11 +21,15 @@ spring:
 elasticsearch:
   hostname: 192.168.136.12
   port: 9200
+# 暴露所有端点
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+feign:
+  sentinel:
+    enabled: true #开启feign的熔断机制
 paocai:
   thread:
     core-pool-size: 20

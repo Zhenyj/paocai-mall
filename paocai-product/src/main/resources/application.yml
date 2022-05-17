@@ -40,6 +40,10 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.136.12:8848
+    sentinel:
+      eager: true #取消Sentinel控制台懒加载
+      transport:
+        dashboard: 192.168.136.12:8858
   redis:
     host: 192.168.136.12
     port: 6379
@@ -64,6 +68,9 @@ management:
     web:
       exposure:
         include: '*'
+feign:
+  sentinel:
+    enabled: true #开启feign的熔断机制
 logging:
   level:
     com.zyj.paocai: debug

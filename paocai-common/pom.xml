@@ -146,6 +146,10 @@
             <artifactId>hutool-core</artifactId>
             <version>${hutool.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

@@ -7,6 +7,10 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.136.12:8848
+    sentinel:
+      eager: true #取消Sentinel控制台懒加载
+      transport:
+        dashboard: 192.168.136.12:8858
   redis:
     host: 192.168.136.12
     port: 6379
@@ -17,6 +21,7 @@ spring:
       use-key-prefix: true #是否使用前缀
       key-prefix: CACHE_ #前缀
       cache-null-values: true #是否缓存空值，可以用去解决缓存穿透问题
+# 暴露所有端点
 management:
   endpoints:
     web:
@@ -24,7 +29,7 @@ management:
         include: '*'
 feign:
   sentinel:
-    enabled: true
+    enabled: true #开启feign的熔断机制
 logging:
   level:
     com.zyj.paocai: debug
