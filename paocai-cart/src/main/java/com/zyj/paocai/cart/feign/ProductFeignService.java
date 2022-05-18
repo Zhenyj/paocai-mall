@@ -1,5 +1,6 @@
 package com.zyj.paocai.cart.feign;
 
+import com.zyj.paocai.cart.feign.fallback.ProductFeignServiceFallBack;
 import com.zyj.paocai.common.entity.vo.BrandVo;
 import com.zyj.paocai.common.entity.vo.CartSkuItem;
 import com.zyj.paocai.common.utils.R;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author lulx
  * @date 2022-04-22 0:41
  **/
-@FeignClient("paocai-product")
+@FeignClient(value = "paocai-product",fallback = ProductFeignServiceFallBack.class)
 public interface ProductFeignService {
 
     @RequestMapping("/product/brand/info/{brandId}")

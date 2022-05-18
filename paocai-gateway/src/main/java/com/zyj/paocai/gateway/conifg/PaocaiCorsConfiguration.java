@@ -29,10 +29,10 @@ public class PaocaiCorsConfiguration {
         corsConfiguration.addAllowedOriginPattern("*");
         // 是否允许携带cookie进行跨域
         corsConfiguration.setAllowCredentials(true);
-            //任意路径都进行跨域
+        // 任意路径都进行跨域
         source.registerCorsConfiguration("/**", corsConfiguration);
-        
-        CorsWebFilter corsWebFilter = new CorsWebFilter( source);
+
+        CorsWebFilter corsWebFilter = new CorsWebFilter(source);
         return corsWebFilter;
     }
 }

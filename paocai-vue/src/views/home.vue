@@ -670,7 +670,6 @@ export default {
       }
     },
     handleNavTo (routerName) {
-      console.log(routerName);
       this.$router.push({ name: routerName });
     }
   },

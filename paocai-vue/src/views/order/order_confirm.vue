@@ -610,6 +610,7 @@ export default {
       if (res.code === 200) {
         const data = res.data;
         console.log(data);
+        // 跳转支付页
         // this.$router.push({
         //   name: 'pay',
         //   params: {

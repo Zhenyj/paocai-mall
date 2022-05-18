@@ -7,6 +7,10 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.136.12:8848
+    sentinel:
+      eager: true
+      transport:
+        dashboard: 192.168.136.12:8858
     gateway:
       routes:
         # 商品服务路由
