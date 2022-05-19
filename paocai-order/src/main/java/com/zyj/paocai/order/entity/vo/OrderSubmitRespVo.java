@@ -1,10 +1,8 @@
 package com.zyj.paocai.order.entity.vo;
 
-import com.zyj.paocai.order.entity.OrderEntity;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 提交订单、创建订单vo
@@ -14,8 +12,10 @@ import java.util.List;
  **/
 @Data
 public class OrderSubmitRespVo {
+    /** 商户订单号 必填 */
+    private String out_trade_no;
     /** 订单信息 */
-    private List<OrderEntity> orders;
+    private OrderInfoVo orderInfo;
     /** 实付金额 */
     private BigDecimal payAmount;
 }

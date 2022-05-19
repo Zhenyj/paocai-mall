@@ -163,10 +163,10 @@
                   <p>{{item.count}}</p>
                 </div>
               </div>
-              <div class="item-row__select">
-                <p class="item-row__text">无优惠</p>
+              <div class="item-row-select">
+                <p class="item-row-text">无优惠</p>
               </div>
-              <div class="item-row__price">
+              <div class="item-row-price">
                 <div class="label item-row-price-item">
                   <span
                     style="font-weight: bold; font-style: normal; text-decoration: none; color: rgb(255, 0, 54); font-size: 14px; min-width: 100px;"
@@ -392,8 +392,8 @@
         <!-- 订单总信息 -->
         <div class="realpay">
           <div class="pay-info box">
-            <div class="box__wrapper">
-              <div class="box__shadow">
+            <div class="box-wrapper">
+              <div class="box-shadow">
                 <div>
                   <span class="realpay-title">实付款：</span>
                   <span class="realpay-price-symbol">¥</span>
@@ -599,24 +599,21 @@ export default {
         payAmount: this.orderInfo.payAmount,
         orderToken: this.orderToken
       }
-      console.log("data", form);
       const res = await this.$request({
         url: 'order/order/submit_order',
         method: 'POST',
         data: form
       });
-      console.log('res', res);
       this.$handleResponseMessage(res, '', '未知错误,订单创建失败');
       if (res.code === 200) {
         const data = res.data;
-        console.log(data);
         // 跳转支付页
-        // this.$router.push({
-        //   name: 'pay',
-        //   params: {
-
-        //   }
-        // });
+        this.$router.push({
+          name: 'pay',
+          params: {
+            payInfo: data
+          }
+        });
       }
     }
   },
@@ -953,17 +950,17 @@ body {
       padding: 0 0 5px;
     }
   }
-  .item-row__select {
+  .item-row-select {
     display: inline-block;
     width: 180px;
     vertical-align: top;
     height: 75px;
     text-align: center;
-    .item-row__text {
+    .item-row-text {
       padding: 10px;
     }
   }
-  .item-row__price {
+  .item-row-price {
     display: inline-block;
     width: 130px;
     text-align: right;
@@ -1295,10 +1292,10 @@ body {
       text-align: right;
       margin-top: 15px;
     }
-    .box__wrapper {
+    .box-wrapper {
       display: inline-block;
       border: 1px solid #ff0036;
-      .box__shadow {
+      .box-shadow {
         border: 3px solid #fff0e8;
         min-width: 230px;
         padding: 10px 5px 10px 20px;

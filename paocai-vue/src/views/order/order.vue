@@ -22,7 +22,7 @@ export default {
       },
     }
   },
-  method: {
+  methods: {
     // 获取用户登录信息
     async getLoginInfo () {
       const loginInfo = await this.$getLoginInfo();

@@ -189,5 +189,14 @@ public class OrderEntity implements Serializable {
 	 * 修改时间
 	 */
 	private Date modifyTime;
+	/**
+	 * 商户订单号
+	 */
+	private String outTradeNo;
+
+	/**
+	 * 总订单实付金额
+	 */
+	private BigDecimal totalPayAmount;
 
 }

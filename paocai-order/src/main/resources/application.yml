@@ -82,3 +82,11 @@ paocai:
     core-pool-size: 20
     maximum-pool-size: 200
     keep-alive-time: 10
+# 支付宝支付
+alipay:
+  app_id: 2021000119617444
+  notify_url: http://2bxi93.natappfree.cc/payed/notify
+  return_url: http://member.gulimall.com/memberOrder.html
+  sign_type: RSA2
+  charset: utf-8
+  gatewayUrl: https://openapi.alipaydev.com/gateway.do

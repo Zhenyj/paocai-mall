@@ -274,7 +274,7 @@ export default {
     }
   },
   created () {
-    document.title = '我的泡菜';
+    document.title = '我的泡菜-泡菜商城';
     this.getLoginInfo();
   },
   filters: {

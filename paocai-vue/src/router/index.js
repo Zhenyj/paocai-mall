@@ -54,10 +54,15 @@ const globalRoutes = [{
   name: 'orderConfirm',
   meta: { title: '确认订单-泡菜商城' }
 }, {
+  path: '/order/pay',
+  component: _import('order/pay'),
+  name: 'pay',
+  meta: { title: '订单支付-泡菜商城' }
+}, {
   path: '/member/my_paocai',
   component: _import('member/my_paocai'),
   name: 'myPaocai',
-  meta: { title: '我的泡菜' }
+  meta: { title: '我的泡菜-泡菜商城' }
 }, {
   path: '/member/address',
   component: _import('member/address/address'),
@@ -67,12 +72,12 @@ const globalRoutes = [{
   path: '/member/user/user_info',
   component: _import('member/user/user_info'),
   name: 'userInfo',
-  meta: { title: '账户信息' }
+  meta: { title: '账户信息-泡菜商城' }
 }, {
   path: '/member/user/pwd_edit',
   component: _import('member/user/pwd_edit'),
   name: 'pwdEdit',
-  meta: { title: '账户信息' }
+  meta: { title: '修改登录密码-泡菜商城' }
 }]
 
 // 主入口路由(需嵌套上左右整体布局)

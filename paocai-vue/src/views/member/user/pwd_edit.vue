@@ -208,7 +208,7 @@ export default {
     }
   },
   created () {
-    document.title = '账户信息';
+    document.title = '修改登录密码-泡菜商城';
     this.getLoginInfo();
   }
 }

@@ -446,6 +446,7 @@ export default {
         }
         const data = res.data;
         this.skuInfo = data.skuInfo;
+        document.title = data.skuInfo.skuName + "-泡菜商城";
         if (data.bounds) {
           this.bounds = data.bounds;
         }
@@ -741,7 +742,7 @@ export default {
       };
       document.body.style.overflow = ""; // 出现滚动条
       document.removeEventListener("touchmove", mo, false);
-    }, 
+    },
     handleNavTo (routerName) {
       this.$router.push({ name: routerName });
     }

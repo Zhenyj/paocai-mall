@@ -33,7 +33,7 @@ public enum BizCodeEnum {
     ORDER_SERVICE_EXCEPTION(9000, "订单服务异常"),
     ORDER_NOT_EXIST_SHOP_EXCEPTION(9001, "订单信息缺失相关店铺数据"),
     ORDER_NOT_EXIST_PRODUCT_EXCEPTION(9002, "订单信息缺失相关商品数据"),
-    ORDER_TIME_OUT_EXCEPTION(9003, "订单信息过期，请刷新再次提交"),
+    ORDER_TIME_OUT_EXCEPTION(9003, "订单已过期"),
     ORDER_PRICE_ERROR_EXCEPTION(9004, "订单商品价格发生变化，请确认后再次提交"),
     ORDER_STOCK_LOCKED_EXCEPTION(9005, "库存锁定失败，库存商品不足"),
     ORDER_CLOSE_EXCEPTION(9006, "订单关闭失败"),

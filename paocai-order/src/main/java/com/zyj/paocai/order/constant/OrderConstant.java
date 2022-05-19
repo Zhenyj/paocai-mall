@@ -61,13 +61,32 @@ public class OrderConstant {
         }
     }
 
-    public enum SourceTypeEnum{
+    public enum SourceTypeEnum {
         CREATE_NEW(0, "PC"),
         SERVICED(1, "APP");
         int status;
         String msg;
 
         SourceTypeEnum(int status, String msg) {
+            this.status = status;
+            this.msg = msg;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+    }
+
+    public enum PayTypeEnum {
+        ZFB(0, "支付宝支付");
+        int status;
+        String msg;
+
+        PayTypeEnum(int status, String msg) {
             this.status = status;
             this.msg = msg;
         }

@@ -19,7 +19,7 @@ import java.util.Map;
 @Configuration
 public class MQConfig {
 
-    public static final Long DELAY_QUEUE_MESSAGE_TTL = 1000 * 1L;
+    public static final Long DELAY_QUEUE_MESSAGE_TTL = 1000 * 30L;
     public static final String ORDER_RELEASE_ORDER_QUEUE = "order.release.order.queue";
     public static final String ORDER_DELAY_QUEUE = "order.delay.queue";
     public static final String ORDER_RELEASE_ORDER_ROUTING_KEY = "order.release.order";
@@ -96,7 +96,7 @@ public class MQConfig {
      * 释放购物车中的订单商品
      */
     @Bean
-    public Binding cartReleaseOrderItem(){
+    public Binding cartReleaseOrderItem() {
         Binding binding = new Binding(CART_RELEASE_ORDER_ITEM_QUEUE,
                 Binding.DestinationType.QUEUE,
                 ORDER_EVENT_EXCHANGE,

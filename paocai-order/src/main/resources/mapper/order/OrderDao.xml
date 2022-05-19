@@ -47,6 +47,8 @@
         <result property="receiveTime" column="receive_time"/>
         <result property="commentTime" column="comment_time"/>
         <result property="modifyTime" column="modify_time"/>
+        <result property="totalPayAmount" column="total_pay_amount"/>
+        <result property="outTradeNo" column="out_trade_no"/>
     </resultMap>
     <resultMap id="orderStatusNumsMap" type="com.zyj.paocai.common.entity.vo.OrderStatusNumsVo">
         <result property="waitPayNum" column="wait_pay_num"/>

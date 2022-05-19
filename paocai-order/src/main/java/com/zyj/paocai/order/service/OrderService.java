@@ -2,11 +2,9 @@ package com.zyj.paocai.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
-import com.zyj.paocai.order.entity.OrderEntity;
 import com.zyj.paocai.common.utils.PageUtils;
-import com.zyj.paocai.order.entity.vo.CartItemBaseVo;
-import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
-import com.zyj.paocai.order.entity.vo.OrderSubmitVo;
+import com.zyj.paocai.order.entity.OrderEntity;
+import com.zyj.paocai.order.entity.vo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -41,12 +39,19 @@ public interface OrderService extends IService<OrderEntity> {
      * @param orderSubmitVo
      * @return
      */
-    List<OrderEntity> submitOrder(OrderSubmitVo orderSubmitVo);
+    OrderSubmitRespVo submitOrder(OrderSubmitVo orderSubmitVo);
 
     /**
      * 关闭订单
      * @param order
      */
     void closeOrder(OrderEntity order);
+
+    /**
+     *
+     * @param payVo
+     * @return
+     */
+    PayVo getOrderPay(PayVo payVo);
 }
 

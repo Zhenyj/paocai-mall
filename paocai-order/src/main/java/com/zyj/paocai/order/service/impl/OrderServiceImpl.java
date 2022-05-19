@@ -10,6 +10,7 @@ import com.zyj.paocai.common.entity.to.AddressTo;
 import com.zyj.paocai.common.entity.to.CartReleaseOrderItemTo;
 import com.zyj.paocai.common.entity.to.OrderTo;
 import com.zyj.paocai.common.entity.to.WareLockTo;
+import com.zyj.paocai.common.entity.vo.SkuIdCountVo;
 import com.zyj.paocai.common.entity.vo.*;
 import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.PageUtils;
@@ -22,10 +23,7 @@ import com.zyj.paocai.order.dao.OrderDao;
 import com.zyj.paocai.order.entity.OrderEntity;
 import com.zyj.paocai.order.entity.OrderItemEntity;
 import com.zyj.paocai.order.entity.to.OrderCreateTo;
-import com.zyj.paocai.order.entity.vo.CartItemBaseVo;
-import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
-import com.zyj.paocai.order.entity.vo.OrderInfoVo;
-import com.zyj.paocai.order.entity.vo.OrderSubmitVo;
+import com.zyj.paocai.order.entity.vo.*;
 import com.zyj.paocai.order.feign.MemberFeignService;
 import com.zyj.paocai.order.feign.ProductFeignService;
 import com.zyj.paocai.order.feign.WareFeignService;
@@ -41,10 +39,12 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -66,6 +66,8 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
 
     private ThreadLocal<OrderSubmitVo> submitVoThreadLocal = new ThreadLocal<>();
+
+    private static final String ORDER_CREATE_PREFIX = "order:pay:";
 
     @Autowired
     OrderDao orderDao;
@@ -90,6 +92,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Autowired
     ThreadPoolExecutor executor;
+
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -245,7 +248,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      */
     @Transactional
     @Override
-    public List<OrderEntity> submitOrder(OrderSubmitVo orderSubmitVo) {
+    public OrderSubmitRespVo submitOrder(OrderSubmitVo orderSubmitVo) {
         try {
             MemberRespVo member = LoginInfoInterceptor.loginInfo.get();
             // 1、验证令牌
@@ -271,14 +274,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             OrderInfoVo orderInfoVo = getOrderInfoVo(skuIds, skuIdCountVos, skuCountMap);
             orderSubmitVo.setOrderInfo(orderInfoVo);
             submitVoThreadLocal.set(orderSubmitVo);
-            // /3、创建订单，订单项
-            List<OrderCreateTo> orders = buildOrder();
+            // 3、创建订单，订单项
+            // 生成商户订单号
+            String outTradeNo = IdUtil.getSnowflakeNextIdStr();
+            List<OrderCreateTo> orders = buildOrder(outTradeNo);
             List<String> orderSnList = new ArrayList<>(orders.size());
-            List<OrderEntity> result = new ArrayList<>(orders.size());
-            for (OrderCreateTo order : orders) {
-                result.add(order.getOrder());
-                orderSnList.add(order.getOrder().getOrderSn());
-            }
             // 4、验证价格,金额对比
             List<ShopItem> submitVoOrderInfoShops = submitVoOrderInfo.getShops();
             for (int i = 0; i < orders.size(); i++) {
@@ -286,6 +286,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     throw new RRException(BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getMsg(),
                             BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getCode());
                 }
+                orders.get(i).getOrder().setOutTradeNo(outTradeNo);
             }
             // 5、保存订单
             log.info("保存订单:{}", orderSnList);
@@ -300,6 +301,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE,
                         MQConfig.ORDER_CREATE_ORDER_ROUTING_KEY, order.getOrder());
             }
+            log.info("生成支付宝支付所需参数");
+            PayVo payVo = new PayVo();
+            payVo.setOut_trade_no(IdUtil.getSnowflakeNextIdStr());
+            payVo.setTotal_amount(orderInfoVo.getPayAmount().setScale(2, RoundingMode.UP).toString());
+            StringBuilder subject = new StringBuilder("商城购买：");
+            for (SkuIdCountVo skuIdCountVo : skuIdCountVos) {
+                subject.append(skuIdCountVo.getSkuName() + ";");
+            }
+            payVo.setSubject(subject.toString());
+            OrderSubmitRespVo orderSubmitRespVo = new OrderSubmitRespVo();
+            orderSubmitRespVo.setOrderInfo(orderInfoVo);
+            orderSubmitRespVo.setPayAmount(orderInfoVo.getPayAmount());
+            orderSubmitRespVo.setOut_trade_no(outTradeNo);
+            // 保存商户订单号至Redis
+            log.info("保存商户订单号至Redis");
+            redisTemplate.opsForValue().set(ORDER_CREATE_PREFIX + outTradeNo, outTradeNo,
+                    MQConfig.DELAY_QUEUE_MESSAGE_TTL, TimeUnit.MILLISECONDS);
+
             log.info("订单创建完成,删除购物车已选中的商品项");
             // 发送MQ通知购物车服务创建订单的相关商品项
             CartReleaseOrderItemTo cartReleaseOrderItemTo = new CartReleaseOrderItemTo();
@@ -318,7 +337,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     log.error(BizCodeEnum.CART_RELEASE_ORDER_ITEM_EXCEPTION.getMsg() + ":" + e.getMessage());
                 }
             }
-            return result;
+            return orderSubmitRespVo;
         } finally {
             submitVoThreadLocal.remove();
         }
@@ -356,6 +375,25 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
         }
 
+    }
+
+    /**
+     * 支付宝支付
+     * @param payVo
+     * @return
+     */
+    @Override
+    public PayVo getOrderPay(PayVo payVo) {
+        // 验证订单是否过期
+        String out_trade_no = payVo.getOut_trade_no();
+        log.info("验证订单是否过期:{}",out_trade_no);
+        String s = redisTemplate.opsForValue().get(ORDER_CREATE_PREFIX + out_trade_no);
+        if (!StringUtils.hasText(s)) {
+            throw new RRException(BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getMsg(),
+                    BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getCode());
+        }
+        payVo.setSubject("商城购买：" + out_trade_no);
+        return payVo;
     }
 
     /**
@@ -431,9 +469,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     /**
      * 创建订单、订单项
      *
+     * @param outTradeNo
      * @return
      */
-    private List<OrderCreateTo> buildOrder() {
+    private List<OrderCreateTo> buildOrder(String outTradeNo) {
         MemberRespVo member = LoginInfoInterceptor.loginInfo.get();
         Long memberId = member.getId();
         OrderSubmitVo orderSubmitVo = submitVoThreadLocal.get();
@@ -444,7 +483,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         List<OrderCreateTo> orders = shops.stream().map(shop -> {
             OrderCreateTo orderCreateTo = new OrderCreateTo();
             // 生成订单号，使用雪花算法
-            String orderSn = String.valueOf(IdUtil.getSnowflake().nextId());
+            String orderSn = IdUtil.getSnowflakeNextIdStr();
             log.info("准备构建订单,订单号:{}", orderSn);
             OrderEntity orderEntity = new OrderEntity();
             orderEntity.setMemberId(memberId);
@@ -471,6 +510,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             orderEntity.setReceiverPostCode(address.getPostCode());
             orderEntity.setCreateTime(date);
             orderEntity.setModifyTime(date);
+            orderEntity.setOutTradeNo(outTradeNo);
+            orderEntity.setTotalPayAmount(orderSubmitVo.getPayAmount());
             orderCreateTo.setOrder(orderEntity);
             // 构建订单项信息
             List<OrderItemEntity> orderItems = buildOrderItems(shop.getItems(), orderSn);

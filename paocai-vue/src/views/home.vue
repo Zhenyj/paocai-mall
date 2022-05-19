@@ -462,7 +462,7 @@
               :key="index"
             >
               <a
-                href=""
+                :href="'/product?skuId='+item.skuId"
                 class="hotsale-item"
               >
                 <div class="img-wrapper">

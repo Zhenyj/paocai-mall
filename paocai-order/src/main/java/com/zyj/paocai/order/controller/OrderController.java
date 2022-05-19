@@ -1,11 +1,13 @@
 package com.zyj.paocai.order.controller;
 
+import com.alipay.api.AlipayApiException;
 import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.order.entity.OrderEntity;
 import com.zyj.paocai.order.entity.vo.CartItemBaseVo;
 import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
+import com.zyj.paocai.order.entity.vo.OrderSubmitRespVo;
 import com.zyj.paocai.order.entity.vo.OrderSubmitVo;
 import com.zyj.paocai.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequestMapping("order/order")
 public class OrderController {
+
     @Autowired
     private OrderService orderService;
 
@@ -37,9 +40,9 @@ public class OrderController {
      * @return
      */
     @PostMapping("/submit_order")
-    public R<List<OrderEntity>> submitOrder(@RequestBody OrderSubmitVo orderSubmitVo) {
-        List<OrderEntity> orders = orderService.submitOrder(orderSubmitVo);
-        return R.ok(orders);
+    public R<OrderSubmitRespVo> submitOrder(@RequestBody OrderSubmitVo orderSubmitVo) throws AlipayApiException {
+        OrderSubmitRespVo vo = orderService.submitOrder(orderSubmitVo);
+        return R.ok(vo);
     }
 
     /**
