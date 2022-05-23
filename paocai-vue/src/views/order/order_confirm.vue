@@ -130,7 +130,7 @@
               <div class="shop-item-info">
                 <div class="info-detail info-cell">
                   <a
-                    :href="'/cart?skuId='+item.skuId"
+                    :href="'/product?skuId='+item.skuId"
                     target="_blank"
                     class="info-cell"
                   ><img
@@ -468,6 +468,7 @@ export default {
       orderInfo: {},
       addressList: [],
       orderToken: '',
+      submitType: 0,
       receiveAddressIndex: -1,
       receiveAddress: {},
       visible: true,
@@ -484,9 +485,11 @@ export default {
         const orderInfo = this.$router.currentRoute.params.orderInfo;
         const addressList = this.$router.currentRoute.params.addressList;
         const orderToken = this.$router.currentRoute.params.orderToken;
+        const submitType = this.$router.currentRoute.params.submitType ? this.$router.currentRoute.params.submitType : 0;
         this.orderInfo = orderInfo;
         this.addressList = addressList;
         this.orderToken = orderToken;
+        this.submitType = submitType;
         this.initAddress();
       } catch (e) {
         this.$alert('订单信息有误，前往购物车', '提示', {
@@ -597,7 +600,8 @@ export default {
         orderInfo: this.orderInfo,
         address: this.receiveAddress,
         payAmount: this.orderInfo.payAmount,
-        orderToken: this.orderToken
+        orderToken: this.orderToken,
+        submitType: this.submitType
       }
       const res = await this.$request({
         url: 'order/order/submit_order',

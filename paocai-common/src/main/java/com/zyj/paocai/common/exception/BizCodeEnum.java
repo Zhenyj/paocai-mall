@@ -49,7 +49,7 @@ public enum BizCodeEnum {
     PRODUCT_ATTR_GROUP_RELATION_EXCEPTION(10007, "属性&属性分组关联"),
     PRODUCT_ATTR_GROUP_EXCEPTION(10008, "属性分组关联异常"),
     PRODUCT_CATEGORY_NO_EXIST_EXCEPTION(10009, "分类不存在"),
-    PRODUCT_OR_CART_EXCEPTION(10010,"获取购物车商品信息详情失败"),
+    PRODUCT_OF_CART_EXCEPTION(10010,"获取购物车商品信息详情失败"),
     // 购物车服务
     CART_SERVICE_EXCEPTION(16000, "购物车服务异常"),
     CART_PRODUCT_INFO_EXCEPTION(16001, "购物车商品信息缺失、不完整"),

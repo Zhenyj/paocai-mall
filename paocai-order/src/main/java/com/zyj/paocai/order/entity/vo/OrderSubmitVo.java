@@ -1,6 +1,7 @@
 package com.zyj.paocai.order.entity.vo;
 
 import com.zyj.paocai.common.entity.to.AddressTo;
+import com.zyj.paocai.order.constant.OrderConstant;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -21,4 +22,6 @@ public class OrderSubmitVo {
     private BigDecimal payAmount;
     /** 令牌 */
     private String orderToken;
+    /** 提交方式，【0:购物车方式，1:立即购买方式】 */
+    private int submitType = OrderConstant.SubmitTypeEnum.CART.getCode();
 }

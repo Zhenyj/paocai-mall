@@ -24,7 +24,7 @@ public class ProductFeignServiceFallBack implements ProductFeignService {
 
     @Override
     public R<CartSkuItem> getCartSkuItem(Long skuId) {
-        throw new RRException(BizCodeEnum.PRODUCT_OR_CART_EXCEPTION.getMsg(),
-                BizCodeEnum.PRODUCT_OR_CART_EXCEPTION.getCode());
+        throw new RRException(BizCodeEnum.PRODUCT_OF_CART_EXCEPTION.getMsg(),
+                BizCodeEnum.PRODUCT_OF_CART_EXCEPTION.getCode());
     }
 }

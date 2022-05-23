@@ -75,5 +75,13 @@ public interface WareSkuService extends IService<WareSkuEntity> {
      * @param to
      */
     void unlockStock(StockLockedTo to);
+
+    /**
+     * 获取sku是否有库存，包含需要的商品数量
+     * @param skuId
+     * @param count
+     * @return
+     */
+    SkuHasStockVo getSkuHasStockWithNum(Long skuId, Integer count);
 }
 

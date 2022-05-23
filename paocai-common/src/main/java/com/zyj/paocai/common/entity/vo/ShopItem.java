@@ -23,7 +23,7 @@ public class ShopItem {
     /** 店铺名 */
     private String brandName;
     /** 商品 */
-    private LinkedList<CartSkuItem> items;
+    private LinkedList<CartSkuItem> items = new LinkedList<>();
     /** 店铺优惠金额 */
     private BigDecimal shopDiscount;
     /** 运费 */
@@ -128,5 +128,9 @@ public class ShopItem {
             }
         }
         return null;
+    }
+
+    public void addItem(CartSkuItem cartSkuItem){
+        items.add(cartSkuItem);
     }
 }

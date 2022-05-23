@@ -99,4 +99,24 @@ public class OrderConstant {
             return msg;
         }
     }
+
+    public enum SubmitTypeEnum {
+        CART(0, "购物车"),
+        NOW(1, "立即购买");
+        int code;
+        String msg;
+
+        SubmitTypeEnum(int code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+    }
 }

@@ -39,7 +39,11 @@ public class WareSkuController {
         return R.ok();
     }
 
-
+    /**
+     * 获取sku是否有库存
+     * @param skuId
+     * @return
+     */
     @PostMapping("/hasstock/{skuId}")
     public R<SkuHasStockVo> getSkuHasStock(@PathVariable("skuId") Long skuId) {
         SkuHasStockVo vo = wareSkuService.getSkuHasStock(skuId);
@@ -48,6 +52,18 @@ public class WareSkuController {
 
     /**
      * 获取sku是否有库存，包含需要的商品数量
+     * @param skuId
+     * @param count
+     * @return
+     */
+    @GetMapping("/hasstock/num")
+    R<SkuHasStockVo> getSkuHasStockWithNum(@RequestParam("skuId") Long skuId, @RequestParam("count") Integer count){
+        SkuHasStockVo skuHasStockVo = wareSkuService.getSkuHasStockWithNum(skuId,count);
+        return R.ok(skuHasStockVo);
+    }
+
+    /**
+     * 批量获取sku是否有库存，包含需要的商品数量
      *
      * @param skuIdCountVos
      * @return

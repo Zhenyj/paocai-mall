@@ -309,7 +309,10 @@
                 </div>
               </div>
               <div class="choose-action">
-                <div class="action-item action-buy">立即购买</div>
+                <div
+                  class="action-item action-buy"
+                  @click="buyNow"
+                >立即购买</div>
                 <div
                   class="action-item action-basket"
                   @click="addToCart"
@@ -482,6 +485,7 @@ export default {
         this.$router.push({ name: 'search', query: { keyword: this.keyword } })
       }
     },
+    // 选择属性，变更跳转其他商品
     changeAttr (checked, index1, index2) {
       if (checked) {
         return;
@@ -514,6 +518,7 @@ export default {
         this.$message.error('商品数据错误或商品已被下架');
       }
     },
+    // 添加购物车
     async addToCart () {
       const brandId = this.skuInfo.brandId;
       const skuId = this.skuId;
@@ -534,6 +539,34 @@ export default {
         this.$notify.error({
           title: '错误',
           message: '加入购物车失败，' + res.msg
+        });
+      }
+    },
+    // 立即购买
+    async buyNow () {
+      const brandId = this.skuInfo.brandId;
+      const skuId = this.skuId;
+      const count = this.buyNum >= 1 ? this.buyNum : 1;
+      let data = {
+        brandId,
+        skuId,
+        count
+      }
+      const res = await this.$request({
+        url: 'order/order/toTradeOne',
+        method: "POST",
+        data: data
+      });
+      this.$handleResponseMessage(res, '', '未知原因：商品购买失败');
+      if (res.code === 200) {
+        this.$router.push({
+          name: 'orderConfirm',
+          params: {
+            orderInfo: res.data.orderInfo,
+            addressList: res.data.addressList,
+            orderToken: res.data.orderToken,
+            submitType: 1
+          }
         });
       }
     },

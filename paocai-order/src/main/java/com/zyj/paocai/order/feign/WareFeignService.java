@@ -5,9 +5,7 @@ import com.zyj.paocai.common.entity.vo.SkuHasStockVo;
 import com.zyj.paocai.common.entity.vo.SkuIdCountVo;
 import com.zyj.paocai.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,4 +42,7 @@ public interface WareFeignService {
 
     @PostMapping("/ware/waresku/lock/order")
     R orderLockStock(@RequestBody List<WareLockTo> wareLockTos);
+
+    @GetMapping("/ware/waresku/hasstock/num")
+    R<SkuHasStockVo> getSkuHasStockWithNum(@RequestParam("skuId") Long skuId, @RequestParam("count") Integer count);
 }

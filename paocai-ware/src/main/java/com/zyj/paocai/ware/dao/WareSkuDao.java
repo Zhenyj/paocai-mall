@@ -78,4 +78,6 @@ public interface WareSkuDao extends BaseMapper<WareSkuEntity> {
      * @return
      */
     List<SkuWareHasStock> listWareIdHasSkuStockBatch(@Param("SkuIdCountVos") List<SkuIdCountVo> SkuIdCountVos);
+
+    SkuHasStockVo getSkuStockInfoBySkuIdWithNum(@Param("skuId") Long skuId, @Param("count") Integer count);
 }

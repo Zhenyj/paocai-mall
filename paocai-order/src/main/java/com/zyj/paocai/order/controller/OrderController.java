@@ -58,6 +58,18 @@ public class OrderController {
     }
 
     /**
+     * 立即购买单个商品
+     *
+     * @param vo
+     * @return
+     */
+    @PostMapping("/toTradeOne")
+    public R<OrderConfirmVo> toTradeOne(@RequestBody CartItemBaseVo vo) throws ExecutionException, InterruptedException {
+        OrderConfirmVo orderConfirmVo = orderService.toTradeOne(vo);
+        return R.ok(orderConfirmVo);
+    }
+
+    /**
      * 获取用户订单状态信息
      *
      * @return

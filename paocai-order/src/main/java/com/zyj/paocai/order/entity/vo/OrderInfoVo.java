@@ -5,6 +5,7 @@ import com.zyj.paocai.common.utils.RRException;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
  **/
 @Data
 public class OrderInfoVo {
-    private List<ShopItem> shops;
+    private List<ShopItem> shops = new ArrayList<>(1);
     /** 订单原价 */
     private BigDecimal totalAmount;
     /** 实付金额 */
@@ -65,5 +66,9 @@ public class OrderInfoVo {
         this.discountAmount = discountAmount;
         this.integration = integration;
         this.growth = growth;
+    }
+
+    public void addShop(ShopItem shopItem){
+        shops.add(shopItem);
     }
 }

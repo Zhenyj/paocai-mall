@@ -156,7 +156,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     }
 
     /**
-     * 获取sku是否有库存，包含需要的商品数量
+     * 批量获取sku是否有库存，包含需要的商品数量
      *
      * @param skuIdCountVos
      * @return
@@ -165,9 +165,27 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     public List<SkuHasStockVo> getSkuHasStockBatchWithNums(List<SkuIdCountVo> skuIdCountVos) {
         List<SkuHasStockVo> skuHasStockVos = wareSkuDao.getSkuStockInfoBySkuIdWithNums(skuIdCountVos);
         if (skuIdCountVos.size() != skuHasStockVos.size()) {
-            throw new RRException(BizCodeEnum.PRODUCT_WARE_EXCEPTION.getMsg(), BizCodeEnum.PRODUCT_WARE_EXCEPTION.getCode());
+            throw new RRException(BizCodeEnum.PRODUCT_WARE_EXCEPTION.getMsg() + "skuIds:" + skuHasStockVos.toString(),
+                    BizCodeEnum.PRODUCT_WARE_EXCEPTION.getCode());
         }
         return skuHasStockVos;
+    }
+
+    /**
+     * 获取sku是否有库存，包含需要的商品数量
+     *
+     * @param skuId
+     * @param count
+     * @return
+     */
+    @Override
+    public SkuHasStockVo getSkuHasStockWithNum(Long skuId, Integer count) {
+        SkuHasStockVo skuHasStockVo = wareSkuDao.getSkuStockInfoBySkuIdWithNum(skuId, count);
+        if (skuHasStockVo == null) {
+            throw new RRException(BizCodeEnum.PRODUCT_WARE_EXCEPTION.getMsg() + ",skuId:" + skuId,
+                    BizCodeEnum.PRODUCT_WARE_EXCEPTION.getCode());
+        }
+        return skuHasStockVo;
     }
 
     /**
@@ -267,4 +285,6 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     public void unlockStock(StockLockedTo to) {
 
     }
+
+
 }

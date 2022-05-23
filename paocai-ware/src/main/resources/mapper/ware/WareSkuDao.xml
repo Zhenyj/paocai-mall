@@ -69,38 +69,30 @@
             WHERE `sku_id` = #{detail.skuId} AND `ware_id` = #{detail.wareId}
         </foreach>
     </select>
-    <select id="getSkuHasStockBySkuId" resultType="com.zyj.paocai.common.entity.vo.SkuHasStockVo">
+    <select id="getSkuHasStockBySkuId" resultMap="skuHasStockVo">
         SELECT `sku_id`,
                (CASE WHEN (SUM(`stock` - `stock_locked`) > 0) THEN 'true' ELSE 'false' END) AS hasStock
         FROM `wms_ware_sku`
         WHERE `sku_id` = #{skuId}
     </select>
-    <select id="getSkuStockInfoBySkuIdWithNums" resultType="com.zyj.paocai.common.entity.vo.SkuHasStockVo">
-        SELECT
-        `sku_id`,
-        'true' AS hasStock
-        FROM `wms_ware_sku`
-        WHERE sku_id IN
-        <foreach collection="skuIdCountVos" item="item" separator="," open="(" close=")">
-            #{item.skuId}
+    <select id="getSkuStockInfoBySkuIdWithNums" resultMap="skuHasStockVo">
+        <foreach collection="skuIdCountVos" item="item" separator="UNION">
+            SELECT
+            IFNULL(t.`sku_id`,#{item.skuId}) AS sku_id,
+            IF
+            ( count(*) > 0, 'true', 'flase' ) AS hasStock
+            FROM
+            ( SELECT sku_id, ware_id
+            FROM `wms_ware_sku`
+            WHERE sku_id = #{item.skuId} AND `stock` - `stock_locked` &gt;=#{item.count}
+            ) t
         </foreach>
-        GROUP BY
-        `sku_id`
-        HAVING
-        SUM( `stock` - `stock_locked` ) > 0
-        UNION
-        SELECT
-        `sku_id`,
-        'false' AS hasStock
+    </select>
+    <select id="getSkuStockInfoBySkuIdWithNum" resultType="com.zyj.paocai.common.entity.vo.SkuHasStockVo">
+        SELECT `sku_id`,
+               (CASE WHEN `stock` - `stock_locked` &gt;= #{count} THEN 'true' ELSE 'false' END) AS hasStock
         FROM `wms_ware_sku`
-        WHERE sku_id IN
-        <foreach collection="skuIdCountVos" item="item" separator="," open="(" close=")">
-            #{item.skuId}
-        </foreach>
-        GROUP BY
-        `sku_id`
-        HAVING
-        SUM( `stock` - `stock_locked` ) &lt;= 0
+        WHERE sku_id = #{skuId}
     </select>
     <select id="listWareIdHasSkuStock" resultMap="SkuWareHasStock">
         SELECT ware_id
@@ -116,6 +108,4 @@
             AND sku_id = #{item.skuId}
         </foreach>
     </select>
-
-
 </mapper>

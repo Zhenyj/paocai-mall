@@ -96,10 +96,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<OrderEntity> page = this.page(
-                new Query<OrderEntity>().getPage(params),
-                new QueryWrapper<OrderEntity>()
-        );
+        IPage<OrderEntity> page = this.page(new Query<OrderEntity>().getPage(params), new QueryWrapper<OrderEntity>());
 
         return new PageUtils(page);
     }
@@ -125,9 +122,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      */
     @Override
     public OrderConfirmVo toTrade(List<CartItemBaseVo> skuItems) throws ExecutionException, InterruptedException {
-        // TODO 大多数都是购买单件商品，可以单独实现，避免复杂的判断逻辑等
-        OrderConfirmVo vo = new OrderConfirmVo();
         MemberRespVo member = LoginInfoInterceptor.loginInfo.get();
+        if (skuItems.size() == Constant.ZERO) {
+            throw new RRException("请选择需要结算的商品", BizCodeEnum.ORDER_SERVICE_EXCEPTION.getCode());
+        }
+        if (skuItems.size() == Constant.ONE) {
+            // 大多数都是购买单件商品，可以单独实现，避免复杂的判断逻辑等
+            return toTradeOne(skuItems.get(0), member.getId());
+        }
+        OrderConfirmVo vo = new OrderConfirmVo();
         // 商品skuId数组
         List<Long> skuIds = new ArrayList<>(skuItems.size());
         //
@@ -150,6 +153,52 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         // 获取收获地址,远程调用会丢失session造成缺失用户登录信息
         // 执行异步调用时，会丢失请求数据，提前获取原始请求数据
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        CompletableFuture<List<AddressTo>> addressFuture = CompletableFuture.supplyAsync(() -> {
+            // 在异步线程中，设置之前保存的请求数据，避免丢失请求头等问题
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            R<List<AddressTo>> r = memberFeignService.getUserReceiveAddress();
+            if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
+                throw new RRException(r.getMsg(), r.getCode());
+            }
+            List<AddressTo> address = r.getData();
+            return address;
+        }, executor);
+
+        CompletableFuture.allOf(addressFuture, orderInfoFuture).get();
+        // 生成防重令牌，使用UUID拼接用户id做到不重复
+        String orderToken = generateOrderToken(member.getId());
+        vo.setOrderToken(orderToken);
+        redisTemplate.opsForValue().set(OrderConstant.USER_ORDER_TOKEN_PREFIX + orderToken, orderToken, 60 * 30L, TimeUnit.SECONDS);
+        return vo;
+    }
+
+    /**
+     * 立即购买单个商品
+     *
+     * @param vo
+     * @return
+     */
+    @Override
+    public OrderConfirmVo toTradeOne(CartItemBaseVo vo) throws ExecutionException, InterruptedException {
+        MemberRespVo member = LoginInfoInterceptor.loginInfo.get();
+        OrderConfirmVo orderConfirmVo = toTradeOne(vo, member.getId());
+        return orderConfirmVo;
+    }
+
+    /**
+     * 购买单个商品
+     *
+     * @param cartItemBaseVo
+     * @return
+     */
+    private OrderConfirmVo toTradeOne(CartItemBaseVo cartItemBaseVo, Long memberId) throws ExecutionException, InterruptedException {
+        OrderConfirmVo vo = new OrderConfirmVo();
+        CompletableFuture<Void> orderInfoFuture = CompletableFuture.runAsync(() -> {
+            OrderInfoVo orderInfo = getOrderInfoVoOne(cartItemBaseVo);
+            vo.setOrderInfo(orderInfo);
+        }, executor);
+        // 执行异步调用时，会丢失请求数据，提前获取原始请求数据
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         CompletableFuture<Void> addressFuture = CompletableFuture.runAsync(() -> {
             // 在异步线程中，设置之前保存的请求数据，避免丢失请求头等问题
             RequestContextHolder.setRequestAttributes(requestAttributes);
@@ -160,14 +209,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             List<AddressTo> address = r.getData();
             vo.setAddressList(address);
         }, executor);
-
-        CompletableFuture.allOf(addressFuture, orderInfoFuture).get();
-        // 生成防重令牌，使用UUID拼接用户id做到不重复
-        String orderToken = UUID.randomUUID().toString().replace("-", "") + member.getId();
+        CompletableFuture.allOf(orderInfoFuture, addressFuture).get();
+        // 生成防重令牌
+        String orderToken = generateOrderToken(memberId);
         vo.setOrderToken(orderToken);
-        redisTemplate.opsForValue().set(OrderConstant.USER_ORDER_TOKEN_PREFIX + orderToken, orderToken,
-                60 * 30, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(OrderConstant.USER_ORDER_TOKEN_PREFIX + orderToken, orderToken, 60 * 30L, TimeUnit.SECONDS);
         return vo;
+    }
+
+    /**
+     * 生成订单令牌
+     *
+     * @param memberId
+     * @return
+     */
+    private String generateOrderToken(Long memberId) {
+        // 使用UUID拼接用户id做到不重复
+        return UUID.randomUUID().toString().replace("-", "") + memberId;
     }
 
     /**
@@ -193,11 +251,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             throw new RRException(BizCodeEnum.PRODUCT_WARE_EXCEPTION.getMsg(), BizCodeEnum.PRODUCT_WARE_EXCEPTION.getCode());
         }
         // 转换为skuId为键的map集合
-        Map<Long, SkuHasStockVo> hasStockVoMap = skuHasStockVos.stream()
-                .collect(Collectors.toMap(SkuHasStockVo::getSkuId, Function.identity()));
+        Map<Long, SkuHasStockVo> hasStockVoMap = skuHasStockVos.stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, Function.identity()));
         // 封装商品信息
-        cartSkuItems = cartSkuItems.stream()
-                .sorted((o1, o2) -> (int) (o1.getBrandId() - o2.getBrandId())).collect(Collectors.toList());
+        cartSkuItems = cartSkuItems.stream().sorted((o1, o2) -> (int) (o1.getBrandId() - o2.getBrandId())).collect(Collectors.toList());
         // 存放上一次遍历的brandId
         Long tempBrandId = -1L;
         // 临时店铺
@@ -241,6 +297,35 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     /**
+     * 获取购买单个商品时的订单信息
+     *
+     * @param cartItemBaseVo
+     * @return
+     */
+    private OrderInfoVo getOrderInfoVoOne(CartItemBaseVo cartItemBaseVo) {
+        OrderInfoVo orderInfo = new OrderInfoVo();
+        Long skuId = cartItemBaseVo.getSkuId();
+        // 获取商品最新的数据
+        R<CartSkuItem> r = productFeignService.getCartSkuItem(skuId);
+        if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
+            throw new RRException(r.getMsg(), r.getCode());
+        }
+        // 获取商品是否有库存（单个仓库）
+        R<SkuHasStockVo> skuHasStockVoR = wareFeignService.getSkuHasStockWithNum(skuId, cartItemBaseVo.getCount());
+        if (!Constant.SUCCESS_CODE.equals(skuHasStockVoR.getCode())) {
+            throw new RRException(skuHasStockVoR.getMsg(), skuHasStockVoR.getCode());
+        }
+        CartSkuItem cartSkuItem = r.getData();
+        SkuHasStockVo skuHasStockVo = skuHasStockVoR.getData();
+        cartSkuItem.setHasStock(skuHasStockVo.getHasStock());
+        ShopItem shop = new ShopItem();
+        shop.addItem(cartSkuItem);
+        orderInfo.addShop(shop);
+        orderInfo.calculate();
+        return orderInfo;
+    }
+
+    /**
      * 提交订单、创建订单
      *
      * @param orderSubmitVo
@@ -252,7 +337,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         try {
             MemberRespVo member = LoginInfoInterceptor.loginInfo.get();
             // 1、验证令牌
-            log.info("使用lua脚本验证令牌");
+            log.info("使用lua脚本验证订单令牌orderToken");
             checkOrderToken(orderSubmitVo.getOrderToken(), member.getId());
             // 保存提交的订单信息用于与最新的价格比较
             OrderInfoVo submitVoOrderInfo = orderSubmitVo.getOrderInfo();
@@ -283,8 +368,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             List<ShopItem> submitVoOrderInfoShops = submitVoOrderInfo.getShops();
             for (int i = 0; i < orders.size(); i++) {
                 if (orders.get(i).getPayAmount().compareTo(submitVoOrderInfoShops.get(i).getPayAmount()) != 0) {
-                    throw new RRException(BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getMsg(),
-                            BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getCode());
+                    throw new RRException(BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getMsg(), BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getCode());
                 }
                 orders.get(i).getOrder().setOutTradeNo(outTradeNo);
             }
@@ -298,8 +382,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             // 订单创建创建成功发送消息给mq
             for (OrderCreateTo order : orders) {
                 log.info("orderSn:{}订单创建成功，发送订单信息到延时队列", order.getOrder().getOrderSn());
-                rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE,
-                        MQConfig.ORDER_CREATE_ORDER_ROUTING_KEY, order.getOrder());
+                rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.ORDER_CREATE_ORDER_ROUTING_KEY, order.getOrder());
             }
             log.info("生成支付宝支付所需参数");
             PayVo payVo = new PayVo();
@@ -316,26 +399,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             orderSubmitRespVo.setOut_trade_no(outTradeNo);
             // 保存商户订单号至Redis
             log.info("保存商户订单号至Redis");
-            redisTemplate.opsForValue().set(ORDER_CREATE_PREFIX + outTradeNo, outTradeNo,
-                    MQConfig.DELAY_QUEUE_MESSAGE_TTL, TimeUnit.MILLISECONDS);
+            redisTemplate.opsForValue().set(ORDER_CREATE_PREFIX + outTradeNo, outTradeNo, MQConfig.DELAY_QUEUE_MESSAGE_TTL, TimeUnit.MILLISECONDS);
 
-            log.info("订单创建完成,删除购物车已选中的商品项");
-            // 发送MQ通知购物车服务创建订单的相关商品项
-            CartReleaseOrderItemTo cartReleaseOrderItemTo = new CartReleaseOrderItemTo();
-            StringBuilder sb = new StringBuilder();
-            for (Long skuId : skuIds) {
-                sb.append("," + skuId);
-            }
-            if (sb.length() > 0) {
-                String skuIdStr = sb.substring(1);
-                cartReleaseOrderItemTo.setSkuIdStr(skuIdStr);
-                cartReleaseOrderItemTo.setMemberId(member.getId());
-                try {
-                    rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE,
-                            MQConfig.CART_RELEASE_ORDER_ITEM_ROUTING_KEY, cartReleaseOrderItemTo);
-                } catch (Exception e) {
-                    log.error(BizCodeEnum.CART_RELEASE_ORDER_ITEM_EXCEPTION.getMsg() + ":" + e.getMessage());
+            if (orderSubmitVo.getSubmitType() == OrderConstant.SubmitTypeEnum.CART.getCode()) {
+                log.info("订单创建完成,删除购物车已选中的商品项");
+                // 发送MQ通知购物车服务创建订单的相关商品项,从购物车提交的订单需要删除
+                CartReleaseOrderItemTo cartReleaseOrderItemTo = new CartReleaseOrderItemTo();
+                StringBuilder sb = new StringBuilder();
+                for (Long skuId : skuIds) {
+                    sb.append("," + skuId);
                 }
+                if (sb.length() > 0) {
+                    String skuIdStr = sb.substring(1);
+                    cartReleaseOrderItemTo.setSkuIdStr(skuIdStr);
+                    cartReleaseOrderItemTo.setMemberId(member.getId());
+                    try {
+                        rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.CART_RELEASE_ORDER_ITEM_ROUTING_KEY, cartReleaseOrderItemTo);
+                    } catch (Exception e) {
+                        log.error(BizCodeEnum.CART_RELEASE_ORDER_ITEM_EXCEPTION.getMsg() + ":" + e.getMessage());
+                    }
+                }
+            } else {
+                log.info("订单创建完成");
             }
             return orderSubmitRespVo;
         } finally {
@@ -367,8 +452,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 // TODO 保证消息一定会发送出去，每一个消息都可以做好日志记录（给数据库保存每一个消息的详细信息）
                 // TODO 定期扫描数据库将失败的消息再重新发送一遍
                 // 发送MQ，通知其他相关功能执行，例如释放库存
-                rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE,
-                        MQConfig.ORDER_RELEASE_OTHER_ROUTING_KEY, orderTo);
+                rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.ORDER_RELEASE_OTHER_ROUTING_KEY, orderTo);
             } catch (Exception e) {
                 //TODO 将没发送成功的消息进行重新发送
                 log.error(e.getMessage());
@@ -379,6 +463,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     /**
      * 支付宝支付
+     *
      * @param payVo
      * @return
      */
@@ -386,11 +471,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public PayVo getOrderPay(PayVo payVo) {
         // 验证订单是否过期
         String out_trade_no = payVo.getOut_trade_no();
-        log.info("验证订单是否过期:{}",out_trade_no);
+        log.info("验证订单是否过期:{}", out_trade_no);
         String s = redisTemplate.opsForValue().get(ORDER_CREATE_PREFIX + out_trade_no);
         if (!StringUtils.hasText(s)) {
-            throw new RRException(BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getMsg(),
-                    BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getCode());
+            throw new RRException(BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getMsg(), BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getCode());
         }
         payVo.setSubject("商城购买：" + out_trade_no);
         return payVo;
@@ -434,17 +518,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      */
     private void checkOrderToken(String orderToken, Long memberId) {
         // 验证令牌(对比和删除必须保持原子性)，所以使用lua脚本
-        String script = "if redis.call(\"get\",KEYS[1]) == ARGV[1]\n" +
-                "then\n" +
-                "    return redis.call(\"del\",KEYS[1])\n" +
-                "else\n" +
-                "    return 0\n" +
-                "end";
-        Long result = redisTemplate.execute(new DefaultRedisScript<>(script, Long.class),
-                Arrays.asList(OrderConstant.USER_ORDER_TOKEN_PREFIX + orderToken), orderToken);
+        String script = "if redis.call(\"get\",KEYS[1]) == ARGV[1]\n" + "then\n" + "    return redis.call(\"del\",KEYS[1])\n" + "else\n" + "    return 0\n" + "end";
+        Long result = redisTemplate.execute(new DefaultRedisScript<>(script, Long.class), Arrays.asList(OrderConstant.USER_ORDER_TOKEN_PREFIX + orderToken), orderToken);
         if (result == null || result == 0L) {
-            throw new RRException(BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getMsg(),
-                    BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getCode());
+            throw new RRException(BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getMsg(), BizCodeEnum.ORDER_TIME_OUT_EXCEPTION.getCode());
         }
     }
 
