@@ -153,7 +153,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         // 获取收获地址,远程调用会丢失session造成缺失用户登录信息
         // 执行异步调用时，会丢失请求数据，提前获取原始请求数据
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        CompletableFuture<List<AddressTo>> addressFuture = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<Void> addressFuture = CompletableFuture.runAsync(() -> {
             // 在异步线程中，设置之前保存的请求数据，避免丢失请求头等问题
             RequestContextHolder.setRequestAttributes(requestAttributes);
             R<List<AddressTo>> r = memberFeignService.getUserReceiveAddress();
@@ -161,7 +161,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 throw new RRException(r.getMsg(), r.getCode());
             }
             List<AddressTo> address = r.getData();
-            return address;
+            vo.setAddressList(address);
         }, executor);
 
         CompletableFuture.allOf(addressFuture, orderInfoFuture).get();
@@ -316,6 +316,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             throw new RRException(skuHasStockVoR.getMsg(), skuHasStockVoR.getCode());
         }
         CartSkuItem cartSkuItem = r.getData();
+        cartSkuItem.setCount(cartItemBaseVo.getCount());
         SkuHasStockVo skuHasStockVo = skuHasStockVoR.getData();
         cartSkuItem.setHasStock(skuHasStockVo.getHasStock());
         ShopItem shop = new ShopItem();
@@ -339,93 +340,184 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             // 1、验证令牌
             log.info("使用lua脚本验证订单令牌orderToken");
             checkOrderToken(orderSubmitVo.getOrderToken(), member.getId());
-            // 保存提交的订单信息用于与最新的价格比较
             OrderInfoVo submitVoOrderInfo = orderSubmitVo.getOrderInfo();
-            // 2、获取最新的商品信息
-            List<Long> skuIds = new ArrayList<>(submitVoOrderInfo.getShops().size() + 1);
-            Map<Long, Integer> skuCountMap = new HashMap<>(submitVoOrderInfo.getShops().size() + 1);
-            List<SkuIdCountVo> skuIdCountVos = new ArrayList<>(submitVoOrderInfo.getShops().size() + 1);
-            for (ShopItem shop : submitVoOrderInfo.getShops()) {
-                for (CartSkuItem item : shop.getItems()) {
-                    skuIds.add(item.getSkuId());
-                    skuCountMap.put(item.getSkuId(), item.getCount());
-                    SkuIdCountVo skuIdCountVo = new SkuIdCountVo();
-                    skuIdCountVo.setSkuId(item.getSkuId());
-                    skuIdCountVo.setSkuName(item.getSkuName());
-                    skuIdCountVo.setCount(item.getCount());
-                    skuIdCountVos.add(skuIdCountVo);
-                }
-            }
-            OrderInfoVo orderInfoVo = getOrderInfoVo(skuIds, skuIdCountVos, skuCountMap);
-            orderSubmitVo.setOrderInfo(orderInfoVo);
-            submitVoThreadLocal.set(orderSubmitVo);
-            // 3、创建订单，订单项
-            // 生成商户订单号
-            String outTradeNo = IdUtil.getSnowflakeNextIdStr();
-            List<OrderCreateTo> orders = buildOrder(outTradeNo);
-            List<String> orderSnList = new ArrayList<>(orders.size());
-            // 4、验证价格,金额对比
-            List<ShopItem> submitVoOrderInfoShops = submitVoOrderInfo.getShops();
-            for (int i = 0; i < orders.size(); i++) {
-                if (orders.get(i).getPayAmount().compareTo(submitVoOrderInfoShops.get(i).getPayAmount()) != 0) {
-                    throw new RRException(BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getMsg(), BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getCode());
-                }
-                orders.get(i).getOrder().setOutTradeNo(outTradeNo);
-            }
-            // 5、保存订单
-            log.info("保存订单:{}", orderSnList);
-            doCreateOrder(orders);
-            // 6、库存锁定
-            log.info("锁定库存:{}", orderSnList);
-            orderLockStock(orders);
-            // 为了保证高并发 库存服务自己回滚,自动解锁库存（延时队列）
-            // 订单创建创建成功发送消息给mq
-            for (OrderCreateTo order : orders) {
-                log.info("orderSn:{}订单创建成功，发送订单信息到延时队列", order.getOrder().getOrderSn());
-                rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.ORDER_CREATE_ORDER_ROUTING_KEY, order.getOrder());
-            }
-            log.info("生成支付宝支付所需参数");
-            PayVo payVo = new PayVo();
-            payVo.setOut_trade_no(IdUtil.getSnowflakeNextIdStr());
-            payVo.setTotal_amount(orderInfoVo.getPayAmount().setScale(2, RoundingMode.UP).toString());
-            StringBuilder subject = new StringBuilder("商城购买：");
-            for (SkuIdCountVo skuIdCountVo : skuIdCountVos) {
-                subject.append(skuIdCountVo.getSkuName() + ";");
-            }
-            payVo.setSubject(subject.toString());
-            OrderSubmitRespVo orderSubmitRespVo = new OrderSubmitRespVo();
-            orderSubmitRespVo.setOrderInfo(orderInfoVo);
-            orderSubmitRespVo.setPayAmount(orderInfoVo.getPayAmount());
-            orderSubmitRespVo.setOut_trade_no(outTradeNo);
-            // 保存商户订单号至Redis
-            log.info("保存商户订单号至Redis");
-            redisTemplate.opsForValue().set(ORDER_CREATE_PREFIX + outTradeNo, outTradeNo, MQConfig.DELAY_QUEUE_MESSAGE_TTL, TimeUnit.MILLISECONDS);
-
-            if (orderSubmitVo.getSubmitType() == OrderConstant.SubmitTypeEnum.CART.getCode()) {
-                log.info("订单创建完成,删除购物车已选中的商品项");
-                // 发送MQ通知购物车服务创建订单的相关商品项,从购物车提交的订单需要删除
-                CartReleaseOrderItemTo cartReleaseOrderItemTo = new CartReleaseOrderItemTo();
-                StringBuilder sb = new StringBuilder();
-                for (Long skuId : skuIds) {
-                    sb.append("," + skuId);
-                }
-                if (sb.length() > 0) {
-                    String skuIdStr = sb.substring(1);
-                    cartReleaseOrderItemTo.setSkuIdStr(skuIdStr);
-                    cartReleaseOrderItemTo.setMemberId(member.getId());
-                    try {
-                        rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.CART_RELEASE_ORDER_ITEM_ROUTING_KEY, cartReleaseOrderItemTo);
-                    } catch (Exception e) {
-                        log.error(BizCodeEnum.CART_RELEASE_ORDER_ITEM_EXCEPTION.getMsg() + ":" + e.getMessage());
-                    }
-                }
+            OrderSubmitRespVo orderSubmitRespVo = null;
+            if (submitVoOrderInfo.getShops().size() == Constant.ONE &&
+                    submitVoOrderInfo.getShops().get(0).getItems().size() == Constant.ONE) {
+                // 购买单件商品
+                orderSubmitRespVo = doSubmitOrderByOne(orderSubmitVo, member.getId());
             } else {
-                log.info("订单创建完成");
+                orderSubmitRespVo = doSubmitOrder(orderSubmitVo, member.getId());
             }
             return orderSubmitRespVo;
         } finally {
             submitVoThreadLocal.remove();
         }
+    }
+
+    /**
+     * 创建订单（单件商品）
+     *
+     * @param orderSubmitVo
+     * @param memberId
+     * @return
+     */
+    @Transactional
+    public OrderSubmitRespVo doSubmitOrderByOne(OrderSubmitVo orderSubmitVo, Long memberId) {
+        // 保存提交的订单信息用于与最新的价格比较
+        OrderInfoVo submitVoOrderInfo = orderSubmitVo.getOrderInfo();
+        CartSkuItem cartSkuItem = submitVoOrderInfo.getShops().get(0).getItems().get(0);
+        // 2、获取最新的商品信息
+        Long skuId = cartSkuItem.getSkuId();
+        Integer count = cartSkuItem.getCount();
+        CartItemBaseVo cartItemBaseVo = new CartItemBaseVo();
+        cartItemBaseVo.setSkuId(skuId);
+        cartItemBaseVo.setCount(count);
+        cartItemBaseVo.setBrandId(cartSkuItem.getBrandId());
+        OrderInfoVo orderInfo = getOrderInfoVoOne(cartItemBaseVo);
+        orderSubmitVo.setOrderInfo(orderInfo);
+        submitVoThreadLocal.set(orderSubmitVo);
+        // 3、校验价格
+        if (orderInfo.getPayAmount().compareTo(submitVoOrderInfo.getPayAmount()) != Constant.ZERO) {
+            throw new RRException(BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getMsg() + "skuId:" + skuId + ",商品名称：" + cartSkuItem.getSkuName(),
+                    BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getCode());
+        }
+        // 4、创建订单，订单项
+        // 生成商户订单号
+        String outTradeNo = IdUtil.getSnowflakeNextIdStr();
+        List<OrderCreateTo> orders = buildOrder(outTradeNo);
+        // 5、保存订单
+        doCreateOrders(orders);
+        // 6、库存锁定
+        orderLockStock(orders);
+        // 为了保证高并发 库存服务自己回滚,自动解锁库存（延时队列）
+        // 订单创建创建成功发送消息给mq
+        for (OrderCreateTo order : orders) {
+            log.info("orderSn:{}订单创建成功，发送订单信息到延时队列", order.getOrder().getOrderSn());
+            rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.ORDER_CREATE_ORDER_ROUTING_KEY, order.getOrder());
+        }
+
+        log.info("生成支付订单所需参数");
+        PayVo payVo = new PayVo();
+        payVo.setOut_trade_no(outTradeNo);
+        payVo.setTotal_amount(orderInfo.getPayAmount().setScale(2, RoundingMode.UP).toString());
+        payVo.setSubject("商城购买：" + cartSkuItem.getSkuId() + "," + cartSkuItem.getSkuName());
+        OrderSubmitRespVo orderSubmitRespVo = new OrderSubmitRespVo();
+        orderSubmitRespVo.setOrderInfo(orderInfo);
+        orderSubmitRespVo.setPayAmount(orderInfo.getPayAmount());
+        orderSubmitRespVo.setOut_trade_no(outTradeNo);
+
+        // 保存商户订单号至Redis
+        log.info("保存商户订单号至Redis");
+        redisTemplate.opsForValue().set(ORDER_CREATE_PREFIX + outTradeNo, outTradeNo, MQConfig.DELAY_QUEUE_MESSAGE_TTL, TimeUnit.MILLISECONDS);
+
+        if (orderSubmitVo.getSubmitType() == OrderConstant.SubmitTypeEnum.CART.getCode()) {
+            log.info("订单创建完成,删除购物车已选中的商品项,skuId:{}", skuId);
+            // 发送MQ通知购物车服务创建订单的相关商品项,从购物车提交的订单需要删除
+            CartReleaseOrderItemTo cartReleaseOrderItemTo = new CartReleaseOrderItemTo();
+            cartReleaseOrderItemTo.setSkuIdStr(skuId + "");
+            cartReleaseOrderItemTo.setMemberId(memberId);
+            try {
+                rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.CART_RELEASE_ORDER_ITEM_ROUTING_KEY, cartReleaseOrderItemTo);
+            } catch (Exception e) {
+                log.error(BizCodeEnum.CART_RELEASE_ORDER_ITEM_EXCEPTION.getMsg() + ",原因:" + e.getMessage());
+            }
+        } else {
+            log.info("订单创建完成");
+        }
+        return orderSubmitRespVo;
+    }
+
+    /**
+     * 创建订单（多件商品）
+     *
+     * @param orderSubmitVo
+     * @param memberId
+     * @return
+     */
+    @Transactional
+    public OrderSubmitRespVo doSubmitOrder(OrderSubmitVo orderSubmitVo, Long memberId) {
+        // 保存提交的订单信息用于与最新的价格比较
+        OrderInfoVo submitVoOrderInfo = orderSubmitVo.getOrderInfo();
+        // 2、获取最新的商品信息
+        List<Long> skuIds = new ArrayList<>(submitVoOrderInfo.getShops().size() + 1);
+        Map<Long, Integer> skuCountMap = new HashMap<>(submitVoOrderInfo.getShops().size() + 1);
+        List<SkuIdCountVo> skuIdCountVos = new ArrayList<>(submitVoOrderInfo.getShops().size() + 1);
+        for (ShopItem shop : submitVoOrderInfo.getShops()) {
+            for (CartSkuItem item : shop.getItems()) {
+                skuIds.add(item.getSkuId());
+                skuCountMap.put(item.getSkuId(), item.getCount());
+                SkuIdCountVo skuIdCountVo = new SkuIdCountVo();
+                skuIdCountVo.setSkuId(item.getSkuId());
+                skuIdCountVo.setSkuName(item.getSkuName());
+                skuIdCountVo.setCount(item.getCount());
+                skuIdCountVos.add(skuIdCountVo);
+            }
+        }
+        OrderInfoVo orderInfoVo = getOrderInfoVo(skuIds, skuIdCountVos, skuCountMap);
+        orderSubmitVo.setOrderInfo(orderInfoVo);
+        submitVoThreadLocal.set(orderSubmitVo);
+        // 3、验证价格,金额对比
+        List<ShopItem> submitVoOrderInfoShops = submitVoOrderInfo.getShops();
+        List<ShopItem> shops = orderInfoVo.getShops();
+        for (int i = 0; i < shops.size(); i++) {
+            if (shops.get(i).getPayAmount().compareTo(submitVoOrderInfoShops.get(i).getPayAmount()) != 0) {
+                throw new RRException(BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getMsg(), BizCodeEnum.ORDER_PRICE_ERROR_EXCEPTION.getCode());
+            }
+        }
+        // 4、创建订单，订单项
+        // 生成商户订单号
+        String outTradeNo = IdUtil.getSnowflakeNextIdStr();
+        List<OrderCreateTo> orders = buildOrder(outTradeNo);
+        // 5、保存订单
+        doCreateOrders(orders);
+        // 6、库存锁定
+        orderLockStock(orders);
+        // 为了保证高并发 库存服务自己回滚,自动解锁库存（延时队列）
+        // 订单创建创建成功发送消息给mq
+        for (OrderCreateTo order : orders) {
+            log.info("orderSn:{}订单创建成功，发送订单信息到延时队列", order.getOrder().getOrderSn());
+            rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.ORDER_CREATE_ORDER_ROUTING_KEY, order.getOrder());
+        }
+        log.info("生成支付订单所需参数");
+        PayVo payVo = new PayVo();
+        payVo.setOut_trade_no(outTradeNo);
+        payVo.setTotal_amount(orderInfoVo.getPayAmount().setScale(2, RoundingMode.UP).toString());
+        StringBuilder subject = new StringBuilder("商城购买：");
+        for (SkuIdCountVo skuIdCountVo : skuIdCountVos) {
+            subject.append(skuIdCountVo.getSkuName()).append(";");
+        }
+        payVo.setSubject(subject.toString());
+        OrderSubmitRespVo orderSubmitRespVo = new OrderSubmitRespVo();
+        orderSubmitRespVo.setOrderInfo(orderInfoVo);
+        orderSubmitRespVo.setPayAmount(orderInfoVo.getPayAmount());
+        orderSubmitRespVo.setOut_trade_no(outTradeNo);
+        // 保存商户订单号至Redis
+        log.info("保存商户订单号至Redis");
+        redisTemplate.opsForValue().set(ORDER_CREATE_PREFIX + outTradeNo, outTradeNo, MQConfig.DELAY_QUEUE_MESSAGE_TTL, TimeUnit.MILLISECONDS);
+
+        if (orderSubmitVo.getSubmitType() == OrderConstant.SubmitTypeEnum.CART.getCode()) {
+            log.info("订单创建完成,删除购物车已选中的商品项");
+            // 发送MQ通知购物车服务创建订单的相关商品项,从购物车提交的订单需要删除
+            CartReleaseOrderItemTo cartReleaseOrderItemTo = new CartReleaseOrderItemTo();
+            StringBuilder sb = new StringBuilder();
+            for (Long skuId : skuIds) {
+                sb.append(",").append(skuId);
+            }
+            if (sb.length() > 0) {
+                String skuIdStr = sb.substring(1);
+                cartReleaseOrderItemTo.setSkuIdStr(skuIdStr);
+                cartReleaseOrderItemTo.setMemberId(memberId);
+                try {
+                    rabbitTemplate.convertAndSend(MQConfig.ORDER_EVENT_EXCHANGE, MQConfig.CART_RELEASE_ORDER_ITEM_ROUTING_KEY, cartReleaseOrderItemTo);
+                } catch (Exception e) {
+                    log.error(BizCodeEnum.CART_RELEASE_ORDER_ITEM_EXCEPTION.getMsg() + ":" + e.getMessage());
+                }
+            }
+        } else {
+            log.info("订单创建完成");
+        }
+        return orderSubmitRespVo;
     }
 
     /**
@@ -503,6 +595,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             to.setSkuIdCountVos(skuIdCountVoList);
             return to;
         }).collect(Collectors.toList());
+        log.info("锁定库存:{}", orderSnList);
         R r = wareFeignService.orderLockStock(wareLockTos);
         if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
             throw new RRException(r.getMsg(), r.getCode());
@@ -531,13 +624,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      * @param orderCreateTos
      */
     @Transactional
-    public void doCreateOrder(List<OrderCreateTo> orderCreateTos) {
+    public void doCreateOrders(List<OrderCreateTo> orderCreateTos) {
         List<OrderEntity> orders = new ArrayList<>(orderCreateTos.size());
+        ArrayList<String> orderSnList = new ArrayList<>(orderCreateTos.size());
         List<OrderItemEntity> orderItems = new ArrayList<>(orderCreateTos.size() + 1);
         orderCreateTos.stream().forEach(to -> {
             orders.add(to.getOrder());
             orderItems.addAll(to.getOrderItems());
+            orderSnList.add(to.getOrder().getOrderSn());
         });
+        log.info("创建订单:{}", orderSnList);
         this.saveBatch(orders);
         orderItemService.saveBatch(orderItems);
     }

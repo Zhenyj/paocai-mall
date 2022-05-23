@@ -287,12 +287,12 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     @Override
     public CartSkuItem getCartSkuItem(Long skuId) throws ExecutionException, InterruptedException {
         // 获取sku基本信息
-        CartSkuItem item = skuInfoDao.getCartSkuInfoBySkuId(skuId);
-        if (item == null) {
+        CartSkuItem skuItem = skuInfoDao.getCartSkuInfoBySkuId(skuId);
+        if (skuItem == null) {
             throw new RRException("商品信息不存在,skuId:" + skuId, BizCodeEnum.PRODUCT_NO_EXIST_EXCEPTION.getCode());
         }
         // 会员价
-        item.setPrice(item.getOriginalPrice());
+        skuItem.setPrice(skuItem.getOriginalPrice());
 
         // 获取sku销售属性
         List<SkuSaleAttrValueEntity> saleAttrs = skuSaleAttrValueService.getSaleAttrsBySkuId(skuId);
@@ -304,9 +304,26 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
                 attr.setAttrValue(saleAttr.getAttrValue());
                 return attr;
             }).collect(Collectors.toList());
-            item.setAttrs(attrs);
+            skuItem.setAttrs(attrs);
         }
-        return item;
+        // 获取优惠信息
+        R<SkuPromotionTo> r = couponFeignService.getSkuPromotion(skuId);
+        if (!Constant.SUCCESS_CODE.equals(r.getCode())) {
+            throw new RRException(r.getMsg(), r.getCode());
+        }
+        SkuPromotionTo skuPromotionTo = r.getData();
+        if (skuPromotionTo != null) {
+            skuItem.setFullReductions(skuPromotionTo.getReductions());
+            skuItem.setLadders(skuPromotionTo.getLadders());
+            if (skuPromotionTo.getBounds() != null) {
+                skuItem.setGrowth(skuPromotionTo.getBounds().getGrowBounds());
+                skuItem.setIntegration(skuPromotionTo.getBounds().getBuyBounds());
+            } else {
+                skuItem.setGrowth(new BigDecimal(0));
+                skuItem.setIntegration(new BigDecimal(0));
+            }
+        }
+        return skuItem;
     }
 
     /**
@@ -349,10 +366,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             if (skuPromotionTo != null) {
                 skuItem.setFullReductions(skuPromotionTo.getReductions());
                 skuItem.setLadders(skuPromotionTo.getLadders());
-                if(skuPromotionTo.getBounds() != null){
+                if (skuPromotionTo.getBounds() != null) {
                     skuItem.setGrowth(skuPromotionTo.getBounds().getGrowBounds());
                     skuItem.setIntegration(skuPromotionTo.getBounds().getBuyBounds());
-                }else{
+                } else {
                     skuItem.setGrowth(new BigDecimal(0));
                     skuItem.setIntegration(new BigDecimal(0));
                 }

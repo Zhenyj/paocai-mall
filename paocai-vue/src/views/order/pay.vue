@@ -98,7 +98,7 @@
                 <div class="label item-row-price-item">
                   <span
                     style="font-weight: bold; font-style: normal; text-decoration: none; color: rgb(255, 0, 54); font-size: 14px; min-width: 100px;"
-                  >{{(item.price*item.count) | showPrice}}</span>
+                  >{{(item.payAmount) | showPrice}}</span>
                 </div>
               </div>
             </div>
