@@ -11,6 +11,19 @@ spring:
       eager: true #取消Sentinel控制台懒加载
       transport:
         dashboard: 192.168.136.12:8858
+      datasource:
+        flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-flow-rules
+            groupId: SENTINEL_GROUP
+            rule-type: flow
+        degrade:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-degrade-rules
+            groupId: SENTINEL_GROUP
+            rule-type: degrade
     alicloud:
       access-key: LTAI5tQxe28JJSvVxpm3LMEW
       secret-key: RPZa3oKyHnSbsMOuY1OUgZI7j5MXkK

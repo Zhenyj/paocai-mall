@@ -67,8 +67,7 @@ public class IndexServiceImpl implements IndexService {
             // TODO 暂时使用固定数据
             String[] strings = new String[]{"新款连衣裙", "四件套", "潮流T恤", "时尚女鞋", "短裤", "半身裙",
                     "男士外套", "墙纸", "行车记录仪", "新款男鞋", "耳机", "时尚女包", "沙发"};
-            ArrayList<String> hotWords = new ArrayList<>();
-            hotWords.addAll(Arrays.asList(strings));
+            ArrayList<String> hotWords = new ArrayList<>(Arrays.asList(strings));
             vo.setHotWords(hotWords);
         }, executor);
 

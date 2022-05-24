@@ -150,6 +150,12 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
+        <!--添加 sentinel的nacos数据源的依赖-->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+            <version>1.8.2</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

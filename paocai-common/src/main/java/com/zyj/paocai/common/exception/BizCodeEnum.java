@@ -23,7 +23,7 @@ public enum BizCodeEnum {
     UNKNOWN_EXCEPTION(1000, "系统未知异常"),
     VALID_EXCEPTION(1001, "参数格式校验失败"),
     SMS_CODE_EXCEPTION(1002, "验证码获取频率太高，请稍后再试"),
-    TOO_MANY_REQUEST(1003, "请求流量过大,请稍后再试"),
+    TOO_MANY_REQUEST(1003, "系统繁忙,请稍后再试"),
     DEGRADE(1004, "服务降级"),
     PARAM_FLOW(1005, "参数限流"),
     SYSTEM_BLOCK(1006, "系统负载异常"),
