@@ -16,6 +16,8 @@ import com.zyj.paocai.product.entity.vo.Catalog2Vo;
 import com.zyj.paocai.product.service.CategoryBrandRelationService;
 import com.zyj.paocai.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -39,6 +41,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     private static final String CATEGORY_JSON = "categoryJson";
     private static final String CATEGORY_LIST_TREE = "categoryListTree";
+    private static final long CATEGORY_LIST_TREE_EXPIRATION = 60 * 60 * 24 * 1L;
+    private static final String CATEGORY_LIST_TREE_LOCK = "categoryListTree-lock";
 
     @Autowired
     CategoryDao categoryDao;
@@ -48,6 +52,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     StringRedisTemplate redisTemplate;
+
+    @Autowired
+    RedissonClient redissonClient;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -68,8 +75,41 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return list;
         }
 
-        // 获取所有分类
+        // 加锁避免缓存击穿问题
+        RLock lock = redissonClient.getLock(CATEGORY_LIST_TREE_LOCK);
+        // 设置过期时间防止宕机无法释放锁
+        lock.lock(30L, TimeUnit.SECONDS);
+        try {
+            // 获取所有分类
+            List<CategoryEntity> list = getCategoryFromDb();
+            redisTemplate.opsForValue().set(CATEGORY_LIST_TREE, JSON.toJSONString(list),
+                    CATEGORY_LIST_TREE_EXPIRATION, TimeUnit.SECONDS);
+            return list;
+        } finally {
+            // 保证锁被释放
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 从数据库中获取分类数据
+     *
+     * @return
+     */
+    private List<CategoryEntity> getCategoryFromDb() {
+        // 再次判断，用于在线程获取到锁之后，之前的线程已经将数据放入缓存后，其余线程还是从数据库中获取数据
+        String categoryString = redisTemplate.opsForValue().get(CATEGORY_LIST_TREE);
+        if (StringUtils.hasText(categoryString)) {
+            List<CategoryEntity> list = JSON.parseObject(categoryString, new TypeReference<List<CategoryEntity>>() {
+            });
+            return list;
+        }
+        log.info("缓存中没有分类数据，从数据库中获取");
         List<CategoryEntity> entities = this.list();
+        if (entities == null || entities.size() == 0) {
+            throw new RRException(BizCodeEnum.PRODUCT_CATEGORY_EXCEPTION.getMsg(),
+                    BizCodeEnum.PRODUCT_CATEGORY_EXCEPTION.getCode());
+        }
 
         List<CategoryEntity> list = entities.stream().filter(entitiy -> {
             return entitiy.getParentCid() == 0;
@@ -79,8 +119,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }).sorted((menu1, menu2) -> {
             return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
-        redisTemplate.opsForValue().set(CATEGORY_LIST_TREE, JSON.toJSONString(list),
-                60 * 60 * 24 * 30, TimeUnit.SECONDS);
         return list;
     }
 
@@ -212,7 +250,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public CategoryEntity getCategoryBySpuId(Long spuId) {
         CategoryEntity category = categoryDao.getCategoryBySpuId(spuId);
         if (category == null) {
-            throw new RRException("没有spu相关分类信息,spuId:" + spuId,  BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
+            throw new RRException("没有spu相关分类信息,spuId:" + spuId, BizCodeEnum.PRODUCT_CATEGORY_NO_EXIST_EXCEPTION.getCode());
         }
         return category;
     }
