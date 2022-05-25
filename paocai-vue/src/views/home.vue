@@ -560,7 +560,7 @@ export default {
       cateIndex: -1,
       promoteCarousel: [],
       smallPromoteCarousel: [],
-      maxPage: 5,
+      maxPage: 4,
       hotSale: {
         page: 1,
         totalPage: 3,
@@ -625,8 +625,7 @@ export default {
       var wScrollY = window.scrollY; //当前滚动条位置
       var wInnerH = window.innerHeight; //设备窗口的高度（不会变）
       var bscrollH = document.body.scrollHeight; //滚动条总高度
-      if (!this.loading && !this.noMore && wScrollY + wInnerH >= bscrollH - 10) {
-        //你需要做的动作
+      if (!this.loading && !this.noMore && wScrollY + wInnerH >= bscrollH - 70 && this.hotSale.page < this.maxPage) {
         this.loadHotSale();
       }
     },
@@ -661,6 +660,7 @@ export default {
           });
           return;
         }
+        this.loading = false;
         this.hotSale.page = page;
         this.hotSale.hotSales = this.hotSale.hotSales.concat(res.data);
       } finally {

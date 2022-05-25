@@ -78,9 +78,8 @@ public class IndexServiceImpl implements IndexService {
         CompletableFuture<Void> promoteFuture = CompletableFuture.runAsync(() -> {
             List<PromoteEntity> promotes = promoteService.getShowPromote();
             if (CollectionUtils.isEmpty(promotes)) {
-                log.error(BizCodeEnum.PRODUCT_PROMOTE_NO_EXIST_EXCEPTION.getMsg());
-//                throw new RRException(BizCodeEnum.PRODUCT_PROMOTE_NO_EXIST_EXCEPTION.getMsg(),
-//                        BizCodeEnum.PRODUCT_PROMOTE_NO_EXIST_EXCEPTION.getCode());
+                throw new RRException(BizCodeEnum.PRODUCT_PROMOTE_NO_EXIST_EXCEPTION.getMsg(),
+                        BizCodeEnum.PRODUCT_PROMOTE_NO_EXIST_EXCEPTION.getCode());
             }
             // 首页顶部大图推广资源
             List<PromoteEntity> promoteCarousel = new ArrayList<>(6);
@@ -104,6 +103,7 @@ public class IndexServiceImpl implements IndexService {
             }
             vo.setPromoteCarousel(promoteCarousel);
             vo.setSmallPromoteCarousel(smallPromoteCarousel);
+
         }, executor);
 
         // 获取猜你喜欢、热销商品数据
