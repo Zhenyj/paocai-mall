@@ -1,5 +1,6 @@
 package com.zyj.paocai.product.service;
 
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyj.paocai.common.entity.vo.CatalogBaseVo;
 import com.zyj.paocai.common.utils.PageUtils;
@@ -25,7 +26,7 @@ public interface CategoryService extends IService<CategoryEntity> {
      *
      * @return
      */
-    List<CategoryEntity> listTree();
+    List<CategoryEntity> listTree() throws BlockException;
 
     /**
      * 获取分类完整路径[父，子，孙]

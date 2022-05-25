@@ -1,5 +1,6 @@
 package com.zyj.paocai.product.controller;
 
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.zyj.paocai.common.entity.vo.CatalogBaseVo;
 import com.zyj.paocai.product.entity.CategoryEntity;
 import com.zyj.paocai.product.service.CategoryService;
@@ -53,7 +54,7 @@ public class CategoryController {
 
 
     @GetMapping("/list/tree")
-    public R<List<CategoryEntity>> listTree() {
+    public R<List<CategoryEntity>> listTree() throws BlockException {
         List<CategoryEntity> list = categoryService.listTree();
         return R.ok(list);
     }

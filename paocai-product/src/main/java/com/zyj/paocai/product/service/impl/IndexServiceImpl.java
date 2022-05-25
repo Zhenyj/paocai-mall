@@ -57,11 +57,16 @@ public class IndexServiceImpl implements IndexService {
 
     @SentinelResource(value = "getHomeData", blockHandler = "defaultBlockHandler")
     @Override
-    public HomePageData getHomeData() throws ExecutionException, InterruptedException, BlockException {
+    public HomePageData getHomeData() throws BlockException, ExecutionException, InterruptedException {
         HomePageData vo = new HomePageData();
         // 获取三级分类
         CompletableFuture<Void> categoryFuture = CompletableFuture.runAsync(() -> {
-            List<CategoryEntity> category = categoryService.listTree();
+            List<CategoryEntity> category = null;
+            try {
+                category = categoryService.listTree();
+            } catch (BlockException e) {
+                throw new RRException(BizCodeEnum.TOO_MANY_REQUEST.getMsg(),BizCodeEnum.TOO_MANY_REQUEST.getCode());
+            }
             vo.setCategory(category);
         }, executor);
 
@@ -122,7 +127,7 @@ public class IndexServiceImpl implements IndexService {
 
 
     public HomePageData defaultBlockHandler(BlockException e) throws ExecutionException, InterruptedException, BlockException {
-        log.error("首页资源限流、降级", e);
+        log.error("首页资源限流、降级，原因:{}", e.getMessage());
         throw new RRException(BizCodeEnum.TOO_MANY_REQUEST.getMsg(), BizCodeEnum.TOO_MANY_REQUEST.getCode());
     }
 }
