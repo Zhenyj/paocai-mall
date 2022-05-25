@@ -41,21 +41,26 @@ spring:
       discovery:
         server-addr: 192.168.136.12:8848
     sentinel:
-      eager: true #取消Sentinel控制台懒加载
+      #取消Sentinel控制台懒加载
+      eager: true
+      # 控制台信息
       transport:
         dashboard: 192.168.136.12:8858
+      # 配置nacos数据源，将流控规则放在nacos中实现动态规则
       datasource:
         flow:
           nacos:
             server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            namespace: ${spring.cloud.nacos.config.namespace}
             dataId: ${spring.application.name}-flow-rules
-            groupId: SENTINEL_GROUP
+            groupId: dev
             rule-type: flow
         degrade:
           nacos:
             server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            namespace: ${spring.cloud.nacos.config.namespace}
             dataId: ${spring.application.name}-degrade-rules
-            groupId: SENTINEL_GROUP
+            groupId: dev
             rule-type: degrade
   redis:
     host: 192.168.136.12
