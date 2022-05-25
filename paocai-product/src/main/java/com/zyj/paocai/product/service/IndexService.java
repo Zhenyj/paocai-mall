@@ -1,5 +1,6 @@
 package com.zyj.paocai.product.service;
 
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.zyj.paocai.product.entity.vo.HomePageData;
 
 import java.util.concurrent.ExecutionException;
@@ -14,5 +15,5 @@ public interface IndexService {
      * 获取主页数据
      * @return
      */
-    HomePageData getHomeData() throws ExecutionException, InterruptedException;
+    HomePageData getHomeData() throws ExecutionException, InterruptedException, BlockException;
 }

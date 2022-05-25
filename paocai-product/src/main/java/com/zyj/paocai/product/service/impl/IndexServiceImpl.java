@@ -1,5 +1,7 @@
 package com.zyj.paocai.product.service.impl;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.zyj.paocai.common.exception.BizCodeEnum;
 import com.zyj.paocai.common.utils.RRException;
 import com.zyj.paocai.product.entity.CategoryEntity;
@@ -53,10 +55,11 @@ public class IndexServiceImpl implements IndexService {
     @Autowired
     ThreadPoolExecutor executor;
 
+    @SentinelResource(value = "getHomeData", blockHandler = "defaultBlockHandler")
     @Override
-    public HomePageData getHomeData() throws ExecutionException, InterruptedException {
+    public HomePageData getHomeData() throws ExecutionException, InterruptedException, BlockException {
         HomePageData vo = new HomePageData();
-        // 获取三级分裂
+        // 获取三级分类
         CompletableFuture<Void> categoryFuture = CompletableFuture.runAsync(() -> {
             List<CategoryEntity> category = categoryService.listTree();
             vo.setCategory(category);
@@ -75,8 +78,9 @@ public class IndexServiceImpl implements IndexService {
         CompletableFuture<Void> promoteFuture = CompletableFuture.runAsync(() -> {
             List<PromoteEntity> promotes = promoteService.getShowPromote();
             if (CollectionUtils.isEmpty(promotes)) {
-                log.warn("没有首页推广资源");
-                throw new RRException("没有首页推广资源", BizCodeEnum.PRODUCT_SERVICE_EXCEPTION.getCode());
+                log.error(BizCodeEnum.PRODUCT_PROMOTE_NO_EXIST_EXCEPTION.getMsg());
+//                throw new RRException(BizCodeEnum.PRODUCT_PROMOTE_NO_EXIST_EXCEPTION.getMsg(),
+//                        BizCodeEnum.PRODUCT_PROMOTE_NO_EXIST_EXCEPTION.getCode());
             }
             // 首页顶部大图推广资源
             List<PromoteEntity> promoteCarousel = new ArrayList<>(6);
@@ -114,5 +118,11 @@ public class IndexServiceImpl implements IndexService {
         CompletableFuture.allOf(categoryFuture, hotWordsFuture, promoteFuture, hotSaleFuture).get();
 
         return vo;
+    }
+
+
+    public HomePageData defaultBlockHandler(BlockException e) throws ExecutionException, InterruptedException, BlockException {
+        log.error("首页资源限流、降级", e);
+        throw new RRException(BizCodeEnum.TOO_MANY_REQUEST.getMsg(), BizCodeEnum.TOO_MANY_REQUEST.getCode());
     }
 }

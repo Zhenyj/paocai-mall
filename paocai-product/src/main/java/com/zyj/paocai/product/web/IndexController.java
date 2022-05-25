@@ -1,7 +1,6 @@
 package com.zyj.paocai.product.web;
 
-import com.alibaba.csp.sentinel.annotation.SentinelResource;
-import com.zyj.paocai.common.exception.BizCodeEnum;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.product.entity.vo.HomePageData;
 import com.zyj.paocai.product.service.CategoryService;
@@ -25,14 +24,10 @@ public class IndexController {
     @Autowired
     IndexService indexService;
 
-    @SentinelResource(value = "getHomeData", blockHandler = "defaultHandler",fallback = "defaultHandler")
+
     @RequestMapping("/product/index/data")
-    public R<HomePageData> getHomeData() throws ExecutionException, InterruptedException {
+    public R<HomePageData> getHomeData() throws ExecutionException, InterruptedException, BlockException {
         HomePageData vo = indexService.getHomeData();
         return R.ok(vo);
-    }
-
-    public R<HomePageData> defaultHandler(){
-        return R.error(BizCodeEnum.TOO_MANY_REQUEST.getCode(),BizCodeEnum.TOO_MANY_REQUEST.getMsg());
     }
 }
