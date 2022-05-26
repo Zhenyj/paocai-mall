@@ -83,8 +83,8 @@
 <script>
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
-import MemberHeader from '@/views/member/member-header'
-import MemberSetMenu from '@/views/member/member-set-menu.vue'
+import MemberHeader from '@/components/member/member-header'
+import MemberSetMenu from '@/components/member/member-set-menu.vue'
 import { clearLoginInfo } from '@/utils'
 export default {
   name: 'addressList',

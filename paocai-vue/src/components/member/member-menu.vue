@@ -11,6 +11,7 @@
       <dt class="tit">{{v1.title}}</dt>
       <dd
         class="menu-item"
+        :class="{'active':defaultActive && i1===defaultActive[0] && i2 === defaultActive[1]}"
         v-for="(v2,i2) in v1.items"
         :key="i2"
         @click="navToByRouterName(v2.routerName)"
@@ -26,6 +27,10 @@ export default {
     bgc: {
       type: String,
       default: '#ffffff'
+    },
+    defaultActive: {
+      type: Array,
+      default: null
     }
   },
   data () {
@@ -34,7 +39,7 @@ export default {
         title: '订单中心',
         items: [{
           name: '我的订单',
-          routerName: ''
+          routerName: 'orderList'
         }]
       }, {
         title: '我的钱包',
@@ -115,6 +120,9 @@ export default {
     cursor: pointer;
   }
   .menu-item:hover {
+    color: #ff0036;
+  }
+  .active {
     color: #ff0036;
   }
 }

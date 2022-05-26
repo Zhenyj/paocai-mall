@@ -66,7 +66,7 @@
             <div class="site-nav-menu-hd">
               <div class="site-nav-user">
                 <a
-                  href="/member/my_paocai"
+                  href="/member/my-paocai"
                   target="_top"
                   id="site-nav-login-info-nick"
                   class="site-nav-login-info-nick"
@@ -127,7 +127,7 @@
             <div class="site-nav-menu-hd">
               <div class="site-nav-user">
                 <a
-                  href="/member/my_paocai"
+                  href="/member/my-paocai"
                   target="_top"
                 >
                   我的泡菜

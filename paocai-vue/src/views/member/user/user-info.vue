@@ -137,8 +137,8 @@
 <script>
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
-import MemberHeader from '@/views/member/member-header'
-import MemberSetMenu from '@/views/member/member-set-menu.vue'
+import MemberHeader from '@/components/member/member-header'
+import MemberSetMenu from '@/components/member/member-set-menu.vue'
 import SingleUpload from '@/components/upload/singleUpload'
 export default {
   name: 'addressList',
@@ -282,6 +282,15 @@ export default {
   }
   /deep/ .el-loading-text {
     font-size: 24px;
+  }
+  /deep/ .el-tabs__item.is-active {
+    color: #ff0036;
+  }
+  /deep/ .el-tabs__active-bar {
+    background-color: #ff0036;
+  }
+  /deep/ .el-tabs__item:hover {
+    color: #ff0036;
   }
   .main {
     .el-input--mini {

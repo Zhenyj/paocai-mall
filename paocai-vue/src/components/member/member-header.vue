@@ -11,7 +11,10 @@
 
         </h1>
       </div>
-      <div class="title">我的泡菜</div>
+      <a
+        href="/member/my-paocai"
+        class="title"
+      >我的泡菜</a>
       <div class="nav-tab">
         <el-dropdown
           :show-timeout="150"
@@ -59,7 +62,7 @@ export default {
         routerName: 'myPaocai',
         items: [{
           name: '订单中心',
-          routerName: ''
+          routerName: 'orderList'
         }, {
           name: '我的钱包',
           routerName: ''
@@ -138,7 +141,9 @@ export default {
       "\u5b8b\u4f53", sans-serif;
     -webkit-font-smoothing: antialiased;
     font-size: 22px;
-    padding: 50px 0 0 25px;
+    margin: 50px 0 20px 25px;
+    color: #333;
+    text-decoration: none;
   }
 }
 .nav-tab {

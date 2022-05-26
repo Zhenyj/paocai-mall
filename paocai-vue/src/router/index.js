@@ -44,13 +44,8 @@ const globalRoutes = [{
   name: 'cart',
   meta: { title: '泡菜商城-我的购物车' }
 }, {
-  path: '/order',
-  component: _import('order/order'),
-  name: 'order',
-  meta: { title: '订单-泡菜商城' }
-}, {
-  path: '/order/order_confirm',
-  component: _import('order/order_confirm'),
+  path: '/order/order-confirm',
+  component: _import('order/order-confirm'),
   name: 'orderConfirm',
   meta: { title: '确认订单-泡菜商城' }
 }, {
@@ -59,8 +54,8 @@ const globalRoutes = [{
   name: 'pay',
   meta: { title: '订单支付-泡菜商城' }
 }, {
-  path: '/member/my_paocai',
-  component: _import('member/my_paocai'),
+  path: '/member/my-paocai',
+  component: _import('member/my-paocai'),
   name: 'myPaocai',
   meta: { title: '我的泡菜-泡菜商城' }
 }, {
@@ -69,15 +64,20 @@ const globalRoutes = [{
   name: 'address',
   meta: { title: '收货地址-泡菜商城' }
 }, {
-  path: '/member/user/user_info',
-  component: _import('member/user/user_info'),
+  path: '/member/user/user-info',
+  component: _import('member/user/user-info'),
   name: 'userInfo',
   meta: { title: '账户信息-泡菜商城' }
 }, {
-  path: '/member/user/pwd_edit',
-  component: _import('member/user/pwd_edit'),
+  path: '/member/user/pwd-edit',
+  component: _import('member/user/pwd-edit'),
   name: 'pwdEdit',
   meta: { title: '修改登录密码-泡菜商城' }
+}, {
+  path: '/member/order/order-list',
+  component: _import('member/order/order-list'),
+  name: 'orderList',
+  meta: { title: '我的订单-泡菜商城' }
 }]
 
 // 主入口路由(需嵌套上左右整体布局)

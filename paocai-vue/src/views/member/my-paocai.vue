@@ -241,8 +241,8 @@
 <script>
 import CommonHeader from '@/components/common/header.vue'
 import CommonFooter from '@/components/common/footer.vue'
-import MemberMenu from './member-menu'
-import MemberHeader from './member-header'
+import MemberMenu from '@/components/member/member-menu'
+import MemberHeader from '@/components/member/member-header'
 export default {
   name: 'myPaocai',
   components: { CommonHeader, CommonFooter, MemberMenu, MemberHeader },
@@ -261,12 +261,12 @@ export default {
       if (loginInfo != null) {
         this.loginInfo = loginInfo;
       } else {
-        this.$alert('请先登录再进行此操作', '提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            this.$router.push({ name: 'login' });
-          }
-        });
+        // this.$alert('请先登录再进行此操作', '提示', {
+        //   confirmButtonText: '确定',
+        //   callback: action => {
+        //     this.$router.push({ name: 'login' });
+        //   }
+        // });
       }
     },
     handleNavTo (routerName) {
@@ -279,6 +279,9 @@ export default {
   },
   filters: {
     showPrice (price) {
+      if (price == null) {
+        price = 0;
+      }
       return parseFloat(price).toFixed(2);
     }
   }

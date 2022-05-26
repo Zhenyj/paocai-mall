@@ -709,6 +709,9 @@ export default {
   },
   filters: {
     showPrice (price) {
+      if (price == null) {
+        price = 0;
+      }
       return parseFloat(price).toFixed(2);
     }
   },

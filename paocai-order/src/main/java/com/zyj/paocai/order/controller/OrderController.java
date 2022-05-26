@@ -5,17 +5,13 @@ import com.zyj.paocai.common.entity.vo.OrderStatusNumsVo;
 import com.zyj.paocai.common.utils.PageUtils;
 import com.zyj.paocai.common.utils.R;
 import com.zyj.paocai.order.entity.OrderEntity;
-import com.zyj.paocai.order.entity.vo.CartItemBaseVo;
-import com.zyj.paocai.order.entity.vo.OrderConfirmVo;
-import com.zyj.paocai.order.entity.vo.OrderSubmitRespVo;
-import com.zyj.paocai.order.entity.vo.OrderSubmitVo;
+import com.zyj.paocai.order.entity.vo.*;
 import com.zyj.paocai.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
@@ -32,6 +28,23 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    /**
+     * 订单列表
+     * @param page
+     * @param limit
+     * @param key
+     * @param status
+     * @return
+     */
+    @GetMapping("/list")
+    public R<PageUtils> getOrderList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                  @RequestParam(value = "limit",defaultValue = "10") Integer limit,
+                  @RequestParam(value = "key",required = false) String key,
+                  @RequestParam(value = "status",required = false) Integer status){
+        PageUtils pu = orderService.getOrderList(page,limit,key,status);
+        return R.ok(pu);
+    }
 
     /**
      * 提交订单、创建订单
@@ -83,12 +96,12 @@ public class OrderController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
-    public R<PageUtils> list(@RequestParam Map<String, Object> params) {
-        PageUtils page = orderService.queryPage(params);
-
-        return R.ok(page);
-    }
+//    @RequestMapping("/list")
+//    public R<PageUtils> list(@RequestParam Map<String, Object> params) {
+//        PageUtils page = orderService.queryPage(params);
+//
+//        return R.ok(page);
+//    }
 
 
     /**

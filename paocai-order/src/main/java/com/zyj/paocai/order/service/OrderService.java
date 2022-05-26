@@ -66,5 +66,15 @@ public interface OrderService extends IService<OrderEntity> {
      * @return
      */
     OrderConfirmVo toTradeOne(CartItemBaseVo vo) throws ExecutionException, InterruptedException;
+
+    /**
+     * 订单列表
+     * @param page
+     * @param limit
+     * @param key
+     * @param status
+     * @return
+     */
+    PageUtils getOrderList(Integer page, Integer limit, String key, Integer status);
 }
 

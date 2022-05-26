@@ -96,9 +96,36 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<OrderEntity> page = this.page(new Query<OrderEntity>().getPage(params), new QueryWrapper<OrderEntity>());
+        QueryWrapper<OrderEntity> wrapper = new QueryWrapper<>();
+        IPage<OrderEntity> page = this.page(new Query<OrderEntity>().getPage(params), wrapper);
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 订单列表
+     *
+     * @param page
+     * @param limit
+     * @param key
+     * @param status
+     * @return
+     */
+    @Override
+    public PageUtils getOrderList(Integer page, Integer limit, String key, Integer status) {
+        if (page < 1) {
+            page = 1;
+        }
+        if (limit < 0) {
+            limit = 10;
+        }
+        Integer offset = (page - 1) * limit;
+        MemberRespVo member = LoginInfoInterceptor.loginInfo.get();
+        // 获取相关数据总数
+        Integer totalCount = orderDao.getOrderListTotal(member.getId(), key, status);
+        List<OrderVo> orders = orderDao.getOrderList(member.getId(), offset, limit, key, status);
+        PageUtils pageUtils = new PageUtils(orders, totalCount, limit, page);
+        return pageUtils;
     }
 
     /**
@@ -709,10 +736,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             orderItem.setIntegrationAmount(new BigDecimal(0));
             orderItem.setGiftGrowth(item.getGrowth());
             orderItem.setGiftIntegration(item.getIntegration());
-            orderItem.setRealAmount(item.getPayAmount());
+            orderItem.setRealAmount(item.getPrice());
             orderItem.setPromotionAmount(item.getPromotionAmount());
             orderItem.setSkuId(item.getSkuId());
             orderItem.setSkuName(item.getSkuName());
+            orderItem.setSkuPrice(item.getOriginalPrice());
             orderItem.setSkuPic(item.getSkuDefaultImg());
             orderItem.setSpuBrand(item.getBrandName());
             orderItem.setSkuQuantity(item.getCount());

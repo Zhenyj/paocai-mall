@@ -246,7 +246,7 @@
               <!-- 未登录-->
               <div
                 class="member-logout"
-                v-if="loginInfo.id == ''"
+                v-if="!loginInfo.id == ''"
               >
                 <a
                   @click="toLogin"
@@ -268,15 +268,13 @@
               >
                 <div class="order-status-info">
                   <a
-                    href="#"><strong>{{orderStatusInfo.cartNum?orderStatusInfo.cartNum:0}}</strong>购物车</a><a
-                    href="#"
-                  ><strong>{{orderStatusInfo.waitReceiveNum?orderStatusInfo.waitReceiveNum:0}}</strong>待收货</a><a
-                    href="#"
-                  ><strong>{{orderStatusInfo.waitDeliverNum?orderStatusInfo.waitDeliverNum:0}}</strong>待发货</a><a
-                    href="#"
-                  ><strong>{{orderStatusInfo.waitPayNum?orderStatusInfo.waitPayNum:0}}</strong>待付款</a><a
-                    href="#"
-                  ><strong>{{orderStatusInfo.waitCommentNum?orderStatusInfo.waitCommentNum:0}}</strong>待评论</a>
+                    href="/member/order/order-list?status=waitReceive"><strong>{{orderStatusInfo.waitReceiveNum?orderStatusInfo.waitReceiveNum:0}}</strong>待收货</a>
+                  <a
+                    href="/member/order/order-list?status=waitDeliver"><strong>{{orderStatusInfo.waitDeliverNum?orderStatusInfo.waitDeliverNum:0}}</strong>待发货</a>
+                  <a
+                    href="/member/order/order-list?status=waitPay"><strong>{{orderStatusInfo.waitPayNum?orderStatusInfo.waitPayNum:0}}</strong>待付款</a>
+                  <a
+                    href="/member/order/order-list?status=waitComment"><strong>{{orderStatusInfo.waitCommentNum?orderStatusInfo.waitCommentNum:0}}</strong>待评论</a>
                 </div>
               </div>
             </div>

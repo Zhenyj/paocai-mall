@@ -56,6 +56,74 @@
         <result property="waitReceiveNum" column="wait_receive_num"/>
         <result property="waitCommentNum" column="wait_comment_num"/>
     </resultMap>
+    <resultMap id="orderVoMap" type="com.zyj.paocai.order.entity.vo.OrderVo">
+        <result property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="orderSn" column="order_sn"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="memberUsername" column="member_username"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="freightAmount" column="freight_amount"/>
+        <result property="promotionAmount" column="promotion_amount"/>
+        <result property="integrationAmount" column="integration_amount"/>
+        <result property="couponAmount" column="coupon_amount"/>
+        <result property="discountAmount" column="discount_amount"/>
+        <result property="payType" column="pay_type"/>
+        <result property="sourceType" column="source_type"/>
+        <result property="status" column="status"/>
+        <result property="deliveryCompany" column="delivery_company"/>
+        <result property="deliverySn" column="delivery_sn"/>
+        <result property="autoConfirmDay" column="auto_confirm_day"/>
+        <result property="integration" column="integration"/>
+        <result property="growth" column="growth"/>
+        <result property="billType" column="bill_type"/>
+        <result property="billHeader" column="bill_header"/>
+        <result property="billContent" column="bill_content"/>
+        <result property="billReceiverPhone" column="bill_receiver_phone"/>
+        <result property="billReceiverEmail" column="bill_receiver_email"/>
+        <result property="receiverName" column="receiver_name"/>
+        <result property="receiverPhone" column="receiver_phone"/>
+        <result property="receiverPostCode" column="receiver_post_code"/>
+        <result property="receiverProvince" column="receiver_province"/>
+        <result property="receiverCity" column="receiver_city"/>
+        <result property="receiverRegion" column="receiver_region"/>
+        <result property="receiverDetailAddress" column="receiver_detail_address"/>
+        <result property="note" column="note"/>
+        <result property="confirmStatus" column="confirm_status"/>
+        <result property="deleteStatus" column="delete_status"/>
+        <result property="useIntegration" column="use_integration"/>
+        <result property="paymentTime" column="payment_time"/>
+        <result property="deliveryTime" column="delivery_time"/>
+        <result property="receiveTime" column="receive_time"/>
+        <result property="commentTime" column="comment_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="totalPayAmount" column="total_pay_amount"/>
+        <result property="outTradeNo" column="out_trade_no"/>
+        <collection property="orderItems" ofType="com.zyj.paocai.order.entity.OrderItemEntity">
+            <result property="id" column="order_item_id"/>
+            <result property="orderId" column="order_id"/>
+            <result property="orderSn" column="order_sn"/>
+            <result property="spuId" column="spu_id"/>
+            <result property="spuName" column="spu_name"/>
+            <result property="spuPic" column="spu_pic"/>
+            <result property="spuBrand" column="spu_brand"/>
+            <result property="categoryId" column="category_id"/>
+            <result property="skuId" column="sku_id"/>
+            <result property="skuName" column="sku_name"/>
+            <result property="skuPic" column="sku_pic"/>
+            <result property="skuPrice" column="sku_price"/>
+            <result property="skuQuantity" column="sku_quantity"/>
+            <result property="skuAttrsVals" column="sku_attrs_vals"/>
+            <result property="promotionAmount" column="item_promotion_amount"/>
+            <result property="couponAmount" column="item_coupon_amount"/>
+            <result property="integrationAmount" column="item_integration_amount"/>
+            <result property="realAmount" column="real_amount"/>
+            <result property="giftIntegration" column="gift_integration"/>
+            <result property="giftGrowth" column="gift_growth"/>
+        </collection>
+    </resultMap>
     <select id="getOrderStatusNumsInfo" resultType="com.zyj.paocai.common.entity.vo.OrderStatusNumsVo">
         SELECT member_id,
                COUNT(
@@ -73,6 +141,97 @@
         FROM oms_order
         WHERE member_id = 1
           AND `status` IN (0, 1, 2, 3)
+    </select>
+    <select id="getOrderList" resultMap="orderVoMap">
+        SELECT o.id,
+        o.member_id,
+        o.order_sn,
+        o.coupon_id,
+        o.pay_amount,
+        o.total_amount,
+        o.member_username,
+        o.create_time,
+        o.freight_amount,
+        o.promotion_amount,
+        o.integration_amount,
+        o.coupon_amount,
+        o.discount_amount,
+        o.pay_type,
+        o.source_type,
+        o.`status`,
+        o.delivery_sn,
+        o.delivery_company,
+        o.auto_confirm_day,
+        o.integration,
+        o.growth,
+        o.bill_type,
+        o.bill_content,
+        o.bill_receiver_phone,
+        o.bill_header,
+        o.bill_receiver_email,
+        o.receiver_name,
+        o.receiver_phone,
+        o.receiver_post_code,
+        o.receiver_province,
+        o.receiver_city,
+        o.receiver_region,
+        o.receiver_detail_address,
+        o.note,
+        o.confirm_status,
+        o.delete_status,
+        o.use_integration,
+        o.payment_time,
+        o.delivery_time,
+        o.receive_time,
+        o.comment_time,
+        o.modify_time,
+        o.out_trade_no,
+        o.total_pay_amount,
+        oi.id AS `order_item_id`,
+        oi.spu_id,
+        oi.spu_name,
+        oi.spu_pic,
+        oi.spu_brand,
+        oi.category_id,
+        oi.sku_id,
+        oi.sku_name,
+        oi.sku_pic,
+        oi.sku_price,
+        oi.sku_quantity,
+        oi.sku_attrs_vals,
+        oi.promotion_amount AS item_promotion_amount,
+        oi.coupon_amount AS item_coupon_amount,
+        oi.integration_amount AS item_integration_amount,
+        oi.real_amount,
+        oi.gift_integration,
+        oi.gift_growth
+        FROM oms_order o
+        LEFT JOIN oms_order_item oi ON o.order_sn = oi.order_sn
+        <where>
+            o.member_id = #{memberId}
+            <if test="status != null and status >=0">
+                AND o.`status` = #{status}
+            </if>
+            <if test="key != null and key != ''">
+                AND (o.order_sn LIKE CONCAT('%',#{key},'%') OR oi.sku_name LIKE CONCAT('%',#{key},'%'))
+            </if>
+        </where>
+        LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+    <select id="getOrderListTotal" resultType="java.lang.Integer">
+        select COUNT(*)
+        FROM oms_order o
+        LEFT JOIN oms_order_item oi ON o.order_sn = oi.order_sn
+        <where>
+            o.member_id = #{memberId}
+            <if test="status != null and status >=0">
+                AND o.`status` = #{status}
+            </if>
+            <if test="key != null and key != ''">
+                AND (o.order_sn LIKE CONCAT('%',#{key},'%') OR oi.sku_name LIKE CONCAT('%',#{key},'%'))
+            </if>
+        </where>
     </select>
 
 
