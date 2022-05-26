@@ -28,6 +28,7 @@
         <druid.version>1.2.20</druid.version>
         <jwt.version>3.4.0</jwt.version>
         <hutool.version>5.7.22</hutool.version>
+        <redisson.version>3.16.4</redisson.version>
     </properties>
 
     <dependencies>
@@ -128,6 +129,12 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
+        </dependency>
+        <!-- redisson作为所有分布式锁，分布式对象等功能框架 -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson.version}</version>
         </dependency>
         <!-- 整合spring session 完成Session共享 -->
         <dependency>
