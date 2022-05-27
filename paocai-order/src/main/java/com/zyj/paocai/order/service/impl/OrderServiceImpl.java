@@ -740,7 +740,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             orderItem.setRealAmount(item.getPrice());
             orderItem.setPromotionAmount(item.getPromotionAmount());
             orderItem.setSkuId(item.getSkuId());
-            orderItem.setSkuName(item.getSkuName());
+            orderItem.setSkuName(item.getSkuTitle());
             orderItem.setSkuPrice(item.getOriginalPrice());
             orderItem.setSkuPic(item.getSkuDefaultImg());
             orderItem.setSpuBrand(item.getBrandName());

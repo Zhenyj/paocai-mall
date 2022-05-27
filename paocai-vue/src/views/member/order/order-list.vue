@@ -57,7 +57,8 @@
             element-loading-spinner="el-icon-loading"
           >
           </div>
-          <div v-show="!loading && totalCount > 0">
+          <div
+            v-show="!loading && (key != '' || (key =='' &&  totalCount > 0))">
             <div class="order-info-table-header">
               <div class="header-item item-product">宝贝</div>
               <div class="header-item item-price">单价</div>
@@ -67,22 +68,39 @@
               <div class="header-item item-order-status">交易状态</div>
               <div class="header-item item-order-op"></div>
             </div>
-            <div
-              class="top-pagination"
-              v-show="totalCount>0"
-            >
-              <el-button
-                type="primary"
-                plain
-                size="mini"
-                :disabled="currPage===1"
-              >上一页</el-button>
-              <el-button
-                type="primary"
-                plain
-                size="mini"
-                :disabled="currPage>=totalPage"
-              >下一页</el-button>
+            <div class="top-op">
+              <div class="top-op-search">
+                <el-input
+                  v-model="key"
+                  size="small"
+                  placeholder="输入商品标题或订单号进行处理"
+                ></el-input>
+                <button
+                  class="search-btn"
+                  @click="getOrderList"
+                >
+                  <span class="el-icon-search"></span>订单搜索
+                </button>
+              </div>
+              <div
+                class="top-op-btn"
+                v-show="totalCount > 0"
+              >
+                <el-button
+                  type="primary"
+                  plain
+                  size="mini"
+                  :disabled="currPage===1"
+                  @click="navPage(-1)"
+                >上一页</el-button>
+                <el-button
+                  type="primary"
+                  plain
+                  size="mini"
+                  :disabled="currPage>=totalPage"
+                  @click="navPage(1)"
+                >下一页</el-button>
+              </div>
             </div>
             <div
               class="order-info-table-body"
@@ -237,17 +255,18 @@
                   :total="totalCount"
                   :page-count="totalPage"
                   :page-size="pageSize"
-                  :current-page="currPage"
+                  :current-page.sync="currPage"
+                  :page-sizes="pageSizes"
                   @size-change="getOrderList"
                   @current-change="getOrderList"
                 >
                 </el-pagination>
               </div>
             </div>
-            <div v-else>
+            <div v-show="totalCount <= 0">
               <el-empty
                 image="https://gtd.alicdn.com/tps/i3/T1TvXUXnNjXXXXXXXX-100-100.png"
-                :image-size="150"
+                :image-size="200"
                 description="您暂时还没有相关的订单，这里都空空的，快去挑选合适的商品吧！"
               ></el-empty>
             </div>
@@ -276,16 +295,17 @@ export default {
       status: '-1',
       loading: false,
       orderStatusInfo: {
-        waitReceiveNum: 1,
-        waitDeliverNum: 1,
-        waitPayNum: 1,
-        waitCommentNum: 1
+        waitReceiveNum: 0,
+        waitDeliverNum: 0,
+        waitPayNum: 0,
+        waitCommentNum: 0
       },
       totalCount: 0,
       pageSize: 10,
       totalPage: 0,
       currPage: 1,
       key: '',
+      pageSizes: [10, 20],
       orders: []
     }
   },
@@ -302,10 +322,12 @@ export default {
       let currPage = this.currPage;
       if (currPage < 1) {
         currPage = 1;
+        this.currPage = 1;
       }
       let pageSize = this.pageSize;
       if (pageSize < 1) {
         pageSize = 10;
+        this.pageSize = 10;
       }
       let url = 'order/order/list?page=' + currPage + '&limit=' + pageSize;
       if (this.status && this.status >= 0) {
@@ -368,6 +390,16 @@ export default {
       if (res.code === 200) {
         this.orderStatusInfo = res.data;
       }
+    },
+    navPage (value) {
+      let currPage = this.currPage;
+      currPage += value;
+      console.log(currPage);
+      if (currPage < 0 || currPage > this.totalPage) {
+        return;
+      }
+      this.currPage = currPage;
+      this.getOrderList();
     }
   },
   created () {
@@ -620,8 +652,29 @@ export default {
       border-top: none !important;
     }
   }
-  .top-pagination {
-    text-align: right;
+  .top-op {
+    display: flex;
+    justify-content: space-between;
+    .top-op-search {
+      position: relative;
+      /deep/ .el-input__inner {
+        border-radius: 16px;
+        width: 330px;
+        padding-right: 100px;
+      }
+      .search-btn {
+        position: absolute;
+        top: 1px;
+        right: 1px;
+        height: 30px;
+        width: 90px;
+        background-color: #ffffff;
+        border: none;
+        border-left: 1px dashed #ececec;
+        border-radius: 0 16px 16px 0;
+        cursor: pointer;
+      }
+    }
   }
   .pagination-wrapper {
     margin: 20px 0;

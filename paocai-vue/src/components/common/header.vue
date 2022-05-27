@@ -138,7 +138,7 @@
             <div class="site-nav-menu-bd site-nav-menu-list">
               <div class="site-nav-menu-bd-panel">
                 <a
-                  href="#"
+                  href="/member/order/order-list"
                   target="_top"
                 >已买到的宝贝</a>
                 <a
