@@ -34,6 +34,14 @@ public class OrderEntity implements Serializable {
 	 */
 	private String orderSn;
 	/**
+	 * 店铺id
+	 */
+	private Long shopId;
+	/**
+	 * 店铺名称
+	 */
+	private String shopName;
+	/**
 	 * 使用的优惠券
 	 */
 	private Long couponId;

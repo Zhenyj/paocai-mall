@@ -197,12 +197,17 @@ export default {
   },
   created () {
     document.title = '订单支付-泡菜商城';
+    try {
+      const payInfo = this.$router.currentRoute.params.payInfo;
+      this.payInfo = payInfo;
+      this.orderInfo = payInfo.orderInfo;
+      this.out_trade_no = payInfo.out_trade_no;
+      this.total_amount = payInfo.payAmount;
+    } catch (e) {
+      this.$message.error('订单已失效,返回首页');
+      this.$router.replace({ name: 'home' });
+    }
     this.getLoginInfo();
-    const payInfo = this.$router.currentRoute.params.payInfo;
-    this.payInfo = payInfo;
-    this.orderInfo = payInfo.orderInfo;
-    this.out_trade_no = payInfo.out_trade_no;
-    this.total_amount = payInfo.payAmount;
   },
   filters: {
     showPrice (price) {

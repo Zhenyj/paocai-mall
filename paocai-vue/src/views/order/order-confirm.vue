@@ -612,7 +612,7 @@ export default {
       if (res.code === 200) {
         const data = res.data;
         // 跳转支付页
-        this.$router.push({
+        this.$router.replace({
           name: 'pay',
           params: {
             payInfo: data

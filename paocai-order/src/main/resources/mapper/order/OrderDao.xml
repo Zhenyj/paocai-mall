@@ -8,6 +8,8 @@
         <result property="id" column="id"/>
         <result property="memberId" column="member_id"/>
         <result property="orderSn" column="order_sn"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
         <result property="couponId" column="coupon_id"/>
         <result property="createTime" column="create_time"/>
         <result property="memberUsername" column="member_username"/>
@@ -60,6 +62,8 @@
         <result property="id" column="id"/>
         <result property="memberId" column="member_id"/>
         <result property="orderSn" column="order_sn"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
         <result property="couponId" column="coupon_id"/>
         <result property="createTime" column="create_time"/>
         <result property="memberUsername" column="member_username"/>
@@ -101,7 +105,7 @@
         <result property="modifyTime" column="modify_time"/>
         <result property="totalPayAmount" column="total_pay_amount"/>
         <result property="outTradeNo" column="out_trade_no"/>
-        <collection property="orderItems" ofType="com.zyj.paocai.order.entity.OrderItemEntity">
+        <collection property="orderItems" ofType="com.zyj.paocai.order.entity.vo.OrderVo$OrderItemVo">
             <result property="id" column="order_item_id"/>
             <result property="orderId" column="order_id"/>
             <result property="orderSn" column="order_sn"/>
@@ -146,6 +150,8 @@
         SELECT o.id,
         o.member_id,
         o.order_sn,
+        o.shop_id,
+        o.shop_name,
         o.coupon_id,
         o.pay_amount,
         o.total_amount,

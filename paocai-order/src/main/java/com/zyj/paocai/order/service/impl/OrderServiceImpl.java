@@ -137,7 +137,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public OrderStatusNumsVo getOrderStatusNumsInfo() {
         MemberRespVo member = LoginInfoInterceptor.loginInfo.get();
         OrderStatusNumsVo vo = orderDao.getOrderStatusNumsInfo(member.getId());
-        // TODO 获取用户购物车商品数量(总数)
         return vo;
     }
 
@@ -688,6 +687,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             OrderEntity orderEntity = new OrderEntity();
             orderEntity.setMemberId(memberId);
             orderEntity.setOrderSn(orderSn);
+            orderEntity.setShopId(shop.getBrandId());
+            orderEntity.setShopName(shop.getBrandName());
             orderEntity.setFreightAmount(shop.getFreightAmount());
             orderCreateTo.setFreightAmount(shop.getFreightAmount());
             orderEntity.setPayAmount(shop.getPayAmount());

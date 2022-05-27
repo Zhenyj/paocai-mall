@@ -28,6 +28,14 @@ public class OrderVo {
      */
     private String orderSn;
     /**
+     * 店铺id
+     */
+    private Long shopId;
+    /**
+     * 店铺名称
+     */
+    private String shopName;
+    /**
      * 使用的优惠券
      */
     private Long couponId;
@@ -196,7 +204,7 @@ public class OrderVo {
     private List<OrderItemEntity> orderItems;
 
     @Data
-    class OrderItemVo {
+    public static class OrderItemVo {
         /**
          * id
          */

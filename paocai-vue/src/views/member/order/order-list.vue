@@ -57,7 +57,7 @@
             element-loading-spinner="el-icon-loading"
           >
           </div>
-          <div v-show="!loading">
+          <div v-show="!loading && totalCount > 0">
             <div class="order-info-table-header">
               <div class="header-item item-product">宝贝</div>
               <div class="header-item item-price">单价</div>
@@ -67,7 +67,27 @@
               <div class="header-item item-order-status">交易状态</div>
               <div class="header-item item-order-op"></div>
             </div>
-            <div class="order-info-table-body">
+            <div
+              class="top-pagination"
+              v-show="totalCount>0"
+            >
+              <el-button
+                type="primary"
+                plain
+                size="mini"
+                :disabled="currPage===1"
+              >上一页</el-button>
+              <el-button
+                type="primary"
+                plain
+                size="mini"
+                :disabled="currPage>=totalPage"
+              >下一页</el-button>
+            </div>
+            <div
+              class="order-info-table-body"
+              v-if="totalCount > 0"
+            >
               <table
                 class="order-info-item"
                 :class="{'in-progress':v1.status >= 0 &&v1.status<=3}"
@@ -82,12 +102,9 @@
                         style="margin-left:10px">{{"订单号："+v1.orderSn}}</span>
 
                     </td>
-                    <td>
-                      <a
-                        href="#"
-                        class="info-header-item item-2"
-                      >
-                        官方旗舰店
+                    <td class="info-header-item item-2">
+                      <a href="#">
+                        {{v1.shopName}}
                       </a>
                     </td>
                     <td class="info-header-item item-3">
@@ -210,7 +227,10 @@
                   </tr>
                 </tbody>
               </table>
-              <div class="pagination-wrapper">
+              <div
+                class="pagination-wrapper"
+                v-show="totalCount > 0"
+              >
                 <el-pagination
                   background
                   layout="prev, pager, next"
@@ -223,6 +243,13 @@
                 >
                 </el-pagination>
               </div>
+            </div>
+            <div v-else>
+              <el-empty
+                image="https://gtd.alicdn.com/tps/i3/T1TvXUXnNjXXXXXXXX-100-100.png"
+                :image-size="150"
+                description="您暂时还没有相关的订单，这里都空空的，快去挑选合适的商品吧！"
+              ></el-empty>
             </div>
           </div>
         </el-tabs>
@@ -254,9 +281,9 @@ export default {
         waitPayNum: 1,
         waitCommentNum: 1
       },
-      totalCount: 4,
+      totalCount: 0,
       pageSize: 10,
-      totalPage: 1,
+      totalPage: 0,
       currPage: 1,
       key: '',
       orders: []
@@ -270,6 +297,7 @@ export default {
         this.loginInfo = loginInfo;
       }
     },
+    // 获取订单列表
     async getOrderList () {
       let currPage = this.currPage;
       if (currPage < 1) {
@@ -280,7 +308,7 @@ export default {
         pageSize = 10;
       }
       let url = 'order/order/list?page=' + currPage + '&limit=' + pageSize;
-      if (this.status >= 0) {
+      if (this.status && this.status >= 0) {
         url += '&status=' + this.status;
       }
       if (this.key.trim() !== '') {
@@ -326,12 +354,25 @@ export default {
     hasDiscount (item) {
       return parseFloat(item.skuPrice) > parseFloat(item.realAmount);
     },
+    // 变更tab标签页
     changeOrderStatus (tab, event) {
-      console.log(tab, event);
+      this.getOrderList();
+      return true;
+    },
+    // 获取用户订单数量信息
+    async getOrderStatusInfo () {
+      const res = await this.$request({
+        url: 'order/order/order_status_num',
+        method: 'GET'
+      });
+      if (res.code === 200) {
+        this.orderStatusInfo = res.data;
+      }
     }
   },
   created () {
     this.getLoginInfo();
+    this.getOrderStatusInfo();
     let param = this.$route.query;
     if (param.status) {
       if (param.status < 0) {
@@ -578,6 +619,9 @@ export default {
     .no-bt {
       border-top: none !important;
     }
+  }
+  .top-pagination {
+    text-align: right;
   }
   .pagination-wrapper {
     margin: 20px 0;
