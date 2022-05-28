@@ -315,6 +315,13 @@ export default {
       const loginInfo = await this.$getLoginInfo();
       if (loginInfo != null) {
         this.loginInfo = loginInfo;
+      } else {
+        this.$alert('请先登录再进行此操作', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$router.push({ name: 'login' });
+          }
+        });
       }
     },
     // 获取订单列表

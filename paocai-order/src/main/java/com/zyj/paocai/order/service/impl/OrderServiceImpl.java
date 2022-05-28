@@ -346,6 +346,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         SkuHasStockVo skuHasStockVo = skuHasStockVoR.getData();
         cartSkuItem.setHasStock(skuHasStockVo.getHasStock());
         ShopItem shop = new ShopItem();
+        shop.setBrandId(cartSkuItem.getBrandId());
+        shop.setBrandName(cartSkuItem.getBrandName());
         shop.addItem(cartSkuItem);
         orderInfo.addShop(shop);
         orderInfo.calculate();

@@ -261,12 +261,12 @@ export default {
       if (loginInfo != null) {
         this.loginInfo = loginInfo;
       } else {
-        // this.$alert('请先登录再进行此操作', '提示', {
-        //   confirmButtonText: '确定',
-        //   callback: action => {
-        //     this.$router.push({ name: 'login' });
-        //   }
-        // });
+        this.$alert('请先登录再进行此操作', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$router.push({ name: 'login' });
+          }
+        });
       }
     },
     handleNavTo (routerName) {
