@@ -285,7 +285,9 @@
                 href="#"
                 target="_blank"
               >
-                <img src="../assets/images/10001.png">
+                <img
+                  src="http://ls.metatech.top:8088/UploadFolder/CarouselImg/20210329083110_Carousel.png"
+                >
               </a>
             </div>
           </div>

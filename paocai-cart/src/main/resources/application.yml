@@ -52,6 +52,7 @@ spring:
         acknowledge-mode: manual # 客户端手动确认收消息
 # 修改日志级别，com.zyj.paocaimall包下的都会打印日志
 logging:
+  config: classpath:log4j2-spring.xml
   level:
     com.zyj.paocai: debug
 # 暴露所有端点

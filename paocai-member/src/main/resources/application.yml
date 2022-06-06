@@ -78,5 +78,6 @@ feign:
   sentinel:
     enabled: true #开启feign的熔断机制
 logging:
+  config: classpath:log4j2-spring.xml
   level:
     com.zyj.paocai: debug

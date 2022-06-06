@@ -48,3 +48,7 @@ paocai:
     core-pool-size: 20
     maximum-pool-size: 200
     keep-alive-time: 10
+logging:
+  config: classpath:log4j2-spring.xml
+  level:
+    com.zyj.paocai: debug
